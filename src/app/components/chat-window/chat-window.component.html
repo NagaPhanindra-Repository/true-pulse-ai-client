@@ -1,0 +1,22 @@
+<div class="chat-container">
+  <div class="messages">
+    <div *ngFor="let msg of messages" [ngClass]="msg.role">
+      <div class="bubble">
+        {{ msg.content }}
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <textarea
+      #messageInput
+      (input)="inputText = messageInput.value"
+      (keydown)="onKeydown($event)"
+      placeholder="Ask something..."
+      rows="3">
+    </textarea>
+    <button type="button" (click)="send()" [disabled]="loading || inputText.trim().length === 0">
+      {{ loading ? 'Thinking...' : 'Send' }}
+    </button>
+  </div>
+</div>
