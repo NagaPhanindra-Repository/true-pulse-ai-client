@@ -1,0 +1,74 @@
+.main-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 2000;
+  background: rgba(24, 31, 42, 0.85);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: 0 2px 16px #232b3e55;
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 72px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    .brand-logo {
+      height: 38px;
+      margin-right: 12px;
+    }
+    .brand-name {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      .ai-gradient {
+        background: linear-gradient(90deg, #6ee7b7, #3b82f6, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+  }
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    a {
+      color: #b5c7e3;
+      text-decoration: none;
+      font-size: 1.08rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      &:hover {
+        color: #3b82f6;
+      }
+    }
+  }
+  .header-actions {
+    .login-btn {
+      background: linear-gradient(90deg, #22c55e 0%, #3b82f6 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 22px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px #22c55e55;
+      &:hover {
+        background: linear-gradient(90deg, #3b82f6 0%, #22c55e 100%);
+      }
+    }
+  }
+}
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  background: linear-gradient(135deg, #181f2a 0%, #232b3e 100%);
+  color: #f3f6fa;
+  min-height: 100vh;
+}

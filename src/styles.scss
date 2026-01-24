@@ -1,1 +1,88 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Global theme variables
+$primary-gradient: linear-gradient(135deg, #232b3e 0%, #3b82f6 100%);
+$secondary-gradient: linear-gradient(90deg, #6ee7b7 0%, #a78bfa 100%);
+$background-dark: #181f2a;
+$background-glossy: rgba(24, 31, 42, 0.95);
+$accent-blue: #3b82f6;
+$accent-green: #22c55e;
+$accent-purple: #a78bfa;
+$text-main: #f3f6fa;
+$text-secondary: #b5c7e3;
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  min-height: 100vh;
+  background: $primary-gradient, url('https://www.transparenttextures.com/patterns/circuit-board.png');
+  background-blend-mode: lighten;
+  color: $text-main;
+  position: relative;
+  overflow-x: hidden;
+}
+
+// Neural network/LLM-inspired animated background overlay
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    url('https://www.transparenttextures.com/patterns/circuit-board.png'),
+    radial-gradient(ellipse at 60% 40%, rgba(59,130,246,0.10) 0%, transparent 70%),
+    radial-gradient(ellipse at 30% 80%, rgba(167,139,250,0.10) 0%, transparent 80%),
+    linear-gradient(120deg, rgba(34,197,94,0.08) 0%, rgba(59,130,246,0.08) 100%);
+  opacity: 0.55;
+  animation: neural-light 8s linear infinite alternate;
+}
+
+@keyframes neural-light {
+  0% {
+    filter: blur(0px) brightness(1.1);
+    opacity: 0.45;
+  }
+  100% {
+    filter: blur(2.5px) brightness(1.25);
+    opacity: 0.65;
+  }
+}
+
+// Universal glassy card style
+.glassy-card {
+  background: $background-glossy;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(24, 31, 42, 0.25), 0 1.5px 16px #3b82f6aa;
+  backdrop-filter: blur(8px) saturate(1.2);
+  border: 1.5px solid rgba(59,130,246,0.18);
+  color: $text-main;
+}
+
+// Accent text and gradients
+.accent-gradient {
+  background: $secondary-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// Utility classes for neural lighting
+.neural-glow {
+  box-shadow: 0 0 16px 4px #3b82f6cc, 0 0 32px 8px #a78bfa55;
+}
+
+// Make sure all app-content, header, and footer use transparent backgrounds
+.main-header, .main-footer, .app-content {
+  background: transparent !important;
+}
+
+// Responsive adjustments
+@media (max-width: 900px) {
+  .main-header .header-content, .main-footer .footer-content {
+    padding: 0 12px;
+  }
+  .app-content {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+}

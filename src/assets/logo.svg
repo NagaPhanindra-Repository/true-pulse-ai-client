@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pulseGradient" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6ee7b7"/>
+      <stop offset="0.5" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Neural pulse circle -->
+  <circle cx="24" cy="24" r="20" fill="url(#pulseGradient)" filter="url(#glow)"/>
+  <!-- AI bot face -->
+  <rect x="13" y="16" width="22" height="16" rx="8" fill="#232b3e" stroke="url(#pulseGradient)" stroke-width="2.5"/>
+  <ellipse cx="24" cy="24" rx="7" ry="7.5" fill="#232b3e"/>
+  <!-- Eyes -->
+  <ellipse cx="20.5" cy="24" rx="2.2" ry="2.5" fill="#6ee7b7"/>
+  <ellipse cx="27.5" cy="24" rx="2.2" ry="2.5" fill="#a78bfa"/>
+  <!-- Smile -->
+  <rect x="21" y="28" width="6" height="2" rx="1" fill="#3b82f6"/>
+  <!-- Antenna -->
+  <rect x="23" y="10" width="2" height="8" rx="1" fill="#a78bfa"/>
+  <circle cx="24" cy="10" r="2" fill="#6ee7b7"/>
+  <!-- Text: TruePulse AI -->
+  <text x="24" y="45" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="7" font-weight="bold" fill="url(#pulseGradient)">TruePulse AI</text>
+</svg>

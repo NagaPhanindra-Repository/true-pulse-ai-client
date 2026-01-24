@@ -1,0 +1,6 @@
+.app-content {
+  padding-top: 80px; // To avoid header overlap
+  padding-bottom: 80px; // To avoid footer overlap
+  min-height: calc(100vh - 160px);
+  box-sizing: border-box;
+}
