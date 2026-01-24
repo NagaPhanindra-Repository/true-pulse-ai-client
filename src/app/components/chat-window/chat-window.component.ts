@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../services/chat-service.service';
@@ -13,9 +13,21 @@ import { ChatMessage } from '../../models/ChatMessage';
   templateUrl: './chat-window.component.html',
   styleUrls: ['./chat-window.component.scss']
 })
-export class ChatWindowComponent {
+export class ChatWindowComponent implements AfterViewChecked {
 
-    @ViewChild('messageInput') messageInput!: ElementRef<HTMLTextAreaElement>;
+    @ViewChild('chatWindow') chatWindow!: ElementRef<HTMLDivElement>;
+    showChat = false;
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
+
+  private scrollToBottom() {
+    try {
+      if (this.chatWindow && this.chatWindow.nativeElement) {
+        this.chatWindow.nativeElement.scrollTop = this.chatWindow.nativeElement.scrollHeight;
+      }
+    } catch (err) {}
+  }
 
 
   messages: ChatMessage[] = [];
