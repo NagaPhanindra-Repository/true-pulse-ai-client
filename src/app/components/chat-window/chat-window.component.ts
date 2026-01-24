@@ -1,8 +1,10 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../services/chat-service.service';
 import { ChatMessage } from '../../models/ChatMessage';
+
+// Use the imported ChatMessage interface from models/ChatMessage
 
 @Component({
   selector: 'app-chat-window',
@@ -13,36 +15,37 @@ import { ChatMessage } from '../../models/ChatMessage';
 })
 export class ChatWindowComponent {
 
-  @ViewChild('messageInput') messageInput!: ElementRef<HTMLTextAreaElement>;
+    @ViewChild('messageInput') messageInput!: ElementRef<HTMLTextAreaElement>;
+
 
   messages: ChatMessage[] = [];
-  inputText = '';
+  userInput: string = '';
   loading = false;
 
   constructor(private chatService: ChatService) {}
 
-  send() {
-    const trimmed = this.inputText.trim();
-    if (!trimmed || this.loading) return;
+  sendMessage() {
+    const input = this.userInput.trim();
+    if (!input) return;
 
-    const userMessage: ChatMessage = {
+    // Add user message
+    this.messages.push({
       role: 'user',
-      content: trimmed
-    };
+      content: input
+    });
 
-    this.messages.push(userMessage);
-    this.inputText = '';
-    this.messageInput.nativeElement.value = '';
+    // Clear input
+    this.userInput = '';
     this.loading = true;
 
     this.chatService.sendMessage({
-      message: trimmed,
+      message: input,
       history: this.messages
     }).subscribe({
       next: (res) => {
         this.messages.push({
           role: 'assistant',
-          content: res.reply
+          content: res.reply,
         });
         this.loading = false;
       },
@@ -54,12 +57,5 @@ export class ChatWindowComponent {
         this.loading = false;
       }
     });
-  }
-
-  onKeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      this.send();
-    }
   }
 }

@@ -1,22 +1,36 @@
-<div class="chat-container">
-  <div class="messages">
-    <div *ngFor="let msg of messages" [ngClass]="msg.role">
-      <div class="bubble">
-        {{ msg.content }}
+<div class="ai-chat-container">
+  <div class="ai-header">
+    <div class="ai-logo">
+      <span class="ai-gradient-text">TruePulse AI</span>
+      <span class="ai-badge">AI</span>
+    </div>
+    <div class="ai-desc">
+      <span>
+        <strong>Intelligent Feedback Summarizer</strong><br>
+        <small>
+          Get instant, trustworthy summaries of reviews and feedback for businesses, leaders, celebrities, restaurants, and political parties—powered by advanced AI.
+        </small>
+      </span>
+    </div>
+  </div>
+
+  <div class="ai-chat-window">
+    <div *ngFor="let msg of messages" [ngClass]="msg.role === 'assistant' ? 'ai-message' : 'user-message'">
+      <div class="msg-avatar" *ngIf="msg.role === 'assistant'">
+        <span class="ai-avatar">🤖</span>
+      </div>
+      <div class="msg-content">
+        <span>{{ msg.content }}</span>
+        <!-- <div *ngIf="msg.summary" class="ai-summary">
+          <span class="summary-label">AI Summary:</span>
+          <span class="summary-text">{{ msg.summary }}</span>
+        </div> -->
       </div>
     </div>
   </div>
 
-  <div class="input-area">
-    <textarea
-      #messageInput
-      (input)="inputText = messageInput.value"
-      (keydown)="onKeydown($event)"
-      placeholder="Ask something..."
-      rows="3">
-    </textarea>
-    <button type="button" (click)="send()" [disabled]="loading || inputText.trim().length === 0">
-      {{ loading ? 'Thinking...' : 'Send' }}
-    </button>
+  <div class="ai-footer">
+    <input class="ai-input" placeholder="Ask anything about feedback, reviews, or more..." [(ngModel)]="userInput" (keyup.enter)="sendMessage()"/>
+    <button class="ai-send-btn" (click)="sendMessage()" [disabled]="!userInput || !userInput.trim()">Send</button>
   </div>
 </div>
