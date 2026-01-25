@@ -12,7 +12,22 @@
       <a href="#">Contact</a>
     </nav>
     <div class="header-actions">
-      <button class="login-btn">Sign In</button>
+      <button class="login-btn" (click)="showLogin = true">Login In</button>
+      <button class="signup-btn" (click)="showSignUp = true">Sign Up</button>
+    </div>
+  </div>
+  <div class="signup-modal" *ngIf="showSignUp">
+    <div class="signup-modal-backdrop" (click)="showSignUp = false"></div>
+    <div class="signup-modal-content">
+      <button class="signup-modal-close" (click)="showSignUp = false">×</button>
+      <app-sign-up></app-sign-up>
+    </div>
+  </div>
+  <div class="signup-modal" *ngIf="showLogin">
+    <div class="signup-modal-backdrop" (click)="showLogin = false"></div>
+    <div class="signup-modal-content">
+      <button class="signup-modal-close" (click)="showLogin = false">×</button>
+      <app-login-in></app-login-in>
     </div>
   </div>
 </header>

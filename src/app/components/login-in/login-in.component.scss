@@ -1,0 +1,103 @@
+.login-wrapper {
+  max-width: 400px;
+  margin: 56px auto;
+  padding: 32px 28px 24px 28px;
+  box-sizing: border-box;
+  @extend .glassy-card !optional;
+  background: rgba(24, 31, 42, 0.97);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.18), 0 1.5px 16px #a78bfa55;
+  color: #f3f6fa;
+  position: relative;
+  overflow: visible;
+}
+.login-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  align-items: end;
+}
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  label {
+    color: #b5c7e3;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  input {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1.5px solid #3b82f6;
+    background: rgba(35, 43, 62, 0.85);
+    color: #f3f6fa;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 6px #3b82f655;
+    &:focus {
+      border-color: #a78bfa;
+      box-shadow: 0 2px 12px #a78bfa55;
+    }
+  }
+}
+.full-width {
+  grid-column: 1 / -1;
+}
+.login-btn-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+.login-btn {
+  background: linear-gradient(90deg, #22c55e 0%, #3b82f6 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 36px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #22c55e55;
+  transition: background 0.2s, box-shadow 0.2s;
+  min-width: 140px;
+  max-width: 200px;
+  width: 100%;
+  &:hover {
+    background: linear-gradient(90deg, #3b82f6 0%, #22c55e 100%);
+    box-shadow: 0 4px 16px #3b82f6aa;
+  }
+}
+
+// Responsive
+@media (max-width: 600px) {
+  .login-wrapper {
+    max-width: 98vw;
+    padding: 18px 2vw 18px 2vw;
+  }
+  .form-grid-2col {
+    grid-template-columns: 1fr;
+  }
+  .login-title {
+    font-size: 1.3rem;
+  }
+  .login-btn {
+    min-width: 100px;
+    max-width: 100%;
+    padding: 10px 0;
+  }
+}
