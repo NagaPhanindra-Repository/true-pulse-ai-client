@@ -68,9 +68,11 @@
 		</svg>
 	</div>
 
+
 	<div class="dashboard-hero">
 		<div class="dashboard-hero-content">
-			<h1>Welcome to Your Dashboard</h1>
+            	<!-- Welcome section with user name -->
+			<h1>Welcome  <span *ngIf="user?.userName">, {{ user?.firstName  }}</span> to Your Dashboard</h1>
 			<p class="dashboard-desc">Create questions, retros, and gather real feedback from your audience. Leverage AI-powered insights and neural-inspired design for the best engagement experience.</p>
 			<div class="ai-summary-highlight">
 				<span class="ai-summary-title">AI Quick Summary:</span>

@@ -21,7 +21,10 @@
              (mouseenter)="toggleProfileDropdown(true)"
              (mouseleave)="toggleProfileDropdown(false)">
           <img [src]="profilePic" alt="Profile" class="profile-pic" />
-          <span class="profile-label">Profile</span>
+          <span class="profile-label">
+            <ng-container *ngIf="userName; else profileText">{{ userName }}</ng-container>
+            <ng-template #profileText>Profile</ng-template>
+          </span>
           <div class="profile-dropdown glassy-card" *ngIf="showProfileDropdown">
             <a href="#">My Profile</a>
             <a href="#">Settings</a>

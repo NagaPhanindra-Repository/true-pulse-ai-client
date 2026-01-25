@@ -1,24 +1,26 @@
 
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { UserModel } from '../../models/user-model';
+import { LoggedInUserModel } from '../../models/logged-in-user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private tokenKey = 'auth_token';
+  private userSubject = new BehaviorSubject<LoggedInUserModel | null>(null);
+  user$ = this.userSubject.asObservable();
+  private baseUrl = "http://localhost:8080";
 
-  
-   private tokenKey = 'auth_token';
   constructor(private http: HttpClient, private router: Router) {}
-   private baseUrl = "http://localhost:8080";
-
 
   login(usernameOrEmail: string, password: string): Observable<string> {
-    return this.http.post<{ accessToken: string; tokenType: string }>(`${this.baseUrl}/api/auth/login`, { usernameOrEmail, password }, 
+    return this.http.post<{ accessToken: string; tokenType: string }>(`${this.baseUrl}/api/auth/login`, { usernameOrEmail, password },
       { headers: { 'Content-Type': 'application/json', "Accept": "application/json" } })
       .pipe(
         tap(resp => this.setToken(resp.accessToken)),
@@ -30,11 +32,24 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/api/auth/signup`, user, { headers: { 'Content-Type': 'application/json', "Accept": "application/json" } });
   }
 
-  logout(): void {
-    this.clearToken();
-    this.router.navigate(['/login']);
+
+  fetchUserDetails(): Observable<LoggedInUserModel> {
+    console.log('[AuthService] Fetching user details from ' + `${this.baseUrl}/api/user/me`);
+    return this.http.get<LoggedInUserModel>(`${this.baseUrl}/api/user/me`,
+      { headers: { 'Content-Type': 'application/json', "Accept": "application/json" } }).pipe(
+      tap(user => this.userSubject.next(user))
+    );
   }
 
+  get user(): LoggedInUserModel | null {
+    return this.userSubject.value;
+  }
+
+  logout(): void {
+    this.clearToken();
+    this.userSubject.next(null);
+    this.router.navigate(['/login']);
+  }
 
   setToken(token: string): void {
     if (typeof window !== 'undefined' && window.sessionStorage) {
@@ -42,14 +57,12 @@ export class AuthService {
     }
   }
 
-
   getToken(): string | null {
     if (typeof window !== 'undefined' && window.sessionStorage) {
       return sessionStorage.getItem(this.tokenKey);
     }
     return null;
   }
-
 
   clearToken(): void {
     if (typeof window !== 'undefined' && window.sessionStorage) {
