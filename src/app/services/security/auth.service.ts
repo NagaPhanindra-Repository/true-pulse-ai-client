@@ -1,0 +1,79 @@
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
+import { UserModel } from '../../models/user-model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+
+  
+   private tokenKey = 'auth_token';
+  constructor(private http: HttpClient, private router: Router) {}
+   private baseUrl = "http://localhost:8080";
+
+
+  login(usernameOrEmail: string, password: string): Observable<string> {
+    return this.http.post<{ accessToken: string; tokenType: string }>(`${this.baseUrl}/api/auth/login`, { usernameOrEmail, password }, 
+      { headers: { 'Content-Type': 'application/json', "Accept": "application/json" } })
+      .pipe(
+        tap(resp => this.setToken(resp.accessToken)),
+        map(resp => resp.accessToken)
+      );
+  }
+
+  signup(user: UserModel): Observable<any> {
+    return this.http.post(`${this.baseUrl}/api/auth/signup`, user, { headers: { 'Content-Type': 'application/json', "Accept": "application/json" } });
+  }
+
+  logout(): void {
+    this.clearToken();
+    this.router.navigate(['/login']);
+  }
+
+
+  setToken(token: string): void {
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      sessionStorage.setItem(this.tokenKey, token);
+    }
+  }
+
+
+  getToken(): string | null {
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      return sessionStorage.getItem(this.tokenKey);
+    }
+    return null;
+  }
+
+
+  clearToken(): void {
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      sessionStorage.removeItem(this.tokenKey);
+    }
+  }
+
+  isAuthenticated(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+    // Check token expiry (JWT)
+    const payload = this.decodeToken(token);
+    if (!payload) return false;
+    const exp = payload.exp;
+    if (!exp) return false;
+    return Date.now() < exp * 1000;
+  }
+
+  private decodeToken(token: string): any {
+    try {
+      const payload = token.split('.')[1];
+      return JSON.parse(atob(payload));
+    } catch {
+      return null;
+    }
+  }
+}

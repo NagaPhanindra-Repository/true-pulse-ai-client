@@ -1,63 +1,71 @@
 <div class="signup-wrapper glassy-card">
   <h2 class="signup-title accent-gradient">Sign Up</h2>
-  <form>
+  <form #signupForm="ngForm" (ngSubmit)="onSubmit(signupForm)">
     <div class="form-grid-2col compact">
       <div class="form-row">
-        <label for="username">Username</label>
-        <input id="username" name="username" type="text" required />
+        <label for="userName">Username</label>
+        <input id="userName" name="userName" type="text" required [(ngModel)]="user.userName" />
       </div>
-     <div class="form-row">
+      <div class="form-row">
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" required />
+        <input id="password" name="password" type="password" required [(ngModel)]="user.password" />
       </div>
       <div class="form-row">
         <label for="email">Email</label>
-        <input id="email" name="email" type="email" required />
+        <input id="email" name="email" type="email" required [(ngModel)]="user.email" />
       </div>
       <div class="form-row">
-        <label for="mobile">Mobile Number</label>
-        <input id="mobile" name="mobile" type="tel" required />
+        <label for="mobileNumber">Mobile Number</label>
+        <input id="mobileNumber" name="mobileNumber" type="tel" required [(ngModel)]="user.mobileNumber" />
       </div>
       <div class="form-row">
-        <label for="usertype">User Type</label>
-        <select id="usertype" name="usertype" required>
-          <option value="">Select...</option>
-          <option value="business">Business</option>
-          <option value="leader">Leader</option>
-          <option value="celebrity">Celebrity</option>
-          <option value="restaurant">Restaurant</option>
-          <option value="political">Politician</option>
-          <option value="other">Other</option>
-        </select>
+        <label for="countryCode">Country Code</label>
+        <input id="countryCode" name="countryCode" type="text" required [(ngModel)]="user.countryCode" />
       </div>
       <div class="form-row">
-        <label for="firstname">First Name</label>
-        <input id="firstname" name="firstname" type="text" required />
+        <label for="firstName">First Name</label>
+        <input id="firstName" name="firstName" type="text" required [(ngModel)]="user.firstName" />
       </div>
       <div class="form-row">
-        <label for="lastname">Last Name</label>
-        <input id="lastname" name="lastname" type="text" required />
+        <label for="lastName">Last Name</label>
+        <input id="lastName" name="lastName" type="text" required [(ngModel)]="user.lastName" />
       </div>
       <div class="form-row">
         <label for="gender">Gender</label>
-        <select id="gender" name="gender" required>
+        <select id="gender" name="gender" required [(ngModel)]="user.gender">
           <option value="">Select...</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+          <option value="OTHER">Other</option>
         </select>
       </div>
       <div class="form-row">
-        <label for="dob">Date of Birth</label>
-        <input id="dob" name="dob" type="date" required />
+        <label for="dateOfBirth">Date of Birth</label>
+        <input id="dateOfBirth" name="dateOfBirth" type="date" required [(ngModel)]="user.dateOfBirth" />
       </div>
       <div class="form-row checkbox-row full-width">
-        <input id="verified" name="verified" type="checkbox" />
-        <label for="verified">Get Verified</label>
+        <input id="isVerified" name="isVerified" type="checkbox" [(ngModel)]="user.isVerified" />
+        <label for="isVerified">Get Verified</label>
+      </div>
+      <div class="form-row">
+        <label for="roleName">Role</label>
+        <select id="roleName" name="roleName" required [(ngModel)]="user.roleName">
+          <option value="">Select...</option>
+          <option value="ADMIN">Admin</option>
+          <option value="USER">User</option>
+          <option value="BUSINESS">Business</option>
+          <option value="LEADER">Leader</option>
+          <option value="CELEBRITY">Celebrity</option>
+          <option value="RESTAURANT">Restaurant</option>
+          <option value="POLITICIAN">Politician</option>
+          <option value="OTHER">Other</option>
+        </select>
       </div>
     </div>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+    <div *ngIf="success" class="success-message">{{ success }}</div>
     <div class="signup-btn-row">
-      <button class="signup-btn" type="submit">Sign Up</button>
+      <button class="signup-btn" type="submit" [disabled]="loading">{{ loading ? 'Signing up...' : 'Sign Up' }}</button>
     </div>
   </form>
 </div>

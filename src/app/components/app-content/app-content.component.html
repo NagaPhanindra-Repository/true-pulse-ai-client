@@ -1,6 +1,130 @@
+<div class="app-content home-page">
+  <!-- Animated Hero Section -->
+  <section class="home-hero">
+    <div class="hero-graphic animated">
+      <svg width="220" height="140" viewBox="0 0 220 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="pulseGradient" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#a78bfa"/>
+            <stop offset="100%" stop-color="#3b82f6"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="110" cy="70" rx="100" ry="50" fill="url(#pulseGradient)" opacity="0.18"/>
+        <circle cx="70" cy="70" r="32" fill="#a78bfa" class="pulse"/>
+        <circle cx="150" cy="70" r="32" fill="#6ee7b7" class="pulse2"/>
+        <rect x="100" y="50" width="20" height="40" rx="10" fill="#fff" opacity="0.8"/>
+        <text x="110" y="135" text-anchor="middle" fill="#b5c7e3" font-size="16">TruePulse AI</text>
+      </svg>
+    </div>
+    <div class="hero-text">
+      <h1><span class="ai-gradient">TruePulse AI</span><br><span class="subtitle">Connect. Listen. Grow.</span></h1>
+      <p class="hero-desc">
+        The next-gen platform for authentic profiles, real feedback, and AI-powered insights. Empowering businesses, leaders, creators, and communities to build trust and grow with real voices.
+      </p>
+      <div class="cta-group">
+        <button class="cta-btn" (click)="openSignUpModal()">Get Started Free</button>
+        <button class="secondary-btn" (click)="scrollToFeatures()">See How It Works</button>
+      </div>
+      <div class="hero-stats">
+        <div><span>10K+</span><br>Verified Users</div>
+        <div><span>1M+</span><br>Feedbacks</div>
+        <div><span>99%</span><br>AI Accuracy</div>
+      </div>
+    </div>
+  </section>
 
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <h2>How It Works</h2>
+    <div class="features-grid">
+      <div class="feature-card dynamic">
+        <div class="icon-bg"><svg width="48" height="48"><circle cx="24" cy="24" r="22" fill="#6ee7b7"/><text x="24" y="30" text-anchor="middle" fill="#fff" font-size="18">ID</text></svg></div>
+        <h3>Verified Profiles</h3>
+        <p>Only real, verified users can create profiles. No bots, no fakes.</p>
+      </div>
+      <div class="feature-card dynamic">
+        <div class="icon-bg"><svg width="48" height="48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#a78bfa"/><text x="24" y="34" text-anchor="middle" fill="#fff" font-size="18">Post</text></svg></div>
+        <h3>Post Updates</h3>
+        <p>Share news, launches, recipes, shows, and more with your audience.</p>
+      </div>
+      <div class="feature-card dynamic">
+        <div class="icon-bg"><svg width="48" height="48"><ellipse cx="24" cy="24" rx="22" ry="16" fill="#3b82f6"/><text x="24" y="30" text-anchor="middle" fill="#fff" font-size="18">💬</text></svg></div>
+        <h3>Collect Feedback</h3>
+        <p>Followers and users leave feedback and reviews—instantly visible to you.</p>
+      </div>
+      <div class="feature-card dynamic">
+        <div class="icon-bg"><svg width="48" height="48"><circle cx="24" cy="24" r="22" fill="#fff" opacity="0.7"/><text x="24" y="30" text-anchor="middle" fill="#3b82f6" font-size="18">AI</text></svg></div>
+        <h3>AI Summarization</h3>
+        <p>AI summarizes all feedback in a few lines—actionable, clear, and fast.</p>
+      </div>
+      <div class="feature-card dynamic">
+        <div class="icon-bg"><svg width="48" height="48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#3b82f6"/><text x="24" y="34" text-anchor="middle" fill="#fff" font-size="18">?</text></svg></div>
+        <h3>Ask AI Anything</h3>
+        <p>Ask specific questions, get instant AI-powered insights and answers.</p>
+      </div>
+      <div class="feature-card dynamic">
+        <div class="icon-bg"><svg width="48" height="48"><ellipse cx="24" cy="24" rx="22" ry="16" fill="#a78bfa"/><text x="24" y="30" text-anchor="middle" fill="#fff" font-size="18">📊</text></svg></div>
+        <h3>Retro Dashboard</h3>
+        <p>Create retros, gather team feedback, and get AI-powered suggestions and action items.</p>
+      </div>
+    </div>
+  </section>
 
-<div class="app-content">
-  <ng-content></ng-content>
-  <app-chat-window></app-chat-window>
+  <!-- Why Section -->
+  <section class="why-section">
+    <h2>Why TruePulse AI?</h2>
+    <div class="why-cards">
+      <div class="why-card">
+        <span class="why-icon">✔️</span>
+        <div>
+          <h4>Verified, Trusted Community</h4>
+          <p>No fake profiles. Only real, trusted users.</p>
+        </div>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">🤖</span>
+        <div>
+          <h4>AI-Powered Insights</h4>
+          <p>Get actionable feedback and instant AI summaries.</p>
+        </div>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">🌟</span>
+        <div>
+          <h4>For All Leaders</h4>
+          <p>Perfect for businesses, creators, celebrities, and political parties.</p>
+        </div>
+      </div>
+      <div class="why-card">
+        <span class="why-icon">📈</span>
+        <div>
+          <h4>Continuous Growth</h4>
+          <p>Retro dashboard for improvement and team growth.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo/Walkthrough Section -->
+  <section class="demo-section">
+    <h2>See It In Action</h2>
+    <div class="demo-carousel dynamic">
+      <img src="assets/demo-profile.svg" alt="Profile Creation Demo" />
+      <img src="assets/demo-feedback.svg" alt="Feedback Demo" />
+      <img src="assets/demo-ai-summary.svg" alt="AI Summary Demo" />
+      <img src="assets/demo-retro.svg" alt="Retro Dashboard Demo" />
+    </div>
+    <div class="carousel-indicators">
+      <span class="indicator active"></span>
+      <span class="indicator"></span>
+      <span class="indicator"></span>
+      <span class="indicator"></span>
+    </div>
+    <div class="demo-caption">
+      <strong>Experience the future of authentic engagement.</strong>
+    </div>
+  </section>
 </div>
+
+
+

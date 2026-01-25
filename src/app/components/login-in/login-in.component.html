@@ -1,18 +1,20 @@
 <div class="login-wrapper glassy-card">
   <h2 class="login-title accent-gradient">Login</h2>
-  <form>
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
     <div class="form-grid-2col">
       <div class="form-row full-width">
         <label for="usernameOrEmail">Username or Email</label>
-        <input id="usernameOrEmail" name="usernameOrEmail" type="text" required />
+        <input id="usernameOrEmail" name="usernameOrEmail" type="text" required [(ngModel)]="usernameOrEmail" />
       </div>
       <div class="form-row full-width">
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" required />
+        <input id="password" name="password" type="password" required [(ngModel)]="password" />
       </div>
     </div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+    <div *ngIf="error" class="error-message">{{ error }}</div>
     <div class="login-btn-row">
-      <button class="login-btn" type="submit">Login</button>
+      <button class="login-btn" type="submit" [disabled]="loading">{{ loading ? 'Logging in...' : 'Login' }}</button>
     </div>
   </form>
 </div>

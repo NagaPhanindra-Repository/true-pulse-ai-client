@@ -1,3 +1,52 @@
+// Profile dropdown styles
+.profile-menu-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  .profile-pic {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid #3b82f6;
+    box-shadow: 0 2px 8px #3b82f655;
+    background: #232b3e;
+    object-fit: cover;
+  }
+  .profile-label {
+    color: #b5c7e3;
+    font-size: 1.08rem;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .profile-dropdown {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    min-width: 170px;
+    background: rgba(35, 43, 62, 0.98);
+    border-radius: 14px;
+    box-shadow: 0 8px 32px #3b82f655, 0 1.5px 16px #a78bfa55;
+    padding: 12px 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    a {
+      color: #b5c7e3;
+      text-decoration: none;
+      padding: 10px 22px;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+      border-radius: 8px;
+      &:hover {
+        background: linear-gradient(90deg, #3b82f6 0%, #a78bfa 100%);
+        color: #fff;
+      }
+    }
+  }
+}
 .main-header {
   position: fixed;
   top: 0;
@@ -87,6 +136,58 @@ body {
   background: linear-gradient(135deg, #181f2a 0%, #232b3e 100%);
   color: #f3f6fa;
   min-height: 100vh;
+  overflow-x: hidden;
+  /* Hide scrollbars for all browsers */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+
+html, body {
+  width: 100vw;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+@media (max-width: 1200px) {
+  .main-header .header-content {
+    padding: 0 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-header .header-content {
+    flex-direction: column;
+    height: auto;
+    gap: 10px;
+    padding: 0 6px;
+  }
+  .main-header .nav-links {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-header .header-content {
+    flex-direction: column;
+    height: auto;
+    gap: 8px;
+    padding: 0 2vw;
+  }
+  .main-header .brand-name {
+    font-size: 1.1rem;
+  }
+  .main-header .nav-links {
+    gap: 8px;
+    font-size: 0.95rem;
+  }
+  .main-header .header-actions .login-btn,
+  .main-header .header-actions .signup-btn {
+    padding: 6px 12px;
+    font-size: 0.95rem;
+  }
 }
 
 .signup-modal {
