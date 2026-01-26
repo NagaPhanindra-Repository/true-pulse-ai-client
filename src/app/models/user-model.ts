@@ -8,7 +8,6 @@ export class UserModel {
 	lastName: string = '';
 	gender: string = '';
 	roleName: string = '';
-	// Additional fields from signup form
 	dateOfBirth?: string;
 	isVerified?: boolean;
 }

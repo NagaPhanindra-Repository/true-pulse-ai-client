@@ -1,0 +1,8 @@
+
+<div class="dashboard-card create-retro">
+	<h2>Start a Retro</h2>
+	<input type="text" class="retro-title-input" placeholder="Retro title (e.g. Sprint 12 Review)" [(ngModel)]="title" [disabled]="loading" />
+	<textarea class="retro-desc-input" placeholder="Describe the retro or goals..." [(ngModel)]="description" [disabled]="loading"></textarea>
+	<button class="action-btn" (click)="createRetro()" [disabled]="loading">{{ loading ? 'Creating...' : 'Create Retro' }}</button>
+	<div *ngIf="error" style="color:#ff6b6b; margin-top:8px;">{{ error }}</div>
+</div>

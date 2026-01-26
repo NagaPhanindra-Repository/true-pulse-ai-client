@@ -1,0 +1,297 @@
+<div class="retro-dashboard-root">
+	<!-- Dynamic SVG background for visual appeal -->
+	<svg class="retro-bg-svg" viewBox="0 0 1600 400">
+		<defs>
+			<linearGradient id="retro-gradient" x1="0" y1="0" x2="1" y2="1">
+				<stop offset="0%" stop-color="#a78bfa"/>
+				<stop offset="100%" stop-color="#3b82f6"/>
+			</linearGradient>
+			<radialGradient id="retro-pulse" cx="50%" cy="50%" r="50%">
+				<stop offset="0%" stop-color="#6ee7b7"/>
+				<stop offset="100%" stop-color="#a78bfa"/>
+			</radialGradient>
+		</defs>
+		<ellipse cx="800" cy="200" rx="700" ry="120" fill="url(#retro-gradient)" opacity="0.10"/>
+		<ellipse cx="800" cy="200" rx="500" ry="80" fill="url(#retro-pulse)" opacity="0.13"/>
+		<circle cx="400" cy="200" r="40" fill="url(#retro-pulse)" opacity="0.18">
+			<animate attributeName="r" values="40;60;40" dur="2.5s" repeatCount="indefinite"/>
+		</circle>
+		<circle cx="1200" cy="200" r="36" fill="#6ee7b7" opacity="0.15">
+			<animate attributeName="r" values="36;54;36" dur="2.7s" repeatCount="indefinite"/>
+		</circle>
+	</svg>
+
+	<div class="retro-header" *ngIf="retro; else noRetro">
+		<div class="retro-title dynamic-gradient">{{ retro.title }}</div>
+		<div class="retro-description">{{ retro.description }}</div>
+		<div class="retro-meta">
+			<span>Created: {{ retro.createdAt | date:'medium' }}</span>
+			<span class="retro-id">#{{ retro.id }}</span>
+		</div>
+	</div>
+
+	<div class="retro-lanes-container" *ngIf="retro">
+		<div class="retro-lane liked">
+			<div class="lane-title">LIKED</div>
+			<div class="lane-desc">What went exceptionally well? Highlight wins, breakthroughs, or moments that energized our team and moved us forward together.</div>
+			<div class="feedback-entry">
+				<input type="text" placeholder="Add a positive highlight..." [(ngModel)]="feedbackEntry.LIKED" (keyup.enter)="addFeedbackPoint('LIKED')" />
+				<button class="add-feedback-btn" (click)="addFeedbackPoint('LIKED')">+</button>
+			</div>
+			<div class="feedback-list">
+								<ng-container *ngFor="let feedback of likedFeedbacks">
+									<div class="feedback-card" [class.edit-mode]="feedbackEdit[feedback.id!]" (dblclick)="!feedbackEdit[feedback.id!] && startEditFeedback(feedback)">
+										<ng-container *ngIf="!feedbackEdit[feedback.id!]">
+											<div class="feedback-desc-row">
+												<span class="feedback-desc">{{ feedback.description }}</span>
+												<button class="icon-btn edit-btn" (click)="startEditFeedback(feedback)" title="Edit">
+													<span class="material-icons">edit</span>
+												</button>
+											</div>
+										</ng-container>
+										<ng-container *ngIf="feedbackEdit[feedback.id!]">
+											<input class="feedback-edit-input" type="text" [(ngModel)]="feedbackEditValue[feedback.id!]" (keyup.enter)="saveEditFeedback(feedback)" placeholder="Edit feedback..." />
+											<div class="feedback-edit-actions">
+												<button class="icon-btn save-btn" (click)="saveEditFeedback(feedback)" title="Save">
+													<span class="material-icons">check_circle</span>
+												</button>
+												<button class="icon-btn cancel-btn" (click)="cancelEditFeedback(feedback)" title="Cancel">
+													<span class="material-icons">cancel</span>
+												</button>
+											</div>
+										</ng-container>
+										<div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div>
+										<div class="discussion-list">
+											<div class="discussion-label">Discussion</div>
+											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
+												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
+													<ng-container *ngIf="!discussionEdit[disc.id!]">
+														<div class="discussion-content">{{ disc.note }}</div>
+														<button class="icon-btn edit-btn" (click)="startEditDiscussion(disc)" title="Edit">
+															<span class="material-icons">edit</span>
+														</button>
+													</ng-container>
+													<ng-container *ngIf="discussionEdit[disc.id!]">
+														<input class="discussion-edit-input" type="text" [(ngModel)]="discussionEditValue[disc.id!]" (keyup.enter)="saveEditDiscussion(disc)" />
+														<div class="discussion-edit-actions">
+															<button class="icon-btn save-btn" (click)="saveEditDiscussion(disc)" title="Save">
+																<span class="material-icons">check_circle</span>
+															</button>
+															<button class="icon-btn cancel-btn" (click)="cancelEditDiscussion(disc)" title="Cancel">
+																<span class="material-icons">cancel</span>
+															</button>
+														</div>
+													</ng-container>
+												</div>
+											</ng-container>
+											<div class="discussion-entry">
+												<input class="discussion-add-input" type="text" placeholder="Add a discussion..." [(ngModel)]="discussionEntry[feedback.id!]" (keyup.enter)="addDiscussion(feedback)" />
+												<button class="icon-btn add-btn" (click)="addDiscussion(feedback)" title="Add">
+													<span class="material-icons">add_circle</span>
+												</button>
+											</div>
+										</div>
+									</div>
+								</ng-container>
+			</div>
+		</div>
+		<div class="retro-lane learned">
+			<div class="lane-title">LEARNED</div>
+			<div class="lane-desc">What did we learn as a team? Share new skills, insights, or discoveries that will help us grow and improve in the next sprint.</div>
+			<div class="feedback-entry">
+				<input type="text" placeholder="Share a key learning..." [(ngModel)]="feedbackEntry.LEARNED" (keyup.enter)="addFeedbackPoint('LEARNED')" />
+				<button class="add-feedback-btn" (click)="addFeedbackPoint('LEARNED')">+</button>
+			</div>
+			<div class="feedback-list">
+								<ng-container *ngFor="let feedback of learnedFeedbacks">
+									<div class="feedback-card" [class.edit-mode]="feedbackEdit[feedback.id!]" (dblclick)="!feedbackEdit[feedback.id!] && startEditFeedback(feedback)">
+										<ng-container *ngIf="!feedbackEdit[feedback.id!]">
+											<div class="feedback-desc-row">
+												<span class="feedback-desc">{{ feedback.description }}</span>
+												<button class="icon-btn edit-btn" (click)="startEditFeedback(feedback)" title="Edit">
+													<span class="material-icons">edit</span>
+												</button>
+											</div>
+										</ng-container>
+										<ng-container *ngIf="feedbackEdit[feedback.id!]">
+											<input class="feedback-edit-input" type="text" [(ngModel)]="feedbackEditValue[feedback.id!]" (keyup.enter)="saveEditFeedback(feedback)" placeholder="Edit feedback..." />
+											<div class="feedback-edit-actions">
+												<button class="icon-btn save-btn" (click)="saveEditFeedback(feedback)" title="Save">
+													<span class="material-icons">check_circle</span>
+												</button>
+												<button class="icon-btn cancel-btn" (click)="cancelEditFeedback(feedback)" title="Cancel">
+													<span class="material-icons">cancel</span>
+												</button>
+											</div>
+										</ng-container>
+										<div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div>
+										<div class="discussion-list">
+											<div class="discussion-label">Discussion</div>
+											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
+												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
+													<ng-container *ngIf="!discussionEdit[disc.id!]">
+														<div class="discussion-content">{{ disc.note }}</div>
+														<button class="icon-btn edit-btn" (click)="startEditDiscussion(disc)" title="Edit">
+															<span class="material-icons">edit</span>
+														</button>
+													</ng-container>
+													<ng-container *ngIf="discussionEdit[disc.id!]">
+														<input class="discussion-edit-input" type="text" [(ngModel)]="discussionEditValue[disc.id!]" (keyup.enter)="saveEditDiscussion(disc)" />
+														<div class="discussion-edit-actions">
+															<button class="icon-btn save-btn" (click)="saveEditDiscussion(disc)" title="Save">
+																<span class="material-icons">check_circle</span>
+															</button>
+															<button class="icon-btn cancel-btn" (click)="cancelEditDiscussion(disc)" title="Cancel">
+																<span class="material-icons">cancel</span>
+															</button>
+														</div>
+													</ng-container>
+												</div>
+											</ng-container>
+											<div class="discussion-entry">
+												<input class="discussion-add-input" type="text" placeholder="Add a discussion..." [(ngModel)]="discussionEntry[feedback.id!]" (keyup.enter)="addDiscussion(feedback)" />
+												<button class="icon-btn add-btn" (click)="addDiscussion(feedback)" title="Add">
+													<span class="material-icons">add_circle</span>
+												</button>
+											</div>
+										</div>
+									</div>
+								</ng-container>
+			</div>
+		</div>
+		<div class="retro-lane lacked">
+			<div class="lane-title">LACKED</div>
+			<div class="lane-desc">Where did we face challenges? Call out blockers, gaps, or anything that slowed us down so we can address them as a team.</div>
+			<div class="feedback-entry">
+				<input type="text" placeholder="What was missing or blocked?" [(ngModel)]="feedbackEntry.LACKED" (keyup.enter)="addFeedbackPoint('LACKED')" />
+				<button class="add-feedback-btn" (click)="addFeedbackPoint('LACKED')">+</button>
+			</div>
+			<div class="feedback-list">
+								<ng-container *ngFor="let feedback of lackedFeedbacks">
+									<div class="feedback-card" [class.edit-mode]="feedbackEdit[feedback.id!]" (dblclick)="!feedbackEdit[feedback.id!] && startEditFeedback(feedback)">
+										<ng-container *ngIf="!feedbackEdit[feedback.id!]">
+											<div class="feedback-desc-row">
+												<span class="feedback-desc">{{ feedback.description }}</span>
+												<button class="icon-btn edit-btn" (click)="startEditFeedback(feedback)" title="Edit">
+													<span class="material-icons">edit</span>
+												</button>
+											</div>
+										</ng-container>
+										<ng-container *ngIf="feedbackEdit[feedback.id!]">
+											<input class="feedback-edit-input" type="text" [(ngModel)]="feedbackEditValue[feedback.id!]" (keyup.enter)="saveEditFeedback(feedback)" placeholder="Edit feedback..." />
+											<div class="feedback-edit-actions">
+												<button class="icon-btn save-btn" (click)="saveEditFeedback(feedback)" title="Save">
+													<span class="material-icons">check_circle</span>
+												</button>
+												<button class="icon-btn cancel-btn" (click)="cancelEditFeedback(feedback)" title="Cancel">
+													<span class="material-icons">cancel</span>
+												</button>
+											</div>
+										</ng-container>
+										<div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div>
+										<div class="discussion-list">
+											<div class="discussion-label">Discussion</div>
+											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
+												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
+													<ng-container *ngIf="!discussionEdit[disc.id!]">
+														<div class="discussion-content">{{ disc.note }}</div>
+														<button class="icon-btn edit-btn" (click)="startEditDiscussion(disc)" title="Edit">
+															<span class="material-icons">edit</span>
+														</button>
+													</ng-container>
+													<ng-container *ngIf="discussionEdit[disc.id!]">
+														<input class="discussion-edit-input" type="text" [(ngModel)]="discussionEditValue[disc.id!]" (keyup.enter)="saveEditDiscussion(disc)" />
+														<div class="discussion-edit-actions">
+															<button class="icon-btn save-btn" (click)="saveEditDiscussion(disc)" title="Save">
+																<span class="material-icons">check_circle</span>
+															</button>
+															<button class="icon-btn cancel-btn" (click)="cancelEditDiscussion(disc)" title="Cancel">
+																<span class="material-icons">cancel</span>
+															</button>
+														</div>
+													</ng-container>
+												</div>
+											</ng-container>
+											<div class="discussion-entry">
+												<input class="discussion-add-input" type="text" placeholder="Add a discussion..." [(ngModel)]="discussionEntry[feedback.id!]" (keyup.enter)="addDiscussion(feedback)" />
+												<button class="icon-btn add-btn" (click)="addDiscussion(feedback)" title="Add">
+													<span class="material-icons">add_circle</span>
+												</button>
+											</div>
+										</div>
+									</div>
+								</ng-container>
+			</div>
+		</div>
+		<div class="retro-lane longed">
+			<div class="lane-title">LONGED FOR</div>
+			<div class="lane-desc">What do we wish for next time? Imagine tools, support, or changes that would make our teamwork even better and more rewarding.</div>
+			<div class="feedback-entry">
+				<input type="text" placeholder="What do you wish for?" [(ngModel)]="feedbackEntry.LONGED_FOR" (keyup.enter)="addFeedbackPoint('LONGED_FOR')" />
+				<button class="add-feedback-btn" (click)="addFeedbackPoint('LONGED_FOR')">+</button>
+			</div>
+			<div class="feedback-list">
+								<ng-container *ngFor="let feedback of longedFeedbacks">
+									<div class="feedback-card" [class.edit-mode]="feedbackEdit[feedback.id!]" (dblclick)="!feedbackEdit[feedback.id!] && startEditFeedback(feedback)">
+										<ng-container *ngIf="!feedbackEdit[feedback.id!]">
+											<div class="feedback-desc-row">
+												<span class="feedback-desc">{{ feedback.description }}</span>
+												<button class="icon-btn edit-btn" (click)="startEditFeedback(feedback)" title="Edit">
+													<span class="material-icons">edit</span>
+												</button>
+											</div>
+										</ng-container>
+										<ng-container *ngIf="feedbackEdit[feedback.id!]">
+											<input class="feedback-edit-input" type="text" [(ngModel)]="feedbackEditValue[feedback.id!]" (keyup.enter)="saveEditFeedback(feedback)" placeholder="Edit feedback..." />
+											<div class="feedback-edit-actions">
+												<button class="icon-btn save-btn" (click)="saveEditFeedback(feedback)" title="Save">
+													<span class="material-icons">check_circle</span>
+												</button>
+												<button class="icon-btn cancel-btn" (click)="cancelEditFeedback(feedback)" title="Cancel">
+													<span class="material-icons">cancel</span>
+												</button>
+											</div>
+										</ng-container>
+										<div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div>
+										<div class="discussion-list">
+											<div class="discussion-label">Discussion</div>
+											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
+												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
+													<ng-container *ngIf="!discussionEdit[disc.id!]">
+														<div class="discussion-content">{{ disc.note }}</div>
+														<button class="icon-btn edit-btn" (click)="startEditDiscussion(disc)" title="Edit">
+															<span class="material-icons">edit</span>
+														</button>
+													</ng-container>
+													<ng-container *ngIf="discussionEdit[disc.id!]">
+														<input class="discussion-edit-input" type="text" [(ngModel)]="discussionEditValue[disc.id!]" (keyup.enter)="saveEditDiscussion(disc)" />
+														<div class="discussion-edit-actions">
+															<button class="icon-btn save-btn" (click)="saveEditDiscussion(disc)" title="Save">
+																<span class="material-icons">check_circle</span>
+															</button>
+															<button class="icon-btn cancel-btn" (click)="cancelEditDiscussion(disc)" title="Cancel">
+																<span class="material-icons">cancel</span>
+															</button>
+														</div>
+													</ng-container>
+												</div>
+											</ng-container>
+											<div class="discussion-entry">
+												<input class="discussion-add-input" type="text" placeholder="Add a discussion..." [(ngModel)]="discussionEntry[feedback.id!]" (keyup.enter)="addDiscussion(feedback)" />
+												<button class="icon-btn add-btn" (click)="addDiscussion(feedback)" title="Add">
+													<span class="material-icons">add_circle</span>
+												</button>
+											</div>
+										</div>
+									</div>
+								</ng-container>
+			</div>
+		</div>
+	</div>
+
+	<ng-template #noRetro>
+		<div class="dashboard-card">
+			<div>No retro details found.</div>
+		</div>
+	</ng-template>
+</div>

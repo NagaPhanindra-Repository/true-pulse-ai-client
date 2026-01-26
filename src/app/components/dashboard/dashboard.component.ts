@@ -1,12 +1,14 @@
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/security/auth.service';
 import { LoggedInUserModel } from '../../models/logged-in-user.model';
+import { CreateRetroComponent } from '../create-retro/create-retro.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CreateRetroComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })

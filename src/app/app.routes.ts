@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './services/security/auth.guard';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { RetroDashboardComponent } from './components/retro-dashboard/retro-dashboard.component';
 import { LoginInComponent } from './components/login-in/login-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 
@@ -11,5 +12,6 @@ export const routes: Routes = [
   { path: 'login', component: LoginInComponent },
   { path: 'signup', component: SignUpComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'retro-dashboard/:id', component: RetroDashboardComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];
