@@ -60,9 +60,9 @@
 												</button>
 											</div>
 										</ng-container>
-										<div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div>
+										<!-- <div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div> -->
 										<div class="discussion-list">
-											<div class="discussion-label">Discussion</div>
+											<!-- <div class="discussion-label">Discussion</div> -->
 											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
 												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
 													<ng-container *ngIf="!discussionEdit[disc.id!]">
@@ -124,9 +124,9 @@
 												</button>
 											</div>
 										</ng-container>
-										<div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div>
+										<!-- <div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div> -->
 										<div class="discussion-list">
-											<div class="discussion-label">Discussion</div>
+											<!-- <div class="discussion-label">Discussion</div> -->
 											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
 												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
 													<ng-container *ngIf="!discussionEdit[disc.id!]">
@@ -188,9 +188,9 @@
 												</button>
 											</div>
 										</ng-container>
-										<div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div>
+										<!-- <div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div> -->
 										<div class="discussion-list">
-											<div class="discussion-label">Discussion</div>
+											<!-- <div class="discussion-label">Discussion</div> -->
 											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
 												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
 													<ng-container *ngIf="!discussionEdit[disc.id!]">
@@ -252,9 +252,9 @@
 												</button>
 											</div>
 										</ng-container>
-										<div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div>
+										<!-- <div class="feedback-meta">{{ feedback.createdAt | date:'short' }}</div> -->
 										<div class="discussion-list">
-											<div class="discussion-label">Discussion</div>
+											<!-- <div class="discussion-label">Discussion</div> -->
 											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
 												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
 													<ng-container *ngIf="!discussionEdit[disc.id!]">
@@ -294,4 +294,59 @@
 			<div>No retro details found.</div>
 		</div>
 	</ng-template>
+
+	<!-- Action Items Section -->
+<div class="action-items-card" *ngIf="retro">
+	<div class="action-items-title">Action Items</div>
+	<div class="action-items-desc">Capture concrete next steps and responsibilities. Assign owners and track progress for continuous improvement.</div>
+	<div class="action-items-entry-row">
+		<input type="text" placeholder="Describe an action item..." [(ngModel)]="actionEntry.description" (keyup.enter)="addActionItem()" />
+			<span class="date-inline-label">Due date:</span>
+			<input type="date" [(ngModel)]="actionEntry.dueDate" id="action-due-date-input" />
+		<input type="text" placeholder="Assign to (username)" [(ngModel)]="actionEntry.assignedUserName" (keyup.enter)="addActionItem()" />
+		<button class="add-action-btn" (click)="addActionItem()">+</button>
+	</div>
+	<div class="action-items-table-container">
+		<table class="action-items-table">
+			<tbody>
+				<tr *ngFor="let item of actionItems" [class.edit-mode]="actionEdit[item.id]">
+					<ng-container *ngIf="!actionEdit[item.id]">
+						<td class="action-desc-cell">
+							<span class="action-desc">{{ item.description }}</span>
+						</td>
+						<td class="action-due-cell">
+							<span class="action-due">{{ item.dueDate | date:'MMM d, yyyy' }}</span>
+						</td>
+						<td class="action-status-cell">
+							<span class="action-status-pill" [ngClass]="item.status?.toLowerCase()">{{ item.status }}</span>
+						</td>
+						<td class="action-assigned-cell">
+							<span class="action-assigned-pill">{{ '@' + item.assignedUserName }}</span>
+						</td>
+						<td class="action-edit-cell">
+							<button class="icon-btn edit-btn" (click)="startEditAction(item)" title="Edit"><span class="material-icons">edit</span></button>
+						</td>
+					</ng-container>
+					<ng-container *ngIf="actionEdit[item.id]">
+						<td colspan="5" class="action-edit-row">
+							<div class="action-edit-flex">
+								<input class="action-edit-input" type="text" [(ngModel)]="actionEditValue[item.id].description" placeholder="Edit action..." />
+								<input class="action-edit-input" type="date" [(ngModel)]="actionEditValue[item.id].dueDate" />
+								<select class="action-edit-input" [(ngModel)]="actionEditValue[item.id].status">
+									<option value="OPEN">OPEN</option>
+									<option value="IN_PROGRESS">IN PROGRESS</option>
+									<option value="COMPLETED">COMPLETED</option>
+									<option value="CANCELLED">CANCELLED</option>
+								</select>
+								<input class="action-edit-input" type="text" [(ngModel)]="actionEditValue[item.id].assignedUserName" placeholder="Assign to (username)" />
+								<button class="icon-btn save-btn" (click)="saveEditAction(item)" title="Save"><span class="material-icons">check_circle</span></button>
+								<button class="icon-btn cancel-btn" (click)="cancelEditAction(item)" title="Cancel"><span class="material-icons">cancel</span></button>
+							</div>
+						</td>
+					</ng-container>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
 </div>

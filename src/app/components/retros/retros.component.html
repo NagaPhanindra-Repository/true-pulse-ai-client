@@ -1,0 +1,31 @@
+<div class="retros-nn-bg-wrapper">
+  <div class="nn-animated-bg">
+    <canvas id="nn-canvas"></canvas>
+    <!-- <div class="nlp-label">Filtering Truths...</div> -->
+  </div>
+  <div class="retros-list-glass">
+    <h2 class="retros-title">Your Retrospectives</h2>
+    <div *ngIf="loading" class="retros-loading">
+      <span class="loader"></span> Loading retros...
+    </div>
+    <div *ngIf="!loading && retros.length === 0" class="retros-empty">
+      <span>No retrospectives found.</span>
+    </div>
+    <div *ngFor="let retro of retros" class="retro-card-glass">
+      <div class="retro-header-glass" (click)="toggleExpand(retro.id)" [class.expanded]="expanded[retro.id]">
+        <span class="retro-title">{{ retro.title }}</span>
+        <span class="retro-toggle-icon" [class.expanded]="expanded[retro.id]">&#9660;</span>
+      </div>
+      <div class="retro-details-glass" *ngIf="expanded[retro.id]">
+        <div class="retro-meta">
+          <span class="retro-date">Created: {{ retro.createdAt | date:'medium' }}</span>
+          <span class="retro-date">Updated: {{ retro.updatedAt | date:'medium' }}</span>
+        </div>
+        <div class="retro-description">{{ retro.description }}</div>
+        <div class="retro-actions">
+          <a [routerLink]="['/retro-dashboard', retro.id]" class="view-retro-btn">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FeedbackService } from '../../services/feedback.service';
 import { AuthService } from '../../services/security/auth.service';
+import { RetroService } from '../../services/retro.service';
 import { FeedbackPoint } from '../../models/feedback-point.model';
 import { Discussion } from '../../models/discussion.model';
 
@@ -18,7 +19,59 @@ export class RetroDashboardComponent implements OnInit {
   retro: any = null;
   feedbackPoints: FeedbackPoint[] = [];
   discussions: Discussion[] = [];
+  actionItems: any[] = [];
+  questions: any[] = [];
   loading: boolean = false;
+
+  // Action item entry/edit state
+  actionEntry: { description: string; dueDate: string; assignedUserName: string } = { description: '', dueDate: '', assignedUserName: '' };
+  actionEdit: { [id: number]: boolean } = {};
+  actionEditValue: { [id: number]: any } = {};
+
+  loadActionItems(): void {
+    if (!this.retro || !this.retro.id) return;
+    this.retroService.getActionItemsByRetroId(this.retro.id).subscribe({
+      next: (items: any[]) => {
+        this.actionItems = items || [];
+      }
+    });
+  }
+
+  addActionItem(): void {
+    if (!this.actionEntry.description || !this.actionEntry.dueDate || !this.actionEntry.assignedUserName || !this.retro || !this.retro.id) return;
+    const payload = {
+      description: this.actionEntry.description,
+      dueDate: this.actionEntry.dueDate,
+      retroId: this.retro.id,
+      assignedUserName: this.actionEntry.assignedUserName
+    };
+    this.retroService.createActionItem(payload).subscribe({
+      next: () => {
+        this.actionEntry = { description: '', dueDate: '', assignedUserName: '' };
+        this.loadActionItems();
+      }
+    });
+  }
+
+  startEditAction(item: any): void {
+    this.actionEdit[item.id] = true;
+    this.actionEditValue[item.id] = { ...item };
+  }
+
+  saveEditAction(item: any): void {
+    const updated = this.actionEditValue[item.id];
+    this.retroService.updateActionItem(item.id, updated).subscribe({
+      next: () => {
+        this.actionEdit[item.id] = false;
+        this.loadActionItems();
+      }
+    });
+  }
+
+  cancelEditAction(item: any): void {
+    this.actionEdit[item.id] = false;
+    this.actionEditValue[item.id] = {};
+  }
 
   // Feedback entry state per lane
   feedbackEntry = {
@@ -55,17 +108,64 @@ export class RetroDashboardComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private feedbackService: FeedbackService,
+    private retroService: RetroService,
     private auth: AuthService
   ) {}
 
   ngOnInit() {
-    // Get retro details from navigation state
-    if (history.state && history.state.retro) {
-      this.retro = history.state.retro;
-      this.loadFeedbackPoints();
-      this.loadDiscussions();
-    }
+    // Try to get retro id from route params
+    this.route.paramMap.subscribe(params => {
+      const retroId = params.get('id');
+      if (retroId) {
+        this.fetchRetroDetails(retroId);
+      } else if (history.state && history.state.retro) {
+        // fallback for navigation state (e.g. after create)
+        this.retro = history.state.retro;
+        this.loadFeedbackPoints();
+        this.loadDiscussions();
+      }
+    });
+  }
+
+
+
+  fetchRetroDetails(retroId: string) {
+    this.loading = true;
+    this.retroService.getRetroDetails(retroId).subscribe({
+      next: (data) => {
+        this.retro = {
+          id: data.id,
+          title: data.title,
+          description: data.description,
+          userId: data.userId,
+          createdBy: data.createdBy,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt
+        };
+        this.feedbackPoints = (data.feedbackPoints || []).map((fp: any) => {
+          // Flatten discussions for each feedback point
+          return {
+            ...fp,
+            discussions: undefined // discussions handled separately
+          };
+        });
+        // Flatten all discussions for easy access
+        this.discussions = (data.feedbackPoints || []).flatMap((fp: any) =>
+          (fp.discussions || []).map((d: any) => ({
+            ...d,
+            feedbackPointId: fp.id
+          }))
+        );
+        this.questions = data.questions || [];
+        this.loadActionItems();
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
   }
 
   loadFeedbackPoints() {

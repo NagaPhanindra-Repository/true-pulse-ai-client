@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SignUpComponent } from '../sign-up/sign-up.component';
 import { LoginInComponent } from '../login-in/login-in.component';
@@ -8,7 +9,7 @@ import { LoggedInUserModel } from '../../models/logged-in-user.model';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, SignUpComponent, LoginInComponent],
+  imports: [CommonModule, RouterModule, SignUpComponent, LoginInComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
