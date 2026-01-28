@@ -6,7 +6,7 @@ import { LoginInComponent } from './components/login-in/login-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 
 import { AppContentComponent } from './components/app-content/app-content.component';
-
+import { QuestionsComponent } from './components/questions/questions.component';
 import { RetrosComponent } from './components/retros/retros.component';
 
 export const routes: Routes = [
@@ -16,5 +16,6 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'retros', component: RetrosComponent, canActivate: [AuthGuard] },
   { path: 'retro-dashboard/:id', component: RetroDashboardComponent, canActivate: [AuthGuard] },
+  { path: 'questions', component: QuestionsComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];

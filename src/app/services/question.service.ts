@@ -1,0 +1,37 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AuthService } from './security/auth.service';
+
+export interface Question {
+  id?: number;
+  title: string;
+  description: string;
+  userId?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class QuestionService {
+  private apiUrl = 'http://localhost:8080/api/questions';
+
+  constructor(private http: HttpClient, private auth: AuthService) {}
+
+
+  createQuestion(question: Partial<Question>): Observable<Question> {
+    return this.http.post<Question>(this.apiUrl, question);
+  }
+
+  getMyQuestions(): Observable<Question[]> {
+    return this.http.get<Question[]>(`${this.apiUrl}/my-questions`);
+  }
+
+
+
+  updateQuestion(id: number, question: Partial<Question>): Observable<Question> {
+    return this.http.put<Question>(`${this.apiUrl}/${id}`, question);
+  }
+
+
+}

@@ -84,8 +84,12 @@
 	<div class="dashboard-actions">
 		<div class="dashboard-card create-question">
 			<h2>Create a Feedback Question</h2>
-			<input type="text" class="question-input" placeholder="Type your question here..." />
-			<button class="action-btn">Send to Followers</button>
+			<input type="text" class="question-input" placeholder="Question title..." [(ngModel)]="questionTitle" maxlength="100" [disabled]="creating" />
+			<textarea class="question-input" placeholder="Description (optional)" [(ngModel)]="questionDescription" maxlength="300" [disabled]="creating"></textarea>
+			<div *ngIf="createError" class="questions-error">{{ createError }}</div>
+			<button class="action-btn" [disabled]="creating || !questionTitle.trim()" (click)="createQuestion()">
+				{{ creating ? 'Creating...' : 'Send to Followers' }}
+			</button>
 		</div>
 		<app-create-retro></app-create-retro>
 		<div class="dashboard-card view-feedback">

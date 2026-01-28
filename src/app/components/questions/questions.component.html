@@ -1,0 +1,46 @@
+<div class="questions-root">
+  <!-- Animated SVG background -->
+  <div class="questions-bg-animated">
+    <svg viewBox="0 0 1600 400" class="questions-svg-bg">
+      <defs>
+        <linearGradient id="q-gradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#a78bfa"/>
+          <stop offset="100%" stop-color="#3b82f6"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,200 Q400,50 800,200 T1600,200" stroke="url(#q-gradient)" stroke-width="12" fill="none" opacity="0.10"/>
+      <circle cx="400" cy="200" r="24" fill="#6ee7b7" opacity="0.3">
+        <animate attributeName="r" values="24;36;24" dur="2.2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="1200" cy="200" r="20" fill="#a78bfa" opacity="0.3">
+        <animate attributeName="r" values="20;32;20" dur="2.4s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+  <div class="questions-title">My Questions</div>
+  <div *ngIf="loading" class="questions-loading">Loading...</div>
+  <div *ngIf="error" class="questions-error">{{ error }}</div>
+  <div *ngIf="!loading && !error && questions.length === 0" class="questions-empty">
+    <span>No questions created yet.</span>
+  </div>
+  <div class="questions-list">
+    <div *ngFor="let q of questions; let i = index" class="question-card" [class.editing]="editIndex === i">
+      <div *ngIf="editIndex !== i">
+        <div class="question-title">{{ q.title }}</div>
+        <div class="question-desc">{{ q.description }}</div>
+        <div class="question-meta">Created: {{ q.createdAt | date:'medium' }}</div>
+        <button class="edit-btn" (click)="startEdit(i)">Edit</button>
+        <button class="ai-bot-btn" (click)="openBot(q)">Open AI Chat</button>
+      </div>
+      <div *ngIf="editIndex === i" class="edit-form">
+        <input class="edit-title" [(ngModel)]="editTitle" placeholder="Title" maxlength="100" />
+        <textarea class="edit-desc" [(ngModel)]="editDescription" placeholder="Description" maxlength="300"></textarea>
+        <div class="edit-actions">
+          <button class="save-btn" [disabled]="saving" (click)="saveEdit(i)">Save</button>
+          <button class="cancel-btn" [disabled]="saving" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-ai-chat-bot *ngIf="showBot" [question]="botQuestion" (close)="closeBot()"></app-ai-chat-bot>
+</div>

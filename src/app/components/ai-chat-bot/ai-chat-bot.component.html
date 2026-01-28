@@ -1,0 +1,27 @@
+<div class="ai-chat-bot-root">
+  <div class="ai-chat-bot-header">
+    <span class="ai-chat-bot-title">{{ question?.title }}</span>
+    <button class="ai-chat-bot-close" (click)="close.emit()">&times;</button>
+  </div>
+  <div class="ai-chat-bot-body">
+    <div #messagesContainer class="ai-chat-bot-messages">
+      <div *ngFor="let msg of messages; trackBy: trackByIdx" [ngClass]="msg.role === 'user' ? 'user-msg' : 'ai-msg'">
+        <span class="msg-bubble">{{ msg.text }}</span>
+      </div>
+      <div *ngIf="aiThinking" class="ai-msg">
+        <span class="msg-bubble ai-thinking">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </span>
+      </div>
+      <div *ngIf="aiTyping && revealText" class="ai-msg">
+        <span class="msg-bubble ai-typing">{{ revealText }}<span class="cursor">|</span></span>
+      </div>
+    </div>
+  </div>
+  <form class="ai-chat-bot-input-row" (ngSubmit)="sendMessage()">
+    <input class="ai-chat-bot-input" [(ngModel)]="userInput" name="userInput" placeholder="Type your message..." autocomplete="off" [disabled]="aiThinking || aiTyping" />
+    <button class="ai-chat-bot-send" type="submit" [disabled]="!userInput.trim() || aiThinking || aiTyping">
+      <span>Send</span>
+    </button>
+  </form>
+</div>
