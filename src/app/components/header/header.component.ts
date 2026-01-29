@@ -5,11 +5,12 @@ import { SignUpComponent } from '../sign-up/sign-up.component';
 import { LoginInComponent } from '../login-in/login-in.component';
 import { AuthService } from '../../services/security/auth.service';
 import { LoggedInUserModel } from '../../models/logged-in-user.model';
+import { FollowersComponent } from '../followers/followers.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule, SignUpComponent, LoginInComponent],
+  imports: [CommonModule, RouterModule, SignUpComponent, LoginInComponent, FollowersComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

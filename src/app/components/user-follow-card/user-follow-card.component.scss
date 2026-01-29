@@ -1,0 +1,129 @@
+.user-follow-card-root {
+  background: rgba(35, 41, 70, 0.45); /* more transparent */
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 #3b82f655;
+  padding: 32px 28px 24px 28px;
+  min-width: 320px;
+  max-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+  animation: fadeInCard 0.7s cubic-bezier(.4,0,.2,1);
+  margin: 40px auto 0 auto;
+  width: fit-content;
+  box-sizing: border-box;
+}
+@keyframes fadeInCard {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.user-follow-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #6ee7b7;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.user-follow-loading, .user-follow-error {
+  color: #e0e7ff;
+  font-size: 1.13rem;
+  margin: 12px 0;
+  text-align: center;
+}
+.user-follow-list {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  overflow-x: auto;
+  padding: 8px 0 8px 0;
+}
+.user-follow-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(35, 41, 70, 0.75);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px 0 #3b82f622;
+  padding: 16px 24px;
+  animation: fadeInUser 0.5s cubic-bezier(.4,0,.2,1);
+  transition: box-shadow 0.2s, transform 0.2s;
+  min-width: 220px;
+  margin-right: 0;
+  margin-left: 0;
+}
+@keyframes fadeInUser {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a78bfa 0%, #3b82f6 100%);
+  color: #232946;
+  font-size: 1.4rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px 0 #3b82f655;
+  letter-spacing: 1px;
+  transition: background 0.3s;
+}
+.user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.user-name {
+  font-size: 1.13rem;
+  font-weight: 700;
+  color: #a78bfa;
+}
+.user-username {
+  font-size: 0.98rem;
+  color: #b3b3c2;
+}
+.follow-btn {
+  background: linear-gradient(90deg, #6ee7b7 0%, #3b82f6 100%);
+  color: #232946;
+  font-weight: 700;
+  border: none;
+  border-radius: 16px;
+  padding: 8px 22px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.follow-btn.following {
+  background: linear-gradient(90deg, #a78bfa 0%, #6ee7b7 100%);
+  color: #fff;
+  transform: scale(1.04);
+}
+.follow-btn.animating {
+  background: #3b82f6;
+  color: #fff;
+}
+.follow-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.follow-anim {
+  position: absolute;
+  left: 0; top: 0; width: 100%; height: 100%;
+  background: linear-gradient(90deg, #a78bfa44 0%, #6ee7b744 100%);
+  animation: followPulse 0.8s cubic-bezier(.4,0,.2,1);
+  z-index: 1;
+}
+@keyframes followPulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}

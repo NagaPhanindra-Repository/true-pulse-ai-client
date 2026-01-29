@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Question } from '../../services/question.service';
 import { AiChatBotService } from './ai-chat-bot.service';
 import { AiChatRequest, AiChatResponse, ChatMessage } from '../../models/ai-chat.model';
+import { SpecificFeedbackRequest } from '../../models/specific-feedback.model';
 
 @Component({
   selector: 'app-ai-chat-bot',
@@ -82,8 +83,8 @@ export class AiChatBotComponent implements AfterViewChecked, OnInit, OnChanges {
     this.aiTyping = false;
     this.revealText = '';
     this.revealIndex = 0;
-    const req: AiChatRequest = { questionId: this.question.id, message: text };
-    this.aiService.analyzeQuestion(req).subscribe({
+    const req: SpecificFeedbackRequest = { questionId: this.question.id, specificFeedback: text };
+    this.aiService.analyzeSpecificFeedback(req).subscribe({
       next: (res: AiChatResponse) => {
         this.aiThinking = false;
         this.aiTyping = true;
@@ -113,4 +114,11 @@ export class AiChatBotComponent implements AfterViewChecked, OnInit, OnChanges {
   }
 
   trackByIdx(i: number) { return i; }
+
+
+
+
+
+
+  
 }

@@ -1,0 +1,82 @@
+<div class="followers-root">
+  <div style="height: 96px;"></div> <!-- Increased spacer from header -->
+  <div class="animated-bg">
+    <!-- Dynamic animated SVG/canvas background for best-in-class look -->
+    <svg viewBox="0 0 1600 400" class="followers-bg-svg">
+      <defs>
+        <linearGradient id="followers-gradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#6ee7b7"/>
+          <stop offset="100%" stop-color="#a78bfa"/>
+        </linearGradient>
+      </defs>
+      <circle cx="300" cy="200" r="80" fill="url(#followers-gradient)" opacity="0.13">
+        <animate attributeName="r" values="80;120;80" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="1200" cy="120" r="60" fill="#a78bfa" opacity="0.10">
+        <animate attributeName="r" values="60;90;60" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="900" cy="300" r="40" fill="#6ee7b7" opacity="0.10">
+        <animate attributeName="r" values="40;70;40" dur="2.2s" repeatCount="indefinite"/>
+      </circle>
+      <path d="M0,350 Q800,100 1600,350" stroke="#a78bfa" stroke-width="6" fill="none" opacity="0.08">
+        <animate attributeName="d" values="M0,350 Q800,100 1600,350;M0,350 Q800,200 1600,350;M0,350 Q800,100 1600,350" dur="4s" repeatCount="indefinite"/>
+      </path>
+    </svg>
+  </div>
+
+  <div class="followers-content">
+    <h1 class="followers-title">Your Following & Their Questions</h1>
+    <div *ngIf="loading" class="followers-loading">Loading...</div>
+    <div *ngIf="error" class="followers-error">{{ error }}</div>
+
+    <div class="followers-section">
+      <h2 class="followers-subtitle">Questions from Users You Follow</h2>
+      <div class="followers-questions-list">
+        <div *ngFor="let q of questions" class="followers-question-card">
+          <div class="question-header">
+            <span class="question-title">{{ q.questionTitle }}</span>
+            <span class="question-meta">by {{ q.questionCreatorFirstName }} {{ q.questionCreatorLastName }} ({{ q.questionCreatorUsername }})</span>
+            <span class="question-date">{{ q.questionCreatedAt | date:'medium' }}</span>
+          </div>
+          <div class="question-desc">{{ q.questionDescription }}</div>
+          <div class="question-answers">
+            <span>Total Answers: {{ q.totalAnswersCount }}</span>
+            <span *ngIf="q.loggedInUserAnswer">Your Answer: {{ q.loggedInUserAnswer.answerContent }}</span>
+          </div>
+          <button *ngIf="!q.loggedInUserAnswer" class="respond-btn" (click)="openRespondModal(q)">Respond</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="followers-section">
+      <h2 class="followers-subtitle">Users You Follow</h2>
+      <div class="followers-users-list">
+        <div *ngFor="let user of followingUsers" class="followers-user-card">
+          <div class="user-avatar">{{ user.firstName[0] }}{{ user.lastName[0] }}</div>
+          <div class="user-info">
+            <div class="user-name">{{ user.firstName }} {{ user.lastName }}</div>
+            <div class="user-username">{{ user.username }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for feedback/answer -->
+  <div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()"></div>
+  <div class="modal custom-modal" *ngIf="showModal">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h2>Respond to: {{ selectedQuestion?.questionTitle }}</h2>
+      <form [formGroup]="feedbackForm" (ngSubmit)="submitFeedback()">
+        <textarea formControlName="content" placeholder="Your answer or feedback..." rows="4"></textarea>
+        <div class="modal-actions">
+          <button type="button" (click)="closeModal()">Cancel</button>
+          <button type="submit" [disabled]="submitting">{{ submitting ? 'Submitting...' : 'Submit' }}</button>
+        </div>
+        <div class="modal-error" *ngIf="submitError">{{ submitError }}</div>
+      </form>
+    </div>
+  </div>
+
+  <div style="height: 64px;"></div> <!-- Spacer from footer -->
+</div>

@@ -1,0 +1,278 @@
+.custom-modal textarea[formControlName="content"] {
+  width: 90%;
+  min-height: 100px;
+  font-size: 1.08rem;
+  border-radius: 12px;
+  border: 1.5px solid #a78bfa;
+  background: rgba(35,41,70,0.85);
+  color: #e0e7ff;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px 0 #a78bfa33;
+  transition: border 0.2s, box-shadow 0.2s;
+  resize: vertical;
+}
+.custom-modal textarea[formControlName="content"]:focus {
+  outline: none;
+  border: 2px solid #6ee7b7;
+  box-shadow: 0 4px 16px 0 #6ee7b755;
+}
+.custom-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 8px;
+}
+.custom-modal .modal-actions button {
+  font-size: 1.08rem;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 8px 22px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px 0 #a78bfa33;
+}
+.custom-modal .modal-actions button[type="button"] {
+  background: #232946;
+  color: #a78bfa;
+  border: 1.5px solid #a78bfa;
+}
+.custom-modal .modal-actions button[type="button"]:hover {
+  background: #a78bfa;
+  color: #232946;
+}
+.custom-modal .modal-actions button[type="submit"] {
+  background: linear-gradient(90deg, #6ee7b7 0%, #a78bfa 100%);
+  color: #232946;
+}
+.custom-modal .modal-actions button[type="submit"]:hover {
+  background: linear-gradient(90deg, #a78bfa 0%, #6ee7b7 100%);
+  color: #232946;
+}
+.followers-root {
+  position: relative;
+  min-height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+  background: transparent;
+  box-sizing: border-box;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+.animated-bg {
+  position: absolute;
+  top: 0; left: 0; width: 100vw; height: 400px;
+  z-index: 0;
+  pointer-events: none;
+}
+.followers-bg-svg {
+  width: 100vw;
+  height: 400px;
+  display: block;
+}
+.followers-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 32px 32px 32px;
+  background: rgba(35,41,70,0.75);
+  border-radius: 32px;
+  box-shadow: 0 8px 32px 0 #3b82f655;
+  animation: fadeInFollowers 0.8s cubic-bezier(.4,0,.2,1);
+  box-sizing: border-box;
+}
+@keyframes fadeInFollowers {
+  from { opacity: 0; transform: translateY(60px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.followers-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #6ee7b7;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.followers-section {
+  margin-top: 32px;
+}
+.followers-subtitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #a78bfa;
+  margin-bottom: 12px;
+}
+.followers-questions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.followers-question-card {
+  background: rgba(60, 70, 120, 0.85);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px 0 #a78bfa33;
+  padding: 22px 28px;
+  min-width: 320px;
+  max-width: 420px;
+  flex: 1 1 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeInCard 0.7s cubic-bezier(.4,0,.2,1);
+}
+@keyframes fadeInCard {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.question-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.question-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e0e7ff;
+}
+.question-meta {
+  font-size: 0.95rem;
+  color: #6ee7b7;
+}
+.question-date {
+  font-size: 0.85rem;
+  color: #a78bfa;
+}
+.question-desc {
+  color: #e0e7ff;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+.question-answers {
+  font-size: 0.98rem;
+  color: #a78bfa;
+  margin-bottom: 8px;
+}
+.respond-btn {
+  background: linear-gradient(90deg, #6ee7b7 0%, #a78bfa 100%);
+  color: #232946;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px 0 #6ee7b755;
+}
+.respond-btn:hover {
+  background: linear-gradient(90deg, #a78bfa 0%, #6ee7b7 100%);
+}
+.followers-users-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 10px;
+}
+.followers-user-card {
+  background: rgba(60, 70, 120, 0.85);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px 0 #3b82f622;
+  padding: 14px 22px;
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: fadeInUser 0.5s cubic-bezier(.4,0,.2,1);
+}
+@keyframes fadeInUser {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a78bfa 0%, #6ee7b7 100%);
+  color: #232946;
+  font-size: 1.2rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.user-name {
+  font-size: 1.05rem;
+  color: #e0e7ff;
+  font-weight: 600;
+}
+.user-username {
+  font-size: 0.95rem;
+  color: #a78bfa;
+}
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(35,41,70,0.55);
+  z-index: 1000;
+  animation: fadeInBackdrop 0.3s;
+}
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+// Modal base style
+.modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #232946;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px 0 #a78bfa55;
+  z-index: 1001;
+  min-width: 340px;
+  max-width: 90vw;
+  padding: 32px 28px 24px 28px;
+  animation: fadeInModal 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+// Custom modal style for feedback/answer
+.custom-modal {
+  background: linear-gradient(135deg, #232946 80%, #6ee7b7 100%);
+  border: 2px solid #a78bfa;
+  box-shadow: 0 12px 48px 0 #a78bfa88;
+  border-radius: 28px;
+  padding: 40px 36px 32px 36px;
+  min-width: 380px;
+  max-width: 96vw;
+}
+@keyframes fadeInModal {
+  from { opacity: 0; transform: translate(-50%, -60%) scale(0.97); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+.modal-error {
+  color: #f87171;
+  font-size: 1.05rem;
+  margin-top: 8px;
+}
+.followers-loading, .followers-error {
+  color: #e0e7ff;
+  font-size: 1.13rem;
+  margin: 12px 0;
+  text-align: center;
+}

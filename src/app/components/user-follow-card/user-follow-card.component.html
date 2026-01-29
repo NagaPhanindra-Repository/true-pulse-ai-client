@@ -1,0 +1,24 @@
+<div class="user-follow-card-root">
+  <div class="user-follow-title">Discover & Follow Users</div>
+  <div *ngIf="loading" class="user-follow-loading">Loading users...</div>
+  <div *ngIf="error" class="user-follow-error">{{ error }}</div>
+  <div class="user-follow-list">
+    <div *ngFor="let user of users" class="user-follow-item" [@fadeIn]>
+      <div class="user-avatar">
+        <span>{{ user.firstName[0] }}{{ user.lastName[0] }}</span>
+      </div>
+      <div class="user-info">
+        <div class="user-name">{{ user.firstName }} {{ user.lastName }}</div>
+        <div class="user-username">{{user.userName}}</div>
+      </div>
+      <button class="follow-btn" 
+              [ngClass]="{following: following.has(user.userName), animating: animating.has(user.userName)}"
+              (click)="follow(user)"
+              [disabled]="following.has(user.userName) || animating.has(user.userName)">
+        <span *ngIf="!following.has(user.userName)">Follow</span>
+        <span *ngIf="following.has(user.userName)">Following</span>
+        <span class="follow-anim" *ngIf="animating.has(user.userName)"></span>
+      </button>
+    </div>
+  </div>
+</div>

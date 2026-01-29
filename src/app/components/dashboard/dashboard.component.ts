@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,11 +6,12 @@ import { LoggedInUserModel } from '../../models/logged-in-user.model';
 import { CreateRetroComponent } from '../create-retro/create-retro.component';
 import { QuestionService } from '../../services/question.service';
 import { Router } from '@angular/router';
+import { UserFollowCardComponent } from '../user-follow-card/user-follow-card.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, CreateRetroComponent],
+  imports: [CommonModule, FormsModule, CreateRetroComponent, UserFollowCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
