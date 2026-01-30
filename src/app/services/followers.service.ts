@@ -20,4 +20,8 @@ export class FollowersService {
   createAnswer(request: CreateAnswerRequest): Observable<CreateAnswerResponse> {
     return this.http.post<CreateAnswerResponse>(`${this.baseUrl}/answers`, request);
   }
+
+  updateAnswer(answerId: number, content: string, questionId: number): Observable<CreateAnswerResponse> {
+    return this.http.put<CreateAnswerResponse>(`${this.baseUrl}/answers/${answerId}`, { content, questionId });
+  }
 }

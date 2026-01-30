@@ -33,17 +33,59 @@
       <h2 class="followers-subtitle">Questions from Users You Follow</h2>
       <div class="followers-questions-list">
         <div *ngFor="let q of questions" class="followers-question-card">
-          <div class="question-header">
-            <span class="question-title">{{ q.questionTitle }}</span>
+          <div class="question-header question-bg">
+            <div class="question-title-row">
+              <span class="question-title">{{ q.questionTitle }}</span>
+              <button *ngIf="!q.loggedInUserAnswer" class="respond-btn-inline" (click)="openRespondModal(q)">
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 4px;">
+                  <path d="M2.5 10L8.5 4V8.5C15 8.5 17.5 13.5 17.5 13.5C15.5 11.5 12.5 11.5 8.5 11.5V16L2.5 10Z" stroke="#6ee7b7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Respond
+              </button>
+            </div>
             <span class="question-meta">by {{ q.questionCreatorFirstName }} {{ q.questionCreatorLastName }} ({{ q.questionCreatorUsername }})</span>
-            <span class="question-date">{{ q.questionCreatedAt | date:'medium' }}</span>
+            <div class="question-desc question-bg">{{ q.questionDescription }}</div>
+            <!-- <span class="question-date">{{ q.questionCreatedAt | date:'medium' }}</span> -->
           </div>
-          <div class="question-desc">{{ q.questionDescription }}</div>
+          
           <div class="question-answers">
-            <span>Total Answers: {{ q.totalAnswersCount }}</span>
-            <span *ngIf="q.loggedInUserAnswer">Your Answer: {{ q.loggedInUserAnswer.answerContent }}</span>
+            <ng-container *ngIf="q.loggedInUserAnswer">
+              <div class="answer-connector">
+                <div class="connector-line"></div>
+                <div class="answer-bg">
+                  <ng-container *ngIf="editingAnswerId !== q.loggedInUserAnswer.answerId; else editAnswerBlock">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span class="answer-label">Your Answer:</span>
+                      <span class="answer-content">{{ q.loggedInUserAnswer.answerContent }}</span>
+                      <span class="edit-icon" title="Edit" (click)="startEditAnswer(q)" style="margin-left: auto;">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M4 13.5V16H6.5L14.87 7.63L12.37 5.13L4 13.5Z" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M15.73 6.04C16.1 5.67 16.1 5.09 15.73 4.72L15.28 4.27C14.91 3.9 14.33 3.9 13.96 4.27L13.13 5.1L15.63 7.6L15.73 6.04Z" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </span>
+                    </div>
+                  </ng-container>
+                <ng-template #editAnswerBlock>
+                  <textarea [(ngModel)]="editAnswerContent" class="edit-answer-textarea"></textarea>
+                  <div class="edit-actions">
+                    <button class="icon-btn" (click)="saveEditAnswer(q)" [disabled]="editSubmitting" title="Save">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 10.5L9 14.5L15 7.5" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                    <button class="icon-btn" (click)="cancelEditAnswer()" title="Cancel">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 6L14 14M14 6L6 14" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="modal-error" *ngIf="editError">{{ editError }}</div>
+                </ng-template>
+                </div>
+              </div>
+            </ng-container>
+           
           </div>
-          <button *ngIf="!q.loggedInUserAnswer" class="respond-btn" (click)="openRespondModal(q)">Respond</button>
         </div>
       </div>
     </div>
@@ -67,14 +109,23 @@
   <div class="modal custom-modal" *ngIf="showModal">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <h2>Respond to: {{ selectedQuestion?.questionTitle }}</h2>
-      <form [formGroup]="feedbackForm" (ngSubmit)="submitFeedback()">
-        <textarea formControlName="content" placeholder="Your answer or feedback..." rows="4"></textarea>
+      <form [formGroup]="feedbackForm" (ngSubmit)="submitFeedback()" novalidate>
+        <textarea formControlName="content" placeholder="Your answer or feedback..." rows="4"
+          [class.invalid-input]="formTouched && (!feedbackForm.value.content || !feedbackForm.value.content.trim())"></textarea>
         <div class="modal-actions">
           <button type="button" (click)="closeModal()">Cancel</button>
-          <button type="submit" [disabled]="submitting">{{ submitting ? 'Submitting...' : 'Submit' }}</button>
+          <button type="submit" [disabled]="submitting || !feedbackForm.value.content || !feedbackForm.value.content.trim()">
+            {{ submitting ? 'Submitting...' : 'Submit' }}
+          </button>
         </div>
         <div class="modal-error" *ngIf="submitError">{{ submitError }}</div>
       </form>
+      <style>
+        .invalid-input {
+          border: 1.5px solid #f87171 !important;
+          background: #fff0f0;
+        }
+      </style>
     </div>
   </div>
 
