@@ -1,0 +1,44 @@
+<div class="retro-session-overlay">
+  <div class="retro-session-modal">
+    <ng-container [ngSwitch]="step">
+      <ng-container *ngSwitchCase="'summary'">
+        <div class="ai-typing-modal">
+          <div class="ai-typing-title">AI Retro Summary</div>
+          <div class="ai-typing-content">
+            <span *ngIf="loading">Loading summary...</span>
+            <span *ngIf="!loading">{{ aiSummary }}</span>
+          </div>
+          <button class="next-btn" (click)="onNextStep()">Let's Start with First Point</button>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchCase="'feedback'">
+        <div class="ai-typing-modal">
+          <div class="ai-typing-title">Feedback Point Analysis</div>
+          <div class="ai-typing-content">
+            <span *ngIf="loading">Analyzing feedback point...</span>
+            <span *ngIf="!loading">{{ aiFeedbackAnalysis }}</span>
+          </div>
+          <div class="feedback-point-meta" *ngIf="feedbackPoints.length">
+            <div class="feedback-point-label">
+              <b>Point {{ currentFeedbackIndex + 1 }} of {{ feedbackPoints.length }}</b>
+            </div>
+            <div class="feedback-point-desc">
+              {{ feedbackPoints[currentFeedbackIndex]?.description }}
+            </div>
+          </div>
+          <!-- Discussion UI can be added here -->
+          <button class="next-btn" (click)="onNextStep()">
+            {{ currentFeedbackIndex < feedbackPoints.length - 1 ? 'Save & Next' : 'Finish Retro' }}
+          </button>
+        </div>
+      </ng-container>
+      <ng-container *ngSwitchCase="'done'">
+        <div class="ai-typing-modal">
+          <div class="ai-typing-title">Good Job!</div>
+          <div class="ai-typing-content">Keep doing good work until next time!</div>
+          <button class="next-btn" (click)="endSession()">Stop Retro</button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

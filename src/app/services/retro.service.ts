@@ -10,6 +10,7 @@ export class RetroService {
   private readonly baseUrl = 'http://localhost:8080/api/retros';
 
   private readonly actionItemsUrl = 'http://localhost:8080/api/action-items';
+  private readonly justBaseUrl = 'http://localhost:8080';
 
   constructor(private http: HttpClient) { }
 
@@ -41,5 +42,13 @@ export class RetroService {
   }
     deleteActionItem(actionItemId: string | number): Observable<any> {
     return this.http.delete(`${this.actionItemsUrl}/${actionItemId}`);
+  }
+
+    getRetroAnalysis(retroId: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${retroId}/analysis`);
+  }
+
+  getFeedbackPointAnalysis(retroId: number, feedbackPointId: number): Observable<any> {
+    return this.http.post(`${this.justBaseUrl}/api/feedback-points/analysis`, { retroId, feedbackPointId });
   }
 }

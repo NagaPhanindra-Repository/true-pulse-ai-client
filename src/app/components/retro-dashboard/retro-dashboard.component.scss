@@ -1086,3 +1086,27 @@
 		font-size: 0.95rem;
 	}
 }
+
+.start-retro-btn-container {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0 1.5rem 0;
+}
+.start-retro-btn {
+  background: linear-gradient(90deg, #3b82f6 0%, #a78bfa 100%);
+  color: #fff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.8rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(59,130,246,0.10);
+  display: flex;
+  align-items: center;
+  transition: background 0.2s, transform 0.2s;
+}
+.start-retro-btn:hover {
+  background: linear-gradient(90deg, #a78bfa 0%, #3b82f6 100%);
+  transform: scale(1.04);
+}

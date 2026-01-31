@@ -386,4 +386,20 @@
 		</table>
 	</div>
 </div>
+
+<!-- Start Retro Button -->
+<div class="start-retro-btn-container" *ngIf="retro && !showSession">
+  <button class="start-retro-btn" (click)="startRetroSession()">
+    <span class="material-icons" style="font-size:2.2rem;vertical-align:middle;">play_circle_filled</span>
+    <span style="font-size:1.2rem;font-weight:600;margin-left:0.5rem;">Start Retro</span>
+  </button>
+</div>
+
+<!-- Retro Session Overlay -->
+<app-retro-session
+  *ngIf="showSession && retro"
+  [retroId]="retro.id"
+  [feedbackPoints]="feedbackPoints"
+  (sessionEnded)="onSessionEnded()">
+</app-retro-session>
 </div>

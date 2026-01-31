@@ -7,11 +7,12 @@ import { AuthService } from '../../services/security/auth.service';
 import { RetroService } from '../../services/retro.service';
 import { FeedbackPoint } from '../../models/feedback-point.model';
 import { Discussion } from '../../models/discussion.model';
+import { RetroSessionComponent } from '../retro-session/retro-session.component';
 
 @Component({
   selector: 'app-retro-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RetroSessionComponent],
   templateUrl: './retro-dashboard.component.html',
   styleUrl: './retro-dashboard.component.scss'
 })
@@ -27,6 +28,16 @@ export class RetroDashboardComponent implements OnInit {
   actionEntry: { description: string; dueDate: string; assignedUserName: string } = { description: '', dueDate: '', assignedUserName: '' };
   actionEdit: { [id: number]: boolean } = {};
   actionEditValue: { [id: number]: any } = {};
+
+  showSession = false;
+
+  startRetroSession() {
+    this.showSession = true;
+  }
+
+  onSessionEnded() {
+    this.showSession = false;
+  }
 
   loadActionItems(): void {
     if (!this.retro || !this.retro.id) return;
