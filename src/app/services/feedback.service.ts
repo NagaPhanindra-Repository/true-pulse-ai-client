@@ -46,4 +46,11 @@ export class FeedbackService {
   updateDiscussion(id: number, discussion: Discussion): Observable<Discussion> {
     return this.http.put<Discussion>(`${this.discussionUrl}/${id}`, discussion);
   }
+    deleteFeedbackPoint(id: number): Observable<any> {
+    return this.http.delete(`${this.feedbackUrl}/${id}`);
+  }
+
+  deleteDiscussion(id: number): Observable<any> {
+    return this.http.delete(`${this.discussionUrl}/${id}`);
+  }
 }

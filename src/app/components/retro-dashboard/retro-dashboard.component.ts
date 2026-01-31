@@ -273,4 +273,34 @@ export class RetroDashboardComponent implements OnInit {
       }
     });
   }
+
+    deleteFeedback(feedback: FeedbackPoint) {
+    if (!feedback.id) return;
+    if (!confirm('Are you sure you want to delete this feedback point?')) return;
+    this.feedbackService.deleteFeedbackPoint(feedback.id).subscribe({
+      next: () => {
+        this.loadFeedbackPoints();
+      }
+    });
+  }
+
+  deleteDiscussion(disc: Discussion) {
+    if (!disc.id) return;
+    if (!confirm('Are you sure you want to delete this discussion?')) return;
+    this.feedbackService.deleteDiscussion(disc.id).subscribe({
+      next: () => {
+        this.loadDiscussions();
+      }
+    });
+  }
+
+    deleteActionItem(item: any): void {
+    if (!item.id) return;
+    if (!confirm('Are you sure you want to delete this action item?')) return;
+    this.retroService.deleteActionItem(item.id).subscribe({
+      next: () => {
+        this.loadActionItems();
+      }
+    });
+  }
 }

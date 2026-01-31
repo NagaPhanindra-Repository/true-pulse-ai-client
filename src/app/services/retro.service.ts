@@ -39,4 +39,7 @@ export class RetroService {
   updateActionItem(actionItemId: string | number, actionItem: any): Observable<any> {
     return this.http.put<any>(`${this.actionItemsUrl}/${actionItemId}`, actionItem);
   }
+    deleteActionItem(actionItemId: string | number): Observable<any> {
+    return this.http.delete(`${this.actionItemsUrl}/${actionItemId}`);
+  }
 }
