@@ -1,21 +1,33 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RetroService } from '../../services/retro.service';
 import { FeedbackService } from '../../services/feedback.service';
 import { Discussion } from '../../models/discussion.model';
+import { FeedbackPoint } from '../../models/feedback-point.model';
+import { AuthService } from '../../services/security/auth.service';
 
 @Component({
   selector: 'app-retro-session',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './retro-session.component.html',
   styleUrls: ['./retro-session.component.scss']
 })
 export class RetroSessionComponent implements OnInit {
   @Input() retroId!: number;
-  @Input() feedbackPoints: any[] = [];
+  @Input() retroTitle: string = '';
   @Input() lanes: string[] = ['LIKED', 'LEARNED', 'LACKED', 'LONGED_FOR'];
   @Output() sessionEnded = new EventEmitter<void>();
+
+  retro: any = null;
+  feedbackPoints: FeedbackPoint[] = []  ;
+  discussions: Discussion[] = [];
+  discussionEntry: { [feedbackId: number]: string } = {};
+  discussionEdit: { [id: number]: boolean } = {};
+  discussionEditValue: { [id: number]: string } = {};
+  feedbackEdit: { [id: number]: boolean } = {};
+  feedbackEditValue: { [id: number]: string } = {};
 
   // State for session flow
   step: 'summary' | 'feedback' | 'done' = 'summary';
@@ -28,11 +40,83 @@ export class RetroSessionComponent implements OnInit {
   typingText: string = '';
   typingInterval: any;
 
-  constructor(private retroService: RetroService, private feedbackService: FeedbackService) {}
+  constructor(private retroService: RetroService,
+     private feedbackService: FeedbackService,
+    private auth: AuthService) {}
 
   ngOnInit() {
     this.startTimer();
+    this.fetchRetroDetails(this.retroId);
     this.loadRetroSummary();
+  }
+
+  fetchRetroDetails(retroId: number) {
+    this.loading = true;
+    this.retroService.getRetroDetails(retroId).subscribe({
+      next: (data) => {
+        this.retro = {
+          id: data.id,
+          title: data.title,
+          description: data.description,
+          userId: data.userId,
+          createdBy: data.createdBy,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt
+        };
+        this.feedbackPoints = (data.feedbackPoints || []).map((fp: any) => ({ ...fp, discussions: undefined }));
+        this.discussions = (data.feedbackPoints || []).flatMap((fp: any) =>
+          (fp.discussions || []).map((d: any) => ({ ...d, feedbackPointId: fp.id }))
+        );
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  startEditFeedback(feedback: FeedbackPoint) {
+    this.feedbackEdit[feedback.id!] = true;
+    this.feedbackEditValue[feedback.id!] = feedback.description;
+  }
+
+  saveEditFeedback(feedback: FeedbackPoint) {
+    const newDesc = this.feedbackEditValue[feedback.id!]?.trim();
+    if (!newDesc) return;
+    const updated: FeedbackPoint = {
+      ...feedback,
+      description: newDesc
+    };
+    this.feedbackService.updateFeedbackPoint(feedback.id!, updated).subscribe(() => {
+      this.feedbackEdit[feedback.id!] = false;
+      this.fetchRetroDetails(this.retroId);
+    });
+  }
+
+  cancelEditFeedback(feedback: FeedbackPoint) {
+    this.feedbackEdit[feedback.id!] = false;
+    this.feedbackEditValue[feedback.id!] = '';
+  }
+
+  deleteFeedback(feedback: FeedbackPoint) {
+    if (!feedback.id) return;
+    if (!confirm('Are you sure you want to delete this feedback point?')) return;
+    this.feedbackService.deleteFeedbackPoint(feedback.id).subscribe(() => {
+      this.fetchRetroDetails(this.retroId);
+    });
+  }
+
+  getDiscussionsFor(feedbackId: number | undefined): Discussion[] {
+    if (!feedbackId) return [];
+    return this.discussions.filter(d => d.feedbackPointId === feedbackId && d.id !== undefined);
+  }
+
+  deleteDiscussion(disc: Discussion) {
+    if (!disc.id) return;
+    if (!confirm('Are you sure you want to delete this discussion?')) return;
+    this.feedbackService.deleteDiscussion(disc.id).subscribe(() => {
+      this.fetchRetroDetails(this.retroId);
+    });
   }
 
   startTimer() {
@@ -78,6 +162,50 @@ export class RetroSessionComponent implements OnInit {
     }
   }
 
+  canSaveAndNext(): boolean {
+    const fp = this.feedbackPoints[this.currentFeedbackIndex];
+    return this.getDiscussionsFor(fp.id!).length > 0;
+  }
+
+  addDiscussion(feedback: FeedbackPoint) {
+    const note = this.discussionEntry[feedback.id!]?.trim();
+     const user = this.auth.user;
+    if (!note || !user?.id) return;
+    const discussion: Discussion = {
+      note,
+      feedbackPointId: feedback.id!,
+      userId: user.id
+    };
+    this.feedbackService.createDiscussion(discussion).subscribe(() => {
+      this.fetchRetroDetails(this.retroId);
+      this.discussionEntry[feedback.id!] = '';
+    });
+  }
+
+
+  startEditDiscussion(disc: Discussion) {
+    this.discussionEdit[disc.id!] = true;
+    this.discussionEditValue[disc.id!] = disc.note;
+  }
+
+  saveEditDiscussion(disc: Discussion) {
+    const newNote = this.discussionEditValue[disc.id!]?.trim();
+    if (!newNote) return;
+    const updated: Discussion = {
+      ...disc,
+      note: newNote
+    };
+    this.feedbackService.updateDiscussion(disc.id!, updated).subscribe(() => {
+      this.discussionEdit[disc.id!] = false;
+      this.fetchRetroDetails(this.retroId);
+    });
+  }
+
+  cancelEditDiscussion(disc: Discussion) {
+    this.discussionEdit[disc.id!] = false;
+    this.discussionEditValue[disc.id!] = '';
+  }
+
   loadFeedbackAnalysis() {
     this.loading = true;
     const feedback = this.feedbackPoints[this.currentFeedbackIndex];
@@ -86,7 +214,7 @@ export class RetroSessionComponent implements OnInit {
       this.loading = false;
       return;
     }
-    this.retroService.getFeedbackPointAnalysis(this.retroId, feedback.id).subscribe({
+    this.retroService.getFeedbackPointAnalysis(this.retroId, feedback.id!).subscribe({
       next: (res) => {
         this.animateTyping(res.analysis, 'feedback');
         this.loading = false;

@@ -1,9 +1,11 @@
+
 <div class="retro-session-overlay">
   <div class="retro-session-modal">
     <ng-container [ngSwitch]="step">
+      <!-- SUMMARY STEP -->
       <ng-container *ngSwitchCase="'summary'">
         <div class="ai-typing-modal">
-          <div class="ai-typing-title">AI Retro Summary</div>
+          <div class="ai-typing-title">{{ retro.title }}</div>
           <div class="ai-typing-content">
             <span *ngIf="loading">Loading summary...</span>
             <span *ngIf="!loading">{{ aiSummary }}</span>
@@ -11,27 +13,84 @@
           <button class="next-btn" (click)="onNextStep()">Let's Start with First Point</button>
         </div>
       </ng-container>
+
+      <!-- FEEDBACK STEP -->
       <ng-container *ngSwitchCase="'feedback'">
-        <div class="ai-typing-modal">
-          <div class="ai-typing-title">Feedback Point Analysis</div>
-          <div class="ai-typing-content">
+        <div class="retro-feedback-modal">
+          <div class="retro-feedback-header">
+            <div class="retro-feedback-title">Retrosecting Point {{ currentFeedbackIndex + 1 }} of {{ feedbackPoints.length }}</div>
+          </div>
+          <ng-container *ngIf="feedbackPoints.length > 0 && feedbackPoints[currentFeedbackIndex] as feedback">
+            <div class="feedback-card" [class.edit-mode]="feedbackEdit[feedback.id!]" (dblclick)="!feedbackEdit[feedback.id!] && startEditFeedback(feedback)">
+              <ng-container *ngIf="!feedbackEdit[feedback.id!]">
+                <div class="feedback-desc-row">
+                  <span class="feedback-desc">{{ feedback.description }}</span>
+                  <button class="icon-btn edit-btn" (click)="startEditFeedback(feedback)" title="Edit">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="icon-btn delete-btn" (click)="deleteFeedback(feedback)" title="Delete">
+                    <span class="material-icons">delete</span>
+                  </button>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="feedbackEdit[feedback.id!]">
+                <input class="feedback-edit-input" type="text" [(ngModel)]="feedbackEditValue[feedback.id!]" (keyup.enter)="saveEditFeedback(feedback)" placeholder="Edit feedback..." />
+                <div class="feedback-edit-actions">
+                  <button class="icon-btn save-btn" (click)="saveEditFeedback(feedback)" title="Save">
+                    <span class="material-icons">check_circle</span>
+                  </button>
+                  <button class="icon-btn cancel-btn" (click)="cancelEditFeedback(feedback)" title="Cancel">
+                    <span class="material-icons">cancel</span>
+                  </button>
+                </div>
+              </ng-container>
+              <div class="discussion-list">
+                <ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
+                  <div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
+                    <ng-container *ngIf="!discussionEdit[disc.id!]">
+                      <div class="discussion-content">{{ disc.note }}</div>
+                      <button class="icon-btn edit-btn" (click)="startEditDiscussion(disc)" title="Edit">
+                        <span class="material-icons">edit</span>
+                      </button>
+                      <button class="icon-btn delete-btn" (click)="deleteDiscussion(disc)" title="Delete">
+                        <span class="material-icons">delete</span>
+                      </button>
+                    </ng-container>
+                    <ng-container *ngIf="discussionEdit[disc.id!]">
+                      <input class="discussion-edit-input" type="text" [(ngModel)]="discussionEditValue[disc.id!]" (keyup.enter)="saveEditDiscussion(disc)" />
+                      <div class="discussion-edit-actions">
+                        <button class="icon-btn save-btn" (click)="saveEditDiscussion(disc)" title="Save">
+                          <span class="material-icons">check_circle</span>
+                        </button>
+                        <button class="icon-btn cancel-btn" (click)="cancelEditDiscussion(disc)" title="Cancel">
+                          <span class="material-icons">cancel</span>
+                        </button>
+                      </div>
+                    </ng-container>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="getDiscussionsFor(feedback.id).length === 0">
+                  <div class="discussion-entry">
+                    <input class="discussion-add-input" type="text" placeholder="Add a discussion..." [(ngModel)]="discussionEntry[feedback.id!]" (keyup.enter)="addDiscussion(feedback)" />
+                    <button class="icon-btn add-btn" (click)="addDiscussion(feedback)" title="Add">
+                      <span class="material-icons">add_circle</span>
+                    </button>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+          <div class="ai-typing-content ai-feedback-analysis">
             <span *ngIf="loading">Analyzing feedback point...</span>
             <span *ngIf="!loading">{{ aiFeedbackAnalysis }}</span>
           </div>
-          <div class="feedback-point-meta" *ngIf="feedbackPoints.length">
-            <div class="feedback-point-label">
-              <b>Point {{ currentFeedbackIndex + 1 }} of {{ feedbackPoints.length }}</b>
-            </div>
-            <div class="feedback-point-desc">
-              {{ feedbackPoints[currentFeedbackIndex]?.description }}
-            </div>
-          </div>
-          <!-- Discussion UI can be added here -->
-          <button class="next-btn" (click)="onNextStep()">
+          <button class="next-btn" [disabled]="!canSaveAndNext()" (click)="onNextStep()">
             {{ currentFeedbackIndex < feedbackPoints.length - 1 ? 'Save & Next' : 'Finish Retro' }}
           </button>
         </div>
       </ng-container>
+
+      <!-- DONE STEP -->
       <ng-container *ngSwitchCase="'done'">
         <div class="ai-typing-modal">
           <div class="ai-typing-title">Good Job!</div>

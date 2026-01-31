@@ -1,3 +1,200 @@
+.retro-feedback-modal {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0.5rem;
+}
+.retro-feedback-header {
+  width: 100%;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+.retro-feedback-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #a78bfa;
+  margin-bottom: 0.5rem;
+}
+.feedback-card {
+  background: rgba(35, 41, 70, 0.98);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 rgba(59,130,246,0.10);
+  padding: 1.5rem 2rem 1.2rem 2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transition: box-shadow 0.18s, background 0.18s;
+}
+.feedback-card.edit-mode {
+  background: #232946;
+  box-shadow: 0 6px 32px 0 #a78bfa33;
+}
+.feedback-desc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+}
+.feedback-desc {
+  flex: 1 1 auto;
+  font-size: 1.13rem;
+  color: #f4f4f8;
+  font-weight: 500;
+}
+.feedback-edit-input {
+  width: 100%;
+  background: #181c2f;
+  color: #f4f4f8;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 1.08rem;
+  margin-bottom: 0.7rem;
+  outline: none;
+  box-shadow: 0 1px 4px 0 #a78bfa22;
+  transition: box-shadow 0.18s, border 0.18s;
+}
+.feedback-edit-input:focus {
+  box-shadow: 0 0 0 2px #a78bfa;
+  border: 1.5px solid #a78bfa;
+}
+.feedback-edit-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  color: #a78bfa;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+.icon-btn.edit-btn:hover {
+  background: #232946;
+  color: #6ee7b7;
+}
+.icon-btn.delete-btn {
+  color: #e53935;
+}
+.icon-btn.delete-btn:hover {
+  background: #232946;
+  color: #fff;
+}
+.icon-btn.save-btn {
+  background: #6ee7b7;
+  color: #232946;
+  font-size: 1.3rem;
+  margin-left: 4px;
+}
+.icon-btn.save-btn:hover {
+  background: #3b82f6;
+  color: #fff;
+}
+.icon-btn.cancel-btn {
+  background: #f87171;
+  color: #fff;
+  font-size: 1.3rem;
+  margin-left: 4px;
+}
+.icon-btn.cancel-btn:hover {
+  background: #232946;
+  color: #f87171;
+}
+.discussion-list {
+  margin-top: 0.7rem;
+  margin-bottom: 0.5rem;
+}
+.discussion-card {
+  background: rgba(59,130,246,0.08);
+  border-radius: 12px;
+  box-shadow: 0 1px 6px 0 #3b82f633;
+  padding: 0.7rem 1.1rem 0.7rem 1.1rem;
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: box-shadow 0.15s, background 0.15s;
+}
+.discussion-card.edit-mode {
+  background: #232946;
+  box-shadow: 0 2px 12px 0 #a78bfa33;
+}
+.discussion-content {
+  flex: 1 1 auto;
+  color: #e0e7ff;
+  font-size: 1.04rem;
+}
+.discussion-edit-input {
+  width: 100%;
+  background: #181c2f;
+  color: #f4f4f8;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1.01rem;
+  outline: none;
+  box-shadow: 0 1px 4px 0 #a78bfa22;
+  transition: box-shadow 0.18s, border 0.18s;
+}
+.discussion-edit-input:focus {
+  box-shadow: 0 0 0 2px #6ee7b7;
+  border: 1.5px solid #6ee7b7;
+}
+.discussion-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+.discussion-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.5rem;
+}
+.discussion-add-input {
+  flex: 1 1 auto;
+  background: #181c2f;
+  color: #f4f4f8;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1.01rem;
+  outline: none;
+  box-shadow: 0 1px 4px 0 #a78bfa22;
+  transition: box-shadow 0.18s, border 0.18s;
+}
+.discussion-add-input:focus {
+  box-shadow: 0 0 0 2px #a78bfa;
+  border: 1.5px solid #a78bfa;
+}
+.icon-btn.add-btn {
+  background: linear-gradient(90deg, #3b82f6 0%, #a78bfa 100%);
+  color: #fff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px 0 #a78bfa44;
+  margin-left: 2px;
+  transition: background 0.18s, box-shadow 0.18s;
+}
+.icon-btn.add-btn:hover {
+  background: linear-gradient(90deg, #a78bfa 0%, #3b82f6 100%);
+  box-shadow: 0 4px 16px 0 #3b82f655;
+}
+.ai-feedback-analysis {
+  margin-top: 1.5rem;
+}
 .retro-session-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -10,7 +207,7 @@
 }
 
 .retro-session-modal {
-  background: rgba(255,255,255,0.95);
+  background: #232946;
   border-radius: 24px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   padding: 2.5rem 2.5rem 2rem 2.5rem;
@@ -40,7 +237,7 @@
   font-size: 1.1rem;
   min-height: 60px;
   margin-bottom: 2rem;
-  color: #22223b;
+  color: #fafafc;
   background: rgba(59,130,246,0.07);
   border-radius: 8px;
   padding: 1rem 1.5rem;

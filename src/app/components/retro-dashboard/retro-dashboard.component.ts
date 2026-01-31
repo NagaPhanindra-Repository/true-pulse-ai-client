@@ -37,6 +37,9 @@ export class RetroDashboardComponent implements OnInit {
 
   onSessionEnded() {
     this.showSession = false;
+    if (this.retro && this.retro.id) {
+      this.fetchRetroDetails(this.retro.id);
+    }
   }
 
   loadActionItems(): void {
