@@ -23,6 +23,23 @@ export class DashboardComponent implements OnInit {
   creating = false;
   createError = '';
 
+  // Recent Feedback AI Analysis Section
+  recentAnalysis: any[] | null = null;
+  currentSlide = 0;
+  currentField = 0;
+  typingText = '';
+  typingInterval: any;
+  autoSlideTimeout: any;
+  // Define the fields to show per question (slide)
+  fieldKeys = [
+    { key: 'questionTitle', label: 'Question' },
+    { key: 'generalSentiment', label: 'General Sentiment' },
+    { key: 'mostLikedAspects', label: 'Most Liked Aspects' },
+    { key: 'mostDislikedAspects', label: 'Most Disliked Aspects' },
+    { key: 'futureExpectations', label: 'Future Expectations' },
+    { key: 'recommendations', label: 'AI Recommendations' }
+  ];
+
   constructor(
     private auth: AuthService,
     private questionService: QuestionService,
@@ -35,6 +52,19 @@ export class DashboardComponent implements OnInit {
     }
     this.auth.user$.subscribe((user: LoggedInUserModel | null) => {
       this.user = user;
+    });
+
+    // Fetch recent AI analysis for feedback/questions
+    this.questionService.getMyQuestionsAnalysis().subscribe({
+      next: (data) => {
+        this.recentAnalysis = data || [];
+        this.currentSlide = 0;
+        this.currentField = 0;
+        this.startTypingAnimation();
+      },
+      error: () => {
+        this.recentAnalysis = [];
+      }
     });
   }
 
@@ -57,5 +87,104 @@ export class DashboardComponent implements OnInit {
         this.creating = false;
       }
     });
+  }
+
+  get currentQuestion() {
+    if (!this.recentAnalysis || this.recentAnalysis.length === 0) return null;
+    return this.recentAnalysis[this.currentSlide];
+  }
+
+  get currentFieldLabel() {
+    return this.fieldKeys[this.currentField]?.label || '';
+  }
+
+  get totalSlides() {
+    return this.recentAnalysis ? this.recentAnalysis.length : 0;
+  }
+
+  get totalFields() {
+    return this.fieldKeys.length;
+  }
+
+  get isFirstSlide() {
+    return this.currentSlide === 0;
+  }
+
+  get isLastSlide() {
+    return this.recentAnalysis && this.currentSlide === this.recentAnalysis.length - 1;
+  }
+
+  get isFirstField() {
+    return this.currentField === 0;
+  }
+
+  get isLastField() {
+    return this.currentField === this.fieldKeys.length - 1;
+  }
+
+  prevSlide() {
+    if (this.currentSlide > 0) {
+      this.currentSlide--;
+      this.currentField = 0;
+      this.startTypingAnimation();
+    }
+  }
+
+  nextSlide() {
+    if (this.recentAnalysis && this.currentSlide < this.recentAnalysis.length - 1) {
+      this.currentSlide++;
+      this.currentField = 0;
+      this.startTypingAnimation();
+    }
+  }
+
+  prevField() {
+    if (this.currentField > 0) {
+      this.currentField--;
+      this.startTypingAnimation();
+    } else if (this.currentSlide > 0) {
+      this.prevSlide();
+    }
+  }
+
+  nextField() {
+    if (this.currentField < this.fieldKeys.length - 1) {
+      this.currentField++;
+      this.startTypingAnimation();
+    } else if (this.recentAnalysis && this.currentSlide < this.recentAnalysis.length - 1) {
+      this.nextSlide();
+    }
+  }
+
+  startTypingAnimation() {
+    if (this.typingInterval) clearInterval(this.typingInterval);
+    if (this.autoSlideTimeout) clearTimeout(this.autoSlideTimeout);
+    if (!this.currentQuestion) {
+      this.typingText = '';
+      return;
+    }
+    const fieldKey = this.fieldKeys[this.currentField].key;
+    const fullText = this.currentQuestion[fieldKey] || '';
+    this.typingText = '';
+    let i = 0;
+    this.typingInterval = setInterval(() => {
+      if (i < fullText.length) {
+        this.typingText += fullText[i];
+        i++;
+      } else {
+        clearInterval(this.typingInterval);
+        // After typing, auto-advance to next field/slide after a pause
+        this.autoSlideTimeout = setTimeout(() => {
+          if (this.currentField < this.fieldKeys.length - 1) {
+            this.currentField++;
+            this.startTypingAnimation();
+          } else if (this.recentAnalysis && this.currentSlide < this.recentAnalysis.length - 1) {
+            this.currentSlide++;
+            this.currentField = 0;
+            this.startTypingAnimation();
+          }
+        }, 1800); // Pause before auto-advance
+      }
+    }, 18); // Typing speed (ms per char)
   }
 }

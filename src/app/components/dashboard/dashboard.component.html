@@ -85,7 +85,7 @@
 
 	
 	<div class="dashboard-actions">
-		<div class="dashboard-card create-question">
+		<div class="dashboard-card create-question-card">
 			<h2>Create a Feedback Question</h2>
 			<input type="text" class="question-input" placeholder="Question title..." [(ngModel)]="questionTitle" maxlength="100" [disabled]="creating" />
 			<textarea class="question-input" placeholder="Description (optional)" [(ngModel)]="questionDescription" maxlength="300" [disabled]="creating"></textarea>
@@ -96,24 +96,33 @@
 		</div>
 		<app-create-retro></app-create-retro>
 
-		<div class="dashboard-card view-feedback">
-			<h2>Recent Feedback</h2>
-			<div class="feedback-list">
-				<div class="feedback-item">
-					<div class="feedback-user"></div>
-					<div class="feedback-content">Love the new features! The AI summary is spot on.</div>
-				</div>
-				<div class="feedback-item">
-					<div class="feedback-user"></div>
-					<div class="feedback-content">Retro dashboard helped our team a lot. Great work!</div>
-				</div>
-				<div class="feedback-item">
-					<div class="feedback-user"></div>
-					<div class="feedback-content">Can we get more analytics in the next update?</div>
-				</div>
-			</div>
-			<button class="action-btn secondary">View All Feedback</button>
-		</div>
+				   <div class="dashboard-card view-feedback ai-feedback-slideshow">
+					   <h2>Recent Feedback (AI Analysis)</h2>
+					   <div *ngIf="recentAnalysis && recentAnalysis.length > 0" class="ai-feedback-slide-container">
+						   <div class="ai-feedback-slide">
+							   <div class="ai-feedback-slide-progress">
+								   <span *ngFor="let q of recentAnalysis; let i = index" [class.active]="i === currentSlide" class="slide-dot"></span>
+							   </div>
+							   <div class="ai-feedback-slide-header">
+								   <span class="ai-slide-index">Question {{ currentSlide + 1 }} of {{ totalSlides }}</span>
+								   <span class="ai-slide-title">{{ currentQuestion?.questionTitle }}</span>
+							   </div>
+							   <div class="ai-feedback-fields">
+								   <div class="ai-feedback-field-label">{{ currentFieldLabel }}</div>
+								   <div class="ai-feedback-typing">
+									   <span>{{ typingText }}</span><span class="ai-cursor">|</span>
+								   </div>
+							   </div>
+							   <div class="ai-feedback-slide-controls">
+								   <button class="slide-btn prev" (click)="prevField()" [disabled]="isFirstSlide && isFirstField">&#8592;</button>
+								   <span class="slide-indicator">Field {{ currentField + 1 }} / {{ totalFields }}</span>
+								   <button class="slide-btn next" (click)="nextField()" [disabled]="isLastSlide && isLastField">&#8594;</button>
+							   </div>
+						   </div>
+					   </div>
+					   <div *ngIf="recentAnalysis && recentAnalysis.length === 0" class="ai-feedback-empty">No recent feedback analysis found.</div>
+					   <div *ngIf="!recentAnalysis" class="ai-feedback-loading">Loading recent feedback analysis...</div>
+				   </div>
 	</div>
 <!-- User follow card moved below dashboard-actions -->
 <app-user-follow-card></app-user-follow-card>

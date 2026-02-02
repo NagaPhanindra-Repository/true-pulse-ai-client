@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -33,5 +34,14 @@ export class QuestionService {
     return this.http.put<Question>(`${this.apiUrl}/${id}`, question);
   }
 
+    /**
+   * Fetches AI analysis objects for recent feedback/questions
+   */
+  getMyQuestionsAnalysis(): Observable<any[]> {
+    return this.http.get<any[]>(
+      'http://localhost:8080/api/v1/chat/my-questions/analyze',
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 
 }
