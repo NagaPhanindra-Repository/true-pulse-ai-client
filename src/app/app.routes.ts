@@ -10,6 +10,8 @@ import { FollowersComponent } from './components/followers/followers.component';
 import { AppContentComponent } from './components/app-content/app-content.component';
 import { QuestionsComponent } from './components/questions/questions.component';
 import { RetrosComponent } from './components/retros/retros.component';
+import { CreateEntityComponent } from './components/create-entity/create-entity.component';
+import { MyEntitiesComponent } from './components/my-entities/my-entities.component';
 
 export const routes: Routes = [
   { path: '', component: AppContentComponent },
@@ -21,5 +23,7 @@ export const routes: Routes = [
   { path: 'questions', component: QuestionsComponent, canActivate: [AuthGuard] },
   { path: 'followers', component: FollowersComponent, canActivate: [AuthGuard] },
   { path: 'business', component: BusinessOwnersComponent },
+  { path: 'entities/create', component: CreateEntityComponent, canActivate: [AuthGuard] },
+  { path: 'entities/my', component: MyEntitiesComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];

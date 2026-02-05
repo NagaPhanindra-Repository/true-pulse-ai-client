@@ -1,0 +1,74 @@
+<div class="entity-create-root">
+  <div class="entity-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="entity-create-container">
+    <div class="entity-hero">
+      <h1>Create a Verified Entity</h1>
+      <p>Build a trusted presence to gather feedback, ideas, and public sentiment at scale.</p>
+    </div>
+
+    <div class="entity-type-grid">
+      <button
+        *ngFor="let option of typeOptions"
+        type="button"
+        class="entity-type-card"
+        [class.active]="selectedType === option.value"
+        (click)="setType(option.value)">
+        <div class="card-title">{{ option.label }}</div>
+        <div class="card-desc">{{ option.description }}</div>
+      </button>
+    </div>
+
+    <form class="entity-form glass-card" [formGroup]="entityForm" (ngSubmit)="submit()" novalidate>
+      <div class="form-section">
+        <div class="section-title">Core Details</div>
+        <div class="form-grid">
+          <label class="field">
+            <span>Display Name *</span>
+            <input
+              type="text"
+              formControlName="displayName"
+              placeholder="Public-facing name"
+              [class.invalid]="isInvalid('displayName')" />
+            <small *ngIf="isInvalid('displayName')">Display name is required.</small>
+          </label>
+
+          <div class="field readonly">
+            <span>Created By</span>
+            <input type="text" [value]="loggedInUser?.userName || 'Not logged in'" disabled />
+            <small>Verified user account will be linked automatically.</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title">{{ selectedType | titlecase }} Details</div>
+        <div class="form-grid">
+          <label class="field" *ngFor="let field of fieldsForSelectedType">
+            <span>{{ field.label }} <span *ngIf="field.required">*</span></span>
+            <input
+              [type]="field.type || 'text'"
+              [formControlName]="field.key"
+              [placeholder]="field.placeholder"
+              [class.invalid]="isInvalid(field.key)" />
+            <small *ngIf="isInvalid(field.key)">{{ field.label }} is required.</small>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <div class="status">
+          <span class="error" *ngIf="submitError">{{ submitError }}</span>
+          <span class="success" *ngIf="submitSuccess">{{ submitSuccess }}</span>
+        </div>
+        <button type="submit" class="primary" [disabled]="submitting">
+          {{ submitting ? 'Creating...' : 'Create Entity' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="my-entities-root">
+  <div class="my-entities-bg">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="glow glow-3"></div>
+  </div>
+
+  <div class="my-entities-layout">
+    <div class="my-entities-list-panel">
+      <div class="list-header">
+        <mat-icon>search</mat-icon>
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Search entities..." />
+      </div>
+
+      <div class="list-body" *ngIf="!loading && !error">
+        <div
+          *ngFor="let entity of filteredEntities"
+          class="entity-list-item"
+          [class.active]="selectedEntity?.id === entity.id"
+          (click)="selectEntity(entity)">
+          <div class="entity-icon" [style.background]="getTypeMeta(entity.type).color">
+            <mat-icon>{{ getTypeMeta(entity.type).icon }}</mat-icon>
+          </div>
+          <div class="entity-info">
+            <div class="entity-name">{{ entity.displayName }}</div>
+            <div class="entity-type" [style.color]="getTypeMeta(entity.type).accent">
+              {{ getTypeMeta(entity.type).label }}
+            </div>
+          </div>
+          <div class="entity-chip" [style.borderColor]="getTypeMeta(entity.type).color">
+            {{ entity.type }}
+          </div>
+        </div>
+
+        <div *ngIf="filteredEntities.length === 0" class="empty-state">
+          No entities found.
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="loading">Loading your entities...</div>
+      <div *ngIf="error" class="error">{{ error }}</div>
+    </div>
+
+    <div class="my-entities-detail-panel" *ngIf="selectedEntity; else emptyDetail">
+      <div class="detail-header">
+        <div class="detail-icon" [style.background]="getTypeMeta(selectedEntity.type).color">
+          <mat-icon>{{ getTypeMeta(selectedEntity.type).icon }}</mat-icon>
+        </div>
+        <div>
+          <div class="detail-title">{{ selectedEntity.displayName }}</div>
+          <div class="detail-subtitle" [style.color]="getTypeMeta(selectedEntity.type).accent">
+            {{ getTypeMeta(selectedEntity.type).label }}
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-table">
+        <div class="detail-row" *ngFor="let row of getDetailRows(selectedEntity)">
+          <span class="row-label">{{ row.label }}</span>
+          <span class="row-value">{{ row.value }}</span>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyDetail>
+      <div class="my-entities-detail-panel empty">
+        <div class="empty-detail-text">Select an entity from the list to view details.</div>
+      </div>
+    </ng-template>
+  </div>
+</div>
