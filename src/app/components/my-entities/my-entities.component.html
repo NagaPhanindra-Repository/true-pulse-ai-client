@@ -46,11 +46,19 @@
         <div class="detail-icon" [style.background]="getTypeMeta(selectedEntity.type).color">
           <mat-icon>{{ getTypeMeta(selectedEntity.type).icon }}</mat-icon>
         </div>
-        <div>
+        <div class="detail-header-title">
           <div class="detail-title">{{ selectedEntity.displayName }}</div>
           <div class="detail-subtitle" [style.color]="getTypeMeta(selectedEntity.type).accent">
             {{ getTypeMeta(selectedEntity.type).label }}
           </div>
+        </div>
+        <div class="upload-section">
+          <label class="upload-btn">
+            <mat-icon>upload_file</mat-icon>
+            <span>Upload Document</span>
+            <input type="file" style="display:none" (change)="onFileSelected($event)" />
+          </label>
+          <span class="upload-status" *ngIf="uploadStatus">{{ uploadStatus }}</span>
         </div>
       </div>
 

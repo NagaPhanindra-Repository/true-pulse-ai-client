@@ -1,9 +1,10 @@
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BusinessDocumentService } from '../../services/business-document.service';
+import { EntityService } from '../../services/entity.service';
+import { CreateEntityResponse, EntityType } from '../../models/entity.model';
 
 @Component({
   selector: 'app-business-owners',
@@ -12,98 +13,76 @@ import { BusinessDocumentService } from '../../services/business-document.servic
   templateUrl: './business-owners.component.html',
   styleUrls: ['./business-owners.component.scss']
 })
-export class BusinessOwnersComponent {
-  // Dummy business data
-  businesses = [
-    {
-      id: 1,
-      name: 'Cafe Aroma',
-      description: 'Cozy coffee shop with fresh pastries.',
-      icon: 'local_cafe',
-      followed: true
-    },
-    {
-      id: 2,
-      name: 'TechFix',
-      description: 'Gadget repair and IT services.',
-      icon: 'build',
-      followed: true
-    },
-    {
-      id: 3,
-      name: 'Green Grocers',
-      description: 'Organic fruits and vegetables.',
-      icon: 'eco',
-      followed: false
-    }
-  ];
+export class BusinessOwnersComponent implements OnInit {
+  // Entity data from backend
+  businesses: CreateEntityResponse[] = [];
 
-  selectedBusiness: any = null;
+  selectedBusiness: CreateEntityResponse | null = null;
   searchTerm = '';
-  uploadStatus: string = '';
-  searchQuery: string = '';
-  searchResults: any[] = [];
-  isUploading = false;
-  isSearching = false;
+  loading = true;
 
-  constructor(private docService: BusinessDocumentService) {}
+  constructor(private entityService: EntityService) {}
 
-  selectBusiness(business: any) {
+  ngOnInit(): void {
+    this.loadRandomEntities();
+  }
+
+  loadRandomEntities(): void {
+    this.loading = true;
+    this.entityService.getRandomEntities(20).subscribe({
+      next: entities => {
+        this.businesses = entities;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  selectBusiness(business: CreateEntityResponse) {
     this.selectedBusiness = business;
-    this.searchResults = [];
   }
 
-  getJwtToken(): string {
-    // Example: get JWT from localStorage or a service
-    return localStorage.getItem('jwt_token') || '';
-  }
-
-  getBusinessId(): string {
-    // Example: use username as businessId (customize as needed)
-    return localStorage.getItem('username') || 'demo_business';
-  }
-
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (!file) return;
-    this.isUploading = true;
-    this.uploadStatus = 'Uploading...';
-    this.docService.uploadDocument(file, this.getJwtToken()).subscribe({
-      next: (res) => {
-        this.uploadStatus = res.message || 'Upload successful!';
-        this.isUploading = false;
+  onSearchTermChange(): void {
+    const term = this.searchTerm.trim();
+    if (!term) {
+      this.loadRandomEntities();
+      return;
+    }
+    if (term.length < 2) return;
+    this.loading = true;
+    this.entityService.searchEntities(term).subscribe({
+      next: entities => {
+        this.businesses = entities;
+        this.loading = false;
       },
-      error: (err) => {
-        this.uploadStatus = 'Upload failed.';
-        this.isUploading = false;
+      error: () => {
+        this.loading = false;
       }
     });
   }
 
-  onSearch() {
-    if (!this.selectedBusiness || !this.searchQuery.trim()) return;
-    this.isSearching = true;
-    this.searchResults = [];
-    this.docService.searchDocuments(
-      this.getBusinessId(),
-      this.searchQuery,
-      5,
-      this.getJwtToken()
-    ).subscribe({
-      next: (res) => {
-        this.searchResults = res.matches || [];
-        this.isSearching = false;
-      },
-      error: (err) => {
-        this.isSearching = false;
-      }
-    });
+  getEntityIcon(entity: CreateEntityResponse): string {
+    switch (entity.type) {
+      case 'BUSINESS':
+        return 'storefront';
+      case 'BUSINESS_LEADER':
+        return 'work';
+      case 'POLITICIAN':
+        return 'gavel';
+      case 'CELEBRITY':
+        return 'star';
+      default:
+        return 'business';
+    }
   }
 
-  get filteredBusinesses() {
-    if (!this.searchTerm.trim()) return this.businesses;
-    return this.businesses.filter(b =>
-      b.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+  getEntityName(entity: CreateEntityResponse): string {
+    return entity.displayName;
+  }
+
+  get filteredBusinesses(): CreateEntityResponse[] {
+    return this.businesses;
   }
 }

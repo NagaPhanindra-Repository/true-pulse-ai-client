@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { EntityService } from '../../services/entity.service';
 import { CreateEntityResponse, EntityType } from '../../models/entity.model';
+import { BusinessDocumentService } from '../../services/business-document.service';
 
 interface DetailRow {
   label: string;
@@ -23,8 +24,13 @@ export class MyEntitiesComponent implements OnInit {
   loading = true;
   error = '';
   searchTerm = '';
+  uploadStatus = '';
+  isUploading = false;
 
-  constructor(private entityService: EntityService) {}
+  constructor(
+    private entityService: EntityService,
+    private docService: BusinessDocumentService
+  ) {}
 
   ngOnInit(): void {
     this.loadEntities();
@@ -48,6 +54,30 @@ export class MyEntitiesComponent implements OnInit {
 
   selectEntity(entity: CreateEntityResponse): void {
     this.selectedEntity = entity;
+    this.uploadStatus = '';
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (!file || !this.selectedEntity) return;
+    
+    this.isUploading = true;
+    this.uploadStatus = 'Uploading...';
+    
+    this.docService.uploadDocumentWithEntity(
+      file,
+      this.selectedEntity.id.toString(),
+      this.selectedEntity.displayName
+    ).subscribe({
+      next: (res) => {
+        this.uploadStatus = res.message || 'Document uploaded successfully!';
+        this.isUploading = false;
+      },
+      error: () => {
+        this.uploadStatus = 'Upload failed. Please try again.';
+        this.isUploading = false;
+      }
+    });
   }
 
   get filteredEntities(): CreateEntityResponse[] {

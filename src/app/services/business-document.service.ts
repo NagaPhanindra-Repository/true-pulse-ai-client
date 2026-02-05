@@ -18,6 +18,14 @@ export class BusinessDocumentService {
     });
   }
 
+  uploadDocumentWithEntity(file: File, entityId: string, displayName: string): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('entityId', entityId);
+    formData.append('displayName', displayName);
+    return this.http.post(`${this.baseUrl}/upload`, formData);
+  }
+
   searchDocuments(businessId: string, query: string, topK: number, jwt: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/search`, {
       businessId,

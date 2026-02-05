@@ -16,4 +16,12 @@ export class EntityService {
   getMyEntities(): Observable<CreateEntityResponse[]> {
     return this.http.get<CreateEntityResponse[]>(`${this.baseUrl}/entities/my-entities`);
   }
+
+  getRandomEntities(limit: number = 10): Observable<CreateEntityResponse[]> {
+    return this.http.get<CreateEntityResponse[]>(`${this.baseUrl}/entities/random?limit=${limit}`);
+  }
+
+  searchEntities(query: string): Observable<CreateEntityResponse[]> {
+    return this.http.get<CreateEntityResponse[]>(`${this.baseUrl}/entities/search?q=${encodeURIComponent(query)}`);
+  }
 }
