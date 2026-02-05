@@ -1,0 +1,155 @@
+<div class="business-owners-root">
+  <div class="business-owners-bg">
+    <!-- SVG: Closely replicates the attached image, with detailed rings, arcs, circuit lines, grid, neon blue -->
+    <svg class="circuit-bg" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="ringGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.8" />
+          <stop offset="100%" stop-color="#232946" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="circuitLine" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#6ee7b7" />
+          <stop offset="100%" stop-color="#3b82f6" />
+        </linearGradient>
+      </defs>
+      <!-- Grid background -->
+      <g opacity="0.08">
+        <rect x="0" y="0" width="800" height="600" fill="none" stroke="#3b82f6" stroke-width="1" />
+        <line x1="0" y1="100" x2="800" y2="100" stroke="#3b82f6" stroke-width="1" />
+        <line x1="0" y1="200" x2="800" y2="200" stroke="#3b82f6" stroke-width="1" />
+        <line x1="0" y1="300" x2="800" y2="300" stroke="#3b82f6" stroke-width="1" />
+        <line x1="0" y1="400" x2="800" y2="400" stroke="#3b82f6" stroke-width="1" />
+        <line x1="0" y1="500" x2="800" y2="500" stroke="#3b82f6" stroke-width="1" />
+        <line x1="100" y1="0" x2="100" y2="600" stroke="#3b82f6" stroke-width="1" />
+        <line x1="200" y1="0" x2="200" y2="600" stroke="#3b82f6" stroke-width="1" />
+        <line x1="300" y1="0" x2="300" y2="600" stroke="#3b82f6" stroke-width="1" />
+        <line x1="400" y1="0" x2="400" y2="600" stroke="#3b82f6" stroke-width="1" />
+        <line x1="500" y1="0" x2="500" y2="600" stroke="#3b82f6" stroke-width="1" />
+        <line x1="600" y1="0" x2="600" y2="600" stroke="#3b82f6" stroke-width="1" />
+        <line x1="700" y1="0" x2="700" y2="600" stroke="#3b82f6" stroke-width="1" />
+      </g>
+      <!-- Central glowing rings and arcs with animated pulse -->
+      <circle cx="400" cy="300" r="100" fill="none" stroke="url(#ringGlow)" stroke-width="12" opacity="0.6">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="400" cy="300" r="90" fill="none" stroke="#3b82f6" stroke-width="6" opacity="0.5">
+        <animate attributeName="stroke-width" values="6;10;6" dur="2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="400" cy="300" r="80" fill="none" stroke="#6ee7b7" stroke-width="4" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="400" cy="300" r="70" fill="none" stroke="#a78bfa" stroke-width="3" opacity="0.3" />
+      <circle cx="400" cy="300" r="60" fill="none" stroke="#6ee7b7" stroke-width="2" opacity="0.2" />
+      <circle cx="400" cy="300" r="50" fill="none" stroke="#3b82f6" stroke-width="2" opacity="0.2" />
+      <!-- Dashed arcs and segments with animated dash offset -->
+      <circle cx="400" cy="300" r="95" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="16 8" opacity="0.3">
+        <animate attributeName="stroke-dashoffset" values="0;48;0" dur="3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="400" cy="300" r="85" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-dasharray="12 6" opacity="0.3">
+        <animate attributeName="stroke-dashoffset" values="0;36;0" dur="2.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="400" cy="300" r="75" fill="none" stroke="#a78bfa" stroke-width="2" stroke-dasharray="8 4" opacity="0.3">
+        <animate attributeName="stroke-dashoffset" values="0;24;0" dur="2s" repeatCount="indefinite" />
+      </circle>
+      <!-- Layered arcs -->
+      <path d="M400,200 A100,100 0 0,1 500,300" stroke="#3b82f6" stroke-width="3" fill="none" opacity="0.4" />
+      <path d="M400,400 A100,100 0 0,0 300,300" stroke="#6ee7b7" stroke-width="3" fill="none" opacity="0.4" />
+      <path d="M400,220 A80,80 0 0,1 480,300" stroke="#a78bfa" stroke-width="2" fill="none" opacity="0.3" />
+      <path d="M400,380 A80,80 0 0,0 320,300" stroke="#6ee7b7" stroke-width="2" fill="none" opacity="0.3" />
+      <!-- Circuit lines radiating outward, with branches and animated traveling dots -->
+      <path id="line1" d="M400,300 L400,60" stroke="url(#circuitLine)" stroke-width="5" opacity="0.9" />
+      <circle r="7" fill="#6ee7b7">
+        <animateMotion dur="2.5s" repeatCount="indefinite" path="M400,300 L400,60" />
+      </circle>
+      <path id="line2" d="M400,300 L700,100" stroke="url(#circuitLine)" stroke-width="5" opacity="0.9" />
+      <circle r="7" fill="#3b82f6">
+        <animateMotion dur="2.5s" repeatCount="indefinite" path="M400,300 L700,100" />
+      </circle>
+      <path id="line3" d="M400,300 L750,300" stroke="url(#circuitLine)" stroke-width="5" opacity="0.9" />
+      <circle r="7" fill="#a78bfa">
+        <animateMotion dur="2.5s" repeatCount="indefinite" path="M400,300 L750,300" />
+      </circle>
+      <path id="line4" d="M400,300 L700,500" stroke="url(#circuitLine)" stroke-width="5" opacity="0.9" />
+      <circle r="7" fill="#6ee7b7">
+        <animateMotion dur="2.5s" repeatCount="indefinite" path="M400,300 L700,500" />
+      </circle>
+      <path id="line5" d="M400,300 L400,540" stroke="url(#circuitLine)" stroke-width="5" opacity="0.9" />
+      <circle r="7" fill="#3b82f6">
+        <animateMotion dur="2.5s" repeatCount="indefinite" path="M400,300 L400,540" />
+      </circle>
+      <path id="line6" d="M400,300 L100,500" stroke="url(#circuitLine)" stroke-width="5" opacity="0.9" />
+      <circle r="7" fill="#a78bfa">
+        <animateMotion dur="2.5s" repeatCount="indefinite" path="M400,300 L100,500" />
+      </circle>
+      <path id="line7" d="M400,300 L50,300" stroke="url(#circuitLine)" stroke-width="5" opacity="0.9" />
+      <circle r="7" fill="#6ee7b7">
+        <animateMotion dur="2.5s" repeatCount="indefinite" path="M400,300 L50,300" />
+      </circle>
+      <path id="line8" d="M400,300 L100,100" stroke="url(#circuitLine)" stroke-width="5" opacity="0.9" />
+      <circle r="7" fill="#3b82f6">
+        <animateMotion dur="2.5s" repeatCount="indefinite" path="M400,300 L100,100" />
+      </circle>
+      <!-- Circuit branches -->
+      <path d="M400,180 Q410,140 450,120" stroke="#6ee7b7" stroke-width="2.5" fill="none" opacity="0.8" />
+      <path d="M400,180 Q390,140 350,120" stroke="#3b82f6" stroke-width="2.5" fill="none" opacity="0.8" />
+      <path d="M400,420 Q410,460 450,480" stroke="#6ee7b7" stroke-width="2.5" fill="none" opacity="0.8" />
+      <path d="M400,420 Q390,460 350,480" stroke="#3b82f6" stroke-width="2.5" fill="none" opacity="0.8" />
+      <!-- Circuit details: small dots -->
+      <circle cx="400" cy="60" r="7" fill="#6ee7b7" opacity="0.9" />
+      <circle cx="700" cy="100" r="7" fill="#3b82f6" opacity="0.9" />
+      <circle cx="750" cy="300" r="7" fill="#a78bfa" opacity="0.9" />
+      <circle cx="700" cy="500" r="7" fill="#6ee7b7" opacity="0.9" />
+      <circle cx="400" cy="540" r="7" fill="#3b82f6" opacity="0.9" />
+      <circle cx="100" cy="500" r="7" fill="#a78bfa" opacity="0.9" />
+      <circle cx="50" cy="300" r="7" fill="#6ee7b7" opacity="0.9" />
+      <circle cx="100" cy="100" r="7" fill="#3b82f6" opacity="0.9" />
+      <circle cx="450" cy="120" r="5" fill="#6ee7b7" opacity="0.9" />
+      <circle cx="350" cy="120" r="5" fill="#3b82f6" opacity="0.9" />
+      <circle cx="450" cy="480" r="5" fill="#6ee7b7" opacity="0.9" />
+      <circle cx="350" cy="480" r="5" fill="#3b82f6" opacity="0.9" />
+    </svg>
+  </div>
+  <div class="upload-btn-page-wrapper">
+    <label class="upload-btn upload-btn-page">
+      <mat-icon>upload_file</mat-icon> Upload Business PDF
+      <input type="file" style="display:none" (change)="onFileSelected($event)" />
+    </label>
+    <span class="upload-status" *ngIf="uploadStatus">{{ uploadStatus }}</span>
+  </div>
+  <div class="business-owners-layout">
+    <div class="business-list-panel">
+      <div class="business-list-header">
+        <mat-icon>search</mat-icon>
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Search businesses..." />
+      </div>
+      <div class="business-list">
+        <div *ngFor="let business of filteredBusinesses" class="business-list-item" [class.followed]="business.followed">
+          <mat-icon>{{ business.icon }}</mat-icon>
+          <span class="business-name" (click)="selectBusiness(business)">{{ business.name }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="business-chat-panel" *ngIf="selectedBusiness">
+      <div class="chat-header">
+        <mat-icon>{{ selectedBusiness.icon }}</mat-icon>
+        <span class="chat-title">{{ selectedBusiness.name }}</span>
+      </div>
+      <div class="chat-body">
+        <div class="chat-message bot">Welcome to {{ selectedBusiness.name }}! Ask any question about this business or its documents.</div>
+        <div *ngFor="let result of searchResults" class="chat-message bot">
+          <div><b>Match:</b> {{ result.content }}</div>
+          <div class="similarity-score">Similarity: {{ result.similarity | number:'1.2-2' }}</div>
+        </div>
+      </div>
+      <form class="chat-input-row" (ngSubmit)="onSearch()">
+        <input type="text" [(ngModel)]="searchQuery" name="searchQuery" placeholder="Type your question..." [disabled]="isSearching" />
+        <button class="send-btn" type="submit" [disabled]="isSearching">
+          <mat-icon>send</mat-icon>
+        </button>
+      </form>
+    </div>
+    <div class="business-chat-panel" *ngIf="!selectedBusiness">
+      <div class="chat-placeholder">Select a business to start chatting.</div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,227 @@
+// ...existing code...
+.upload-btn-page-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+.upload-btn-page {
+  background: linear-gradient(90deg, #6ee7b7 0%, #a78bfa 100%);
+  color: #232946;
+  border: none;
+  border-radius: 12px;
+  padding: 6px 14px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 #3b82f655;
+  transition: background 0.18s, transform 0.18s;
+  margin-right: 2vw;
+}
+.business-owners-root {
+  position: relative;
+  min-height: 100vh;
+  padding: 80px 2vw 0 2vw; /* Add top margin to move below header */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.business-owners-bg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.circuit-bg {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+.business-owners-layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 2vw;
+  min-height: 80vh;
+  align-items: flex-start;
+}
+.business-list-panel {
+  width: 15%;
+  min-width: 180px;
+  max-width: 240px;
+  background: rgba(35,41,70,0.7);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px 0 #3b82f655;
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+// ...existing code...
+.business-list-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.business-list-header input {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 1rem;
+  background: #23294644;
+  color: #f4f4f8;
+  outline: none;
+}
+.upload-btn {
+  background: linear-gradient(90deg, #6ee7b7 0%, #a78bfa 100%);
+  color: #232946;
+  border: none;
+  border-radius: 12px;
+  padding: 6px 14px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 #3b82f655;
+  transition: background 0.18s, transform 0.18s;
+}
+.upload-btn-top {
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translateY(-50%);
+  margin-top: 0;
+  margin-right: 0;
+  z-index: 2;
+}
+.upload-btn mat-icon {
+  margin-right: 4px;
+}
+.business-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.business-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  background: rgba(59,130,246,0.08);
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.business-list-item.followed {
+  background: rgba(106,231,183,0.18);
+}
+.business-name {
+  font-weight: 600;
+  color: #a78bfa;
+  font-size: 1.08rem;
+}
+.business-chat-panel {
+  flex: 1 1 75%;
+  background: rgba(35,41,70,0.7);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px 0 #3b82f655;
+  padding: 24px 18px;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #6ee7b7;
+  margin-bottom: 8px;
+}
+.chat-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+}
+.chat-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.chat-message {
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  max-width: 80%;
+  background: rgba(59,130,246,0.13);
+  color: #e0e7ef;
+}
+.chat-message.bot {
+  background: rgba(106,231,183,0.18);
+  color: #6ee7b7;
+}
+.chat-message.user {
+  background: rgba(59,130,246,0.18);
+  color: #a78bfa;
+  align-self: flex-end;
+}
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chat-input-row input {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  background: #23294644;
+  color: #f4f4f8;
+  outline: none;
+}
+.send-btn {
+  background: linear-gradient(90deg, #a78bfa 0%, #6ee7b7 100%);
+  color: #232946;
+  border: none;
+  border-radius: 12px;
+  padding: 7px 16px;
+  font-size: 1.08rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 #3b82f655;
+  transition: background 0.18s, transform 0.18s;
+}
+.send-btn mat-icon {
+  margin-left: 2px;
+}
+.chat-placeholder {
+  color: #b5c7e3;
+  font-size: 1.08rem;
+  text-align: center;
+  margin-top: 120px;
+}
+@media (max-width: 900px) {
+  .business-owners-layout {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .business-list-panel {
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+    margin-bottom: 18px;
+  }
+  .business-chat-panel {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 100%;
+    padding: 18px 8px;
+  }
+}
