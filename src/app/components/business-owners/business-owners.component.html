@@ -127,9 +127,35 @@
         <mat-icon>{{ getEntityIcon(selectedBusiness) }}</mat-icon>
         <span class="chat-title">{{ getEntityName(selectedBusiness) }}</span>
       </div>
-      <div class="chat-body">
-        <div class="chat-message bot">Welcome to {{ getEntityName(selectedBusiness) }}!</div>
+      <div class="chat-body" #messagesContainer>
+        <div
+          *ngFor="let msg of chatMessages"
+          class="chat-message"
+          [class.user]="msg.role === 'user'"
+          [class.bot]="msg.role === 'assistant'">
+          {{ msg.text }}
+        </div>
+        <div class="chat-message bot ai-typing" *ngIf="aiThinking">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+        <div class="chat-message bot ai-typing-text" *ngIf="aiTyping">
+          {{ revealText }}<span class="cursor">|</span>
+        </div>
       </div>
+      <form class="chat-input-row" (ngSubmit)="sendMessage()">
+        <input
+          type="text"
+          [(ngModel)]="userInput"
+          name="userInput"
+          placeholder="Ask about this entity..."
+          (keydown)="onEnterSend($event)"
+          [disabled]="aiThinking || aiTyping" />
+        <button class="send-btn" type="submit" [disabled]="!userInput.trim() || aiThinking || aiTyping">
+          <mat-icon>send</mat-icon>
+        </button>
+      </form>
     </div>
     <div class="business-chat-panel" *ngIf="!selectedBusiness">
       <div class="chat-placeholder">Select a business to start chatting.</div>

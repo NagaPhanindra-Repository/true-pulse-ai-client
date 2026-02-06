@@ -1,10 +1,17 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EntityService } from '../../services/entity.service';
-import { CreateEntityResponse, EntityType } from '../../models/entity.model';
+import { CreateEntityResponse } from '../../models/entity.model';
+import { BusinessDocumentService } from '../../services/business-document.service';
+
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  text: string;
+  timestamp: number;
+}
 
 @Component({
   selector: 'app-business-owners',
@@ -20,8 +27,19 @@ export class BusinessOwnersComponent implements OnInit {
   selectedBusiness: CreateEntityResponse | null = null;
   searchTerm = '';
   loading = true;
+  userInput = '';
+  aiThinking = false;
+  aiTyping = false;
+  revealText = '';
+  private typingIntervalId: any = null;
+  chatMessages: ChatMessage[] = [];
 
-  constructor(private entityService: EntityService) {}
+  @ViewChild('messagesContainer') messagesContainer?: ElementRef<HTMLDivElement>;
+
+  constructor(
+    private entityService: EntityService,
+    private docService: BusinessDocumentService
+  ) {}
 
   ngOnInit(): void {
     this.loadRandomEntities();
@@ -42,6 +60,98 @@ export class BusinessOwnersComponent implements OnInit {
 
   selectBusiness(business: CreateEntityResponse) {
     this.selectedBusiness = business;
+    this.clearTyping();
+    this.resetChat();
+  }
+
+  resetChat(): void {
+    if (!this.selectedBusiness) return;
+    this.clearTyping();
+    this.chatMessages = [
+      {
+        role: 'assistant',
+        text: `Welcome to ${this.getEntityName(this.selectedBusiness)}! Ask me anything from the uploaded documents.`,
+        timestamp: Date.now()
+      }
+    ];
+    this.scrollToBottom();
+  }
+
+  sendMessage(): void {
+    if (!this.selectedBusiness) return;
+    const query = this.userInput.trim();
+    if (!query || this.aiThinking) return;
+
+    this.chatMessages.push({ role: 'user', text: query, timestamp: Date.now() });
+    this.userInput = '';
+    this.aiThinking = true;
+    this.scrollToBottom();
+
+    this.docService.searchDocuments(
+      this.selectedBusiness.id,
+      this.selectedBusiness.displayName,
+      query,
+      5
+    ).subscribe({
+      next: (res) => {
+        const answer = res?.answer || 'I could not find an answer in the documents.';
+        this.aiThinking = false;
+        this.startTyping(answer);
+      },
+      error: () => {
+        this.aiThinking = false;
+        this.chatMessages.push({
+          role: 'assistant',
+          text: 'Sorry, I had trouble answering that. Please try again.',
+          timestamp: Date.now()
+        });
+        this.scrollToBottom();
+      }
+    });
+  }
+
+  onEnterSend(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendMessage();
+    }
+  }
+
+  private startTyping(answer: string): void {
+    this.clearTyping();
+    this.aiTyping = true;
+    this.revealText = '';
+    let index = 0;
+    this.typingIntervalId = setInterval(() => {
+      this.revealText += answer.charAt(index);
+      index += 1;
+      if (index % 4 === 0) {
+        this.scrollToBottom();
+      }
+      if (index >= answer.length) {
+        this.clearTyping();
+        this.chatMessages.push({ role: 'assistant', text: answer, timestamp: Date.now() });
+        this.scrollToBottom();
+      }
+    }, 18);
+  }
+
+  private clearTyping(): void {
+    if (this.typingIntervalId) {
+      clearInterval(this.typingIntervalId);
+      this.typingIntervalId = null;
+    }
+    this.aiTyping = false;
+    this.revealText = '';
+  }
+
+  private scrollToBottom(): void {
+    setTimeout(() => {
+      const el = this.messagesContainer?.nativeElement;
+      if (el) {
+        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+      }
+    }, 0);
   }
 
   onSearchTermChange(): void {

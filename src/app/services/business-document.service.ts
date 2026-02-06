@@ -26,16 +26,12 @@ export class BusinessDocumentService {
     return this.http.post(`${this.baseUrl}/upload`, formData);
   }
 
-  searchDocuments(businessId: string, query: string, topK: number, jwt: string): Observable<any> {
+  searchDocuments(entityId: number, displayName: string, query: string, topK: number = 5): Observable<any> {
     return this.http.post(`${this.baseUrl}/search`, {
-      businessId,
+      entityId,
+      displayName,
       query,
       topK
-    }, {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${jwt}`,
-        'Content-Type': 'application/json'
-      })
     });
   }
 }
