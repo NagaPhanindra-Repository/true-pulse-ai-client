@@ -70,7 +70,7 @@ export class BusinessOwnersComponent implements OnInit {
     this.chatMessages = [
       {
         role: 'assistant',
-        text: `Welcome to ${this.getEntityName(this.selectedBusiness)}! Ask me anything from the uploaded documents.`,
+        text: `Welcome to ${this.getEntityName(this.selectedBusiness)}! Ask me anything you want to know.`,
         timestamp: Date.now()
       }
     ];

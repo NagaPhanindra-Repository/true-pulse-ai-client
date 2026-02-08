@@ -1,6 +1,16 @@
 
 <div class="retro-session-overlay">
   <div class="retro-session-modal">
+    <div class="retro-session-topbar">
+      <div class="session-meta">
+        <div class="session-label">Retro session</div>
+        <div class="session-status">{{ sessionStatusLabel }}</div>
+      </div>
+      <button class="pause-session-btn" (click)="pauseSession()" title="Pause session">
+        <span class="material-icons">pause_circle_filled</span>
+        <span class="pause-label">Pause</span>
+      </button>
+    </div>
     <ng-container [ngSwitch]="step">
       <!-- SUMMARY STEP -->
       <ng-container *ngSwitchCase="'summary'">
@@ -46,7 +56,7 @@
               </ng-container>
               <div class="discussion-list">
                 <ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
-                  <div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
+                  <div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="$event.stopPropagation(); !discussionEdit[disc.id!] && startEditDiscussion(disc)">
                     <ng-container *ngIf="!discussionEdit[disc.id!]">
                       <div class="discussion-content">{{ disc.note }}</div>
                       <button class="icon-btn edit-btn" (click)="startEditDiscussion(disc)" title="Edit">
@@ -84,9 +94,14 @@
             <span *ngIf="loading">Analyzing feedback point...</span>
             <span *ngIf="!loading">{{ aiFeedbackAnalysis }}</span>
           </div>
-          <button class="next-btn" [disabled]="!canSaveAndNext()" (click)="onNextStep()">
-            {{ currentFeedbackIndex < feedbackPoints.length - 1 ? 'Save & Next' : 'Finish Retro' }}
-          </button>
+          <div class="retro-feedback-actions">
+            <button class="ghost-btn" [disabled]="currentFeedbackIndex === 0" (click)="onPrevStep()">
+              Previous Point
+            </button>
+            <button class="next-btn" [disabled]="!canSaveAndNext()" (click)="onNextStep()">
+              {{ currentFeedbackIndex < feedbackPoints.length - 1 ? 'Save & Next' : 'Finish Retro' }}
+            </button>
+          </div>
         </div>
       </ng-container>
 

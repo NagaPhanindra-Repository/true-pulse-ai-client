@@ -3,7 +3,14 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { EntityService } from '../../services/entity.service';
-import { CreateEntityResponse, EntityType } from '../../models/entity.model';
+import {
+  BusinessLeaderProfile,
+  BusinessProfile,
+  CelebrityProfile,
+  CreateEntityResponse,
+  EntityType,
+  PoliticianProfile
+} from '../../models/entity.model';
 import { BusinessDocumentService } from '../../services/business-document.service';
 
 interface DetailRow {
@@ -26,6 +33,13 @@ export class MyEntitiesComponent implements OnInit {
   searchTerm = '';
   uploadStatus = '';
   isUploading = false;
+  isEditing = false;
+  isSaving = false;
+  isDeleting = false;
+  profileLoading = false;
+  saveStatus = '';
+  deleteStatus = '';
+  editForm: any = {};
 
   constructor(
     private entityService: EntityService,
@@ -43,6 +57,9 @@ export class MyEntitiesComponent implements OnInit {
       next: entities => {
         this.entities = entities || [];
         this.selectedEntity = this.entities[0] || null;
+        if (this.selectedEntity) {
+          this.loadProfile(this.selectedEntity);
+        }
         this.loading = false;
       },
       error: () => {
@@ -55,6 +72,200 @@ export class MyEntitiesComponent implements OnInit {
   selectEntity(entity: CreateEntityResponse): void {
     this.selectedEntity = entity;
     this.uploadStatus = '';
+    this.saveStatus = '';
+    this.deleteStatus = '';
+    this.isEditing = false;
+    this.loadProfile(entity);
+  }
+
+  loadProfile(entity: CreateEntityResponse): void {
+    this.profileLoading = true;
+    const onDone = () => {
+      this.profileLoading = false;
+      this.syncEntity(entity);
+    };
+
+    if (entity.type === 'BUSINESS') {
+      this.entityService.getBusinessProfile(entity.id).subscribe({
+        next: profile => {
+          entity.businessProfile = profile;
+          onDone();
+        },
+        error: () => onDone()
+      });
+      return;
+    }
+
+    if (entity.type === 'BUSINESS_LEADER') {
+      this.entityService.getBusinessLeaderProfile(entity.id).subscribe({
+        next: profile => {
+          entity.businessLeaderProfile = profile;
+          onDone();
+        },
+        error: () => onDone()
+      });
+      return;
+    }
+
+    if (entity.type === 'POLITICIAN') {
+      this.entityService.getPoliticianProfile(entity.id).subscribe({
+        next: profile => {
+          entity.politicianProfile = profile;
+          onDone();
+        },
+        error: () => onDone()
+      });
+      return;
+    }
+
+    this.entityService.getCelebrityProfile(entity.id).subscribe({
+      next: profile => {
+        entity.celebrityProfile = profile;
+        onDone();
+      },
+      error: () => onDone()
+    });
+  }
+
+  syncEntity(entity: CreateEntityResponse): void {
+    const index = this.entities.findIndex(e => e.id === entity.id);
+    if (index >= 0) {
+      this.entities = this.entities.map((item, i) => (i === index ? { ...item, ...entity } : item));
+    }
+    if (this.selectedEntity?.id === entity.id) {
+      this.selectedEntity = { ...this.selectedEntity, ...entity };
+    }
+  }
+
+  startEdit(): void {
+    if (!this.selectedEntity) return;
+    this.isEditing = true;
+    this.saveStatus = '';
+    this.editForm = this.buildEditForm(this.selectedEntity);
+  }
+
+  cancelEdit(): void {
+    this.isEditing = false;
+    this.saveStatus = '';
+    this.editForm = {};
+  }
+
+  saveEdit(): void {
+    if (!this.selectedEntity) return;
+    this.isSaving = true;
+    this.saveStatus = 'Saving changes...';
+    const entity = this.selectedEntity;
+
+    const onSuccess = (profile: any) => {
+      if (entity.type === 'BUSINESS') entity.businessProfile = profile;
+      if (entity.type === 'BUSINESS_LEADER') entity.businessLeaderProfile = profile;
+      if (entity.type === 'POLITICIAN') entity.politicianProfile = profile;
+      if (entity.type === 'CELEBRITY') entity.celebrityProfile = profile;
+      this.syncEntity(entity);
+      this.isSaving = false;
+      this.isEditing = false;
+      this.saveStatus = 'Profile updated successfully.';
+    };
+
+    const onError = () => {
+      this.isSaving = false;
+      this.saveStatus = 'Update failed. Please try again.';
+    };
+
+    if (entity.type === 'BUSINESS') {
+      const payload: BusinessProfile = {
+        fullName: this.editForm.fullName,
+        address: this.editForm.address,
+        description: this.editForm.description,
+        businessType: this.editForm.businessType,
+        mobileNumber: this.editForm.mobileNumber,
+        countryCode: this.editForm.countryCode,
+        email: this.editForm.email,
+        contactHours: this.editForm.contactHours
+      };
+      this.entityService.upsertBusinessProfile(entity.id, payload).subscribe({ next: onSuccess, error: onError });
+      return;
+    }
+
+    if (entity.type === 'BUSINESS_LEADER') {
+      const payload: BusinessLeaderProfile = {
+        fullName: this.editForm.fullName,
+        company: this.editForm.company,
+        projectName: this.editForm.projectName,
+        projectDescription: this.editForm.projectDescription,
+        mobileNumber: this.editForm.mobileNumber,
+        countryCode: this.editForm.countryCode,
+        email: this.editForm.email,
+        contactHours: this.editForm.contactHours
+      };
+      this.entityService.upsertBusinessLeaderProfile(entity.id, payload).subscribe({ next: onSuccess, error: onError });
+      return;
+    }
+
+    if (entity.type === 'POLITICIAN') {
+      const payload: PoliticianProfile = {
+        fullName: this.editForm.fullName,
+        partyName: this.editForm.partyName,
+        segmentAddress: this.editForm.segmentAddress,
+        contestingTo: this.editForm.contestingTo,
+        description: this.editForm.description,
+        mobileNumber: this.editForm.mobileNumber,
+        countryCode: this.editForm.countryCode,
+        email: this.editForm.email,
+        contactHours: this.editForm.contactHours
+      };
+      this.entityService.upsertPoliticianProfile(entity.id, payload).subscribe({ next: onSuccess, error: onError });
+      return;
+    }
+
+    const payload: CelebrityProfile = {
+      realName: this.editForm.realName,
+      artistName: this.editForm.artistName,
+      artistType: this.editForm.artistType,
+      description: this.editForm.description,
+      mobileNumber: this.editForm.mobileNumber,
+      countryCode: this.editForm.countryCode,
+      email: this.editForm.email,
+      contactHours: this.editForm.contactHours
+    };
+    this.entityService.upsertCelebrityProfile(entity.id, payload).subscribe({ next: onSuccess, error: onError });
+  }
+
+  deleteEntity(): void {
+    if (!this.selectedEntity || this.isDeleting) return;
+    const entity = this.selectedEntity;
+    if (!confirm(`Delete ${entity.displayName}? This will remove the profile details.`)) return;
+    this.isDeleting = true;
+    this.deleteStatus = 'Deleting profile...';
+
+    const onSuccess = () => {
+      this.isDeleting = false;
+      this.deleteStatus = 'Profile deleted.';
+      this.isEditing = false;
+      this.loadEntities();
+    };
+
+    const onError = () => {
+      this.isDeleting = false;
+      this.deleteStatus = 'Delete failed. Please try again.';
+    };
+
+    if (entity.type === 'BUSINESS') {
+      this.entityService.deleteBusinessProfile(entity.id).subscribe({ next: onSuccess, error: onError });
+      return;
+    }
+
+    if (entity.type === 'BUSINESS_LEADER') {
+      this.entityService.deleteBusinessLeaderProfile(entity.id).subscribe({ next: onSuccess, error: onError });
+      return;
+    }
+
+    if (entity.type === 'POLITICIAN') {
+      this.entityService.deletePoliticianProfile(entity.id).subscribe({ next: onSuccess, error: onError });
+      return;
+    }
+
+    this.entityService.deleteCelebrityProfile(entity.id).subscribe({ next: onSuccess, error: onError });
   }
 
   onFileSelected(event: any): void {
@@ -162,5 +373,60 @@ export class MyEntitiesComponent implements OnInit {
     }
 
     return rows;
+  }
+
+  buildEditForm(entity: CreateEntityResponse): any {
+    const profile: any = entity.businessProfile || entity.businessLeaderProfile || entity.politicianProfile || entity.celebrityProfile || {};
+
+    if (entity.type === 'BUSINESS') {
+      return {
+        fullName: profile.fullName || entity.displayName || '',
+        address: profile.address || '',
+        description: profile.description || '',
+        businessType: profile.businessType || '',
+        mobileNumber: profile.mobileNumber || '',
+        countryCode: profile.countryCode || '',
+        email: profile.email || '',
+        contactHours: profile.contactHours || ''
+      };
+    }
+
+    if (entity.type === 'BUSINESS_LEADER') {
+      return {
+        fullName: profile.fullName || entity.displayName || '',
+        company: profile.company || '',
+        projectName: profile.projectName || '',
+        projectDescription: profile.projectDescription || '',
+        mobileNumber: profile.mobileNumber || '',
+        countryCode: profile.countryCode || '',
+        email: profile.email || '',
+        contactHours: profile.contactHours || ''
+      };
+    }
+
+    if (entity.type === 'POLITICIAN') {
+      return {
+        fullName: profile.fullName || entity.displayName || '',
+        partyName: profile.partyName || '',
+        segmentAddress: profile.segmentAddress || '',
+        contestingTo: profile.contestingTo || '',
+        description: profile.description || '',
+        mobileNumber: profile.mobileNumber || '',
+        countryCode: profile.countryCode || '',
+        email: profile.email || '',
+        contactHours: profile.contactHours || ''
+      };
+    }
+
+    return {
+      realName: profile.realName || '',
+      artistName: profile.artistName || entity.displayName || '',
+      artistType: profile.artistType || '',
+      description: profile.description || '',
+      mobileNumber: profile.mobileNumber || '',
+      countryCode: profile.countryCode || '',
+      email: profile.email || '',
+      contactHours: profile.contactHours || ''
+    };
   }
 }

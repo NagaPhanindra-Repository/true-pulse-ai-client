@@ -22,11 +22,21 @@
 	</svg>
 
 	<div class="retro-header" *ngIf="retro; else noRetro">
-		<div class="retro-title dynamic-gradient">{{ retro.title }}</div>
-		<div class="retro-description">{{ retro.description }}</div>
-		<div class="retro-meta">
-			<span>Created: {{ retro.createdAt | date:'medium' }}</span>
-			<span class="retro-id">#{{ retro.id }}</span>
+		<div class="retro-header-row">
+			<div class="retro-header-copy">
+				<div class="retro-title dynamic-gradient">{{ retro.title }}</div>
+				<div class="retro-description">{{ retro.description }}</div>
+			</div>
+			<!-- Start Retro Button -->
+			<div class="start-retro-btn-container" *ngIf="retro && !showSession">
+				<button class="start-retro-btn" [class.paused]="sessionPaused" (click)="startRetroSession()">
+					<span class="material-icons" style="font-size:2.2rem;vertical-align:middle;">play_circle_filled</span>
+					<span class="start-retro-text">
+						<span class="start-retro-title">{{ startRetroLabel }}</span>
+						<span class="start-retro-sub">{{ startRetroSubLabel }}</span>
+					</span>
+				</button>
+			</div>
 		</div>
 	</div>
 
@@ -67,7 +77,7 @@
 										<div class="discussion-list">
 											<!-- <div class="discussion-label">Discussion</div> -->
 											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
-												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
+												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="$event.stopPropagation(); !discussionEdit[disc.id!] && startEditDiscussion(disc)">
 													<ng-container *ngIf="!discussionEdit[disc.id!]">
 														<div class="discussion-content">{{ disc.note }}</div>
 														<button class="icon-btn edit-btn" (click)="startEditDiscussion(disc)" title="Edit">
@@ -141,7 +151,7 @@
 										<div class="discussion-list">
 											<!-- <div class="discussion-label">Discussion</div> -->
 											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
-												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
+												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="$event.stopPropagation(); !discussionEdit[disc.id!] && startEditDiscussion(disc)">
 													<ng-container *ngIf="!discussionEdit[disc.id!]">
 														<div class="discussion-content">{{ disc.note }}</div>
 														<button class="icon-btn edit-btn" (click)="startEditDiscussion(disc)" title="Edit">
@@ -213,7 +223,7 @@
 										<div class="discussion-list">
 											<!-- <div class="discussion-label">Discussion</div> -->
 											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
-												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
+												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="$event.stopPropagation(); !discussionEdit[disc.id!] && startEditDiscussion(disc)">
 													<ng-container *ngIf="!discussionEdit[disc.id!]">
 														<div class="discussion-content">{{ disc.note }}</div>
 														<button class="icon-btn edit-btn" (click)="startEditDiscussion(disc)" title="Edit">
@@ -285,7 +295,7 @@
 										<div class="discussion-list">
 											<!-- <div class="discussion-label">Discussion</div> -->
 											<ng-container *ngFor="let disc of getDiscussionsFor(feedback.id)">
-												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="!discussionEdit[disc.id!] && startEditDiscussion(disc)">
+												<div class="discussion-card" [class.edit-mode]="discussionEdit[disc.id!]" (dblclick)="$event.stopPropagation(); !discussionEdit[disc.id!] && startEditDiscussion(disc)">
 													<ng-container *ngIf="!discussionEdit[disc.id!]">
 														<div class="discussion-content">{{ disc.note }}</div>
 														<button class="icon-btn edit-btn" (click)="startEditDiscussion(disc)" title="Edit">
@@ -387,18 +397,16 @@
 	</div>
 </div>
 
-<!-- Start Retro Button -->
-<div class="start-retro-btn-container" *ngIf="retro && !showSession">
-  <button class="start-retro-btn" (click)="startRetroSession()">
-    <span class="material-icons" style="font-size:2.2rem;vertical-align:middle;">play_circle_filled</span>
-    <span style="font-size:1.2rem;font-weight:600;margin-left:0.5rem;">Start Retro</span>
-  </button>
-</div>
+
 
 <!-- Retro Session Overlay -->
 <app-retro-session
   *ngIf="showSession && retro"
   [retroId]="retro.id"
-  (sessionEnded)="onSessionEnded()">
+	[retroTitle]="retro.title"
+	[initialStep]="sessionPaused ? pausedStep : 'summary'"
+	[initialFeedbackIndex]="sessionPaused ? pausedFeedbackIndex : 0"
+	(sessionPaused)="onSessionPaused($event)"
+	(sessionEnded)="onSessionEnded()">
 </app-retro-session>
 </div>

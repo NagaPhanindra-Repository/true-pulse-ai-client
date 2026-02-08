@@ -18,7 +18,10 @@ export class RetroSessionComponent implements OnInit {
   @Input() retroId!: number;
   @Input() retroTitle: string = '';
   @Input() lanes: string[] = ['LIKED', 'LEARNED', 'LACKED', 'LONGED_FOR'];
+  @Input() initialStep: 'summary' | 'feedback' | 'done' = 'summary';
+  @Input() initialFeedbackIndex: number = 0;
   @Output() sessionEnded = new EventEmitter<void>();
+  @Output() sessionPaused = new EventEmitter<{ step: 'summary' | 'feedback' | 'done'; currentFeedbackIndex: number }>();
 
   retro: any = null;
   feedbackPoints: FeedbackPoint[] = []  ;
@@ -45,9 +48,13 @@ export class RetroSessionComponent implements OnInit {
     private auth: AuthService) {}
 
   ngOnInit() {
+    this.step = this.initialStep || 'summary';
+    this.currentFeedbackIndex = Math.max(0, this.initialFeedbackIndex || 0);
     this.startTimer();
     this.fetchRetroDetails(this.retroId);
-    this.loadRetroSummary();
+    if (this.step === 'summary') {
+      this.loadRetroSummary();
+    }
   }
 
   fetchRetroDetails(retroId: number) {
@@ -67,6 +74,11 @@ export class RetroSessionComponent implements OnInit {
         this.discussions = (data.feedbackPoints || []).flatMap((fp: any) =>
           (fp.discussions || []).map((d: any) => ({ ...d, feedbackPointId: fp.id }))
         );
+        if (this.step === 'feedback') {
+          const maxIndex = Math.max(0, this.feedbackPoints.length - 1);
+          this.currentFeedbackIndex = Math.min(this.currentFeedbackIndex, maxIndex);
+          this.loadFeedbackAnalysis();
+        }
         this.loading = false;
       },
       error: () => {
@@ -133,6 +145,25 @@ export class RetroSessionComponent implements OnInit {
     this.sessionEnded.emit();
   }
 
+  pauseSession() {
+    this.stopTimer();
+    this.sessionPaused.emit({
+      step: this.step,
+      currentFeedbackIndex: this.currentFeedbackIndex
+    });
+  }
+
+  get sessionStatusLabel(): string {
+    if (this.step === 'summary') return 'Summary';
+    if (this.step === 'feedback') {
+      const total = this.feedbackPoints.length;
+      if (total === 0) return 'Feedback';
+      const current = Math.min(this.currentFeedbackIndex + 1, total);
+      return `Feedback ${current} of ${total}`;
+    }
+    return 'Wrap up';
+  }
+
   loadRetroSummary() {
     this.loading = true;
     this.retroService.getRetroAnalysis(this.retroId).subscribe({
@@ -159,6 +190,14 @@ export class RetroSessionComponent implements OnInit {
       } else {
         this.step = 'done';
       }
+    }
+  }
+
+  onPrevStep() {
+    if (this.step !== 'feedback') return;
+    if (this.currentFeedbackIndex > 0) {
+      this.currentFeedbackIndex--;
+      this.loadFeedbackAnalysis();
     }
   }
 

@@ -42,7 +42,7 @@
     </div>
 
     <div class="my-entities-detail-panel" *ngIf="selectedEntity; else emptyDetail">
-      <div class="detail-header">
+      <div class="detail-header" [class.editing]="isEditing">
         <div class="detail-icon" [style.background]="getTypeMeta(selectedEntity.type).color">
           <mat-icon>{{ getTypeMeta(selectedEntity.type).icon }}</mat-icon>
         </div>
@@ -51,6 +51,16 @@
           <div class="detail-subtitle" [style.color]="getTypeMeta(selectedEntity.type).accent">
             {{ getTypeMeta(selectedEntity.type).label }}
           </div>
+        </div>
+        <div class="detail-actions">
+          <button class="ghost-action" (click)="startEdit()" [disabled]="isEditing || profileLoading">
+            <mat-icon>edit</mat-icon>
+            <span>Edit</span>
+          </button>
+          <button class="danger-action" (click)="deleteEntity()" [disabled]="isDeleting">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+          </button>
         </div>
         <div class="upload-section">
           <label class="upload-btn">
@@ -62,11 +72,173 @@
         </div>
       </div>
 
-      <div class="detail-table">
+      <div class="detail-table" *ngIf="!isEditing">
         <div class="detail-row" *ngFor="let row of getDetailRows(selectedEntity)">
           <span class="row-label">{{ row.label }}</span>
           <span class="row-value">{{ row.value }}</span>
         </div>
+      </div>
+
+      <div class="detail-edit" *ngIf="isEditing">
+        <div class="edit-grid">
+          <ng-container [ngSwitch]="selectedEntity.type">
+            <ng-container *ngSwitchCase="'BUSINESS'">
+              <label class="edit-field">
+                <span>Full Name</span>
+                <input type="text" [(ngModel)]="editForm.fullName" placeholder="Business full name" />
+              </label>
+              <label class="edit-field">
+                <span>Address</span>
+                <input type="text" [(ngModel)]="editForm.address" placeholder="Street, city, country" />
+              </label>
+              <label class="edit-field">
+                <span>Business Type</span>
+                <input type="text" [(ngModel)]="editForm.businessType" placeholder="Restaurant, Retail, Service" />
+              </label>
+              <label class="edit-field">
+                <span>Phone</span>
+                <div class="edit-inline">
+                  <input type="text" [(ngModel)]="editForm.countryCode" placeholder="+1" />
+                  <input type="text" [(ngModel)]="editForm.mobileNumber" placeholder="Phone number" />
+                </div>
+              </label>
+              <label class="edit-field">
+                <span>Email</span>
+                <input type="email" [(ngModel)]="editForm.email" placeholder="Email address" />
+              </label>
+              <label class="edit-field">
+                <span>Contact Hours</span>
+                <input type="text" [(ngModel)]="editForm.contactHours" placeholder="Mon-Fri 9AM-6PM" />
+              </label>
+              <label class="edit-field full">
+                <span>Description</span>
+                <textarea rows="3" [(ngModel)]="editForm.description" placeholder="Business description"></textarea>
+              </label>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'BUSINESS_LEADER'">
+              <label class="edit-field">
+                <span>Full Name</span>
+                <input type="text" [(ngModel)]="editForm.fullName" placeholder="Full name" />
+              </label>
+              <label class="edit-field">
+                <span>Company</span>
+                <input type="text" [(ngModel)]="editForm.company" placeholder="Company name" />
+              </label>
+              <label class="edit-field">
+                <span>Project Name</span>
+                <input type="text" [(ngModel)]="editForm.projectName" placeholder="Current project" />
+              </label>
+              <label class="edit-field">
+                <span>Phone</span>
+                <div class="edit-inline">
+                  <input type="text" [(ngModel)]="editForm.countryCode" placeholder="+1" />
+                  <input type="text" [(ngModel)]="editForm.mobileNumber" placeholder="Phone number" />
+                </div>
+              </label>
+              <label class="edit-field">
+                <span>Email</span>
+                <input type="email" [(ngModel)]="editForm.email" placeholder="Email address" />
+              </label>
+              <label class="edit-field">
+                <span>Contact Hours</span>
+                <input type="text" [(ngModel)]="editForm.contactHours" placeholder="Availability" />
+              </label>
+              <label class="edit-field full">
+                <span>Project Description</span>
+                <textarea rows="3" [(ngModel)]="editForm.projectDescription" placeholder="Project description"></textarea>
+              </label>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'POLITICIAN'">
+              <label class="edit-field">
+                <span>Full Name</span>
+                <input type="text" [(ngModel)]="editForm.fullName" placeholder="Full name" />
+              </label>
+              <label class="edit-field">
+                <span>Party Name</span>
+                <input type="text" [(ngModel)]="editForm.partyName" placeholder="Party" />
+              </label>
+              <label class="edit-field">
+                <span>Segment Address</span>
+                <input type="text" [(ngModel)]="editForm.segmentAddress" placeholder="District/segment" />
+              </label>
+              <label class="edit-field">
+                <span>Contesting To</span>
+                <input type="text" [(ngModel)]="editForm.contestingTo" placeholder="Position" />
+              </label>
+              <label class="edit-field">
+                <span>Phone</span>
+                <div class="edit-inline">
+                  <input type="text" [(ngModel)]="editForm.countryCode" placeholder="+1" />
+                  <input type="text" [(ngModel)]="editForm.mobileNumber" placeholder="Phone number" />
+                </div>
+              </label>
+              <label class="edit-field">
+                <span>Email</span>
+                <input type="email" [(ngModel)]="editForm.email" placeholder="Email address" />
+              </label>
+              <label class="edit-field">
+                <span>Contact Hours</span>
+                <input type="text" [(ngModel)]="editForm.contactHours" placeholder="Availability" />
+              </label>
+              <label class="edit-field full">
+                <span>Description</span>
+                <textarea rows="3" [(ngModel)]="editForm.description" placeholder="Description"></textarea>
+              </label>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'CELEBRITY'">
+              <label class="edit-field">
+                <span>Real Name</span>
+                <input type="text" [(ngModel)]="editForm.realName" placeholder="Real name" />
+              </label>
+              <label class="edit-field">
+                <span>Artist Name</span>
+                <input type="text" [(ngModel)]="editForm.artistName" placeholder="Stage name" />
+              </label>
+              <label class="edit-field">
+                <span>Artist Type</span>
+                <input type="text" [(ngModel)]="editForm.artistType" placeholder="Musician, Actor" />
+              </label>
+              <label class="edit-field">
+                <span>Phone</span>
+                <div class="edit-inline">
+                  <input type="text" [(ngModel)]="editForm.countryCode" placeholder="+1" />
+                  <input type="text" [(ngModel)]="editForm.mobileNumber" placeholder="Phone number" />
+                </div>
+              </label>
+              <label class="edit-field">
+                <span>Email</span>
+                <input type="email" [(ngModel)]="editForm.email" placeholder="Email address" />
+              </label>
+              <label class="edit-field">
+                <span>Contact Hours</span>
+                <input type="text" [(ngModel)]="editForm.contactHours" placeholder="Availability" />
+              </label>
+              <label class="edit-field full">
+                <span>Description</span>
+                <textarea rows="3" [(ngModel)]="editForm.description" placeholder="Bio or highlights"></textarea>
+              </label>
+            </ng-container>
+          </ng-container>
+        </div>
+
+        <div class="edit-actions">
+          <div class="edit-status" *ngIf="saveStatus">{{ saveStatus }}</div>
+          <div class="edit-controls">
+            <button class="ghost-action" (click)="cancelEdit()" [disabled]="isSaving">
+              Cancel
+            </button>
+            <button class="primary-action" (click)="saveEdit()" [disabled]="isSaving">
+              {{ isSaving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-row" *ngIf="deleteStatus">
+        {{ deleteStatus }}
       </div>
     </div>
 

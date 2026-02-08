@@ -30,6 +30,9 @@ export class RetroDashboardComponent implements OnInit {
   actionEditValue: { [id: number]: any } = {};
 
   showSession = false;
+  sessionPaused = false;
+  pausedStep: 'summary' | 'feedback' | 'done' = 'summary';
+  pausedFeedbackIndex = 0;
 
   startRetroSession() {
     this.showSession = true;
@@ -37,9 +40,38 @@ export class RetroDashboardComponent implements OnInit {
 
   onSessionEnded() {
     this.showSession = false;
+    this.sessionPaused = false;
+    this.pausedStep = 'summary';
+    this.pausedFeedbackIndex = 0;
     if (this.retro && this.retro.id) {
       this.fetchRetroDetails(this.retro.id);
     }
+  }
+
+  onSessionPaused(state: { step: 'summary' | 'feedback' | 'done'; currentFeedbackIndex: number }) {
+    this.showSession = false;
+    this.sessionPaused = true;
+    this.pausedStep = state.step;
+    this.pausedFeedbackIndex = state.currentFeedbackIndex;
+  }
+
+  get startRetroLabel(): string {
+    return this.sessionPaused ? 'Resume Retro' : 'Start Retro';
+  }
+
+  get startRetroSubLabel(): string {
+    if (!this.sessionPaused) {
+      return 'Start the guided session with AI insights and discussions.';
+    }
+    if (this.pausedStep === 'summary') {
+      return 'Paused at the session summary. Pick up where you left off.';
+    }
+    if (this.pausedStep === 'done') {
+      return 'Paused at the wrap up. Finish the session when you are ready.';
+    }
+    const total = this.feedbackPoints.length;
+    const current = total > 0 ? Math.min(this.pausedFeedbackIndex + 1, total) : 1;
+    return `Paused at feedback point ${current}${total > 0 ? ` of ${total}` : ''}. Pick up where you left off.`;
   }
 
   loadActionItems(): void {

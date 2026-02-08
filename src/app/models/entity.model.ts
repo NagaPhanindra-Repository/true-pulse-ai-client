@@ -1,5 +1,54 @@
 export type EntityType = 'BUSINESS' | 'BUSINESS_LEADER' | 'POLITICIAN' | 'CELEBRITY';
 
+export interface BusinessProfile {
+  entityId?: number;
+  fullName?: string;
+  address?: string;
+  description?: string;
+  businessType?: string;
+  mobileNumber?: string;
+  countryCode?: string;
+  email?: string;
+  contactHours?: string;
+}
+
+export interface BusinessLeaderProfile {
+  entityId?: number;
+  fullName?: string;
+  company?: string;
+  projectName?: string;
+  projectDescription?: string;
+  mobileNumber?: string;
+  countryCode?: string;
+  email?: string;
+  contactHours?: string;
+}
+
+export interface PoliticianProfile {
+  entityId?: number;
+  fullName?: string;
+  partyName?: string;
+  segmentAddress?: string;
+  contestingTo?: string;
+  description?: string;
+  mobileNumber?: string;
+  countryCode?: string;
+  email?: string;
+  contactHours?: string;
+}
+
+export interface CelebrityProfile {
+  entityId?: number;
+  realName?: string;
+  artistName?: string;
+  artistType?: string;
+  description?: string;
+  mobileNumber?: string;
+  countryCode?: string;
+  email?: string;
+  contactHours?: string;
+}
+
 export interface CreateEntityRequest {
   type: EntityType;
   displayName: string;
@@ -54,8 +103,8 @@ export interface CreateEntityResponse {
   createdByUserId: number;
   createdAt: string;
   updatedAt: string;
-  businessProfile?: any;
-  businessLeaderProfile?: any;
-  politicianProfile?: any;
-  celebrityProfile?: any;
+  businessProfile?: BusinessProfile;
+  businessLeaderProfile?: BusinessLeaderProfile;
+  politicianProfile?: PoliticianProfile;
+  celebrityProfile?: CelebrityProfile;
 }

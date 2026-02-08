@@ -703,9 +703,21 @@
 .retro-header {
 	position: relative;
 	z-index: 1;
-	text-align: center;
+	text-align: left;
 	padding: 24px 0 12px 0;
 	margin-top: 56px;
+}
+.retro-header-row {
+	width: min(1100px, 92vw);
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+}
+.retro-header-copy {
+	flex: 1 1 auto;
+	min-width: 0;
 }
 .retro-title {
 	font-size: 1.45rem;
@@ -880,7 +892,7 @@
 	padding: 10px 14px;
 	border-radius: 8px;
 	border: 1.5px solid #bfc8e6;
-	font-size: 1.08rem;
+	font-size: inherit;
 	background: #232946;
 	color: #f4f4f8;
 	transition: border-color 0.2s;
@@ -946,7 +958,7 @@
 	padding: 8px 12px;
 	border-radius: 7px;
 	border: 1.5px solid #bfc8e6;
-	font-size: 1.01rem;
+	font-size: inherit;
 	background: #232946;
 	color: #f4f4f8;
 	transition: border-color 0.2s;
@@ -1088,25 +1100,66 @@
 }
 
 .start-retro-btn-container {
-  display: flex;
-  justify-content: center;
-  margin: 2rem 0 1.5rem 0;
+	display: flex;
+	justify-content: flex-end;
+	margin: 0;
 }
 .start-retro-btn {
   background: linear-gradient(90deg, #3b82f6 0%, #a78bfa 100%);
   color: #fff;
   border: none;
   border-radius: 2rem;
-  padding: 0.8rem 2.5rem;
+	padding: 0.9rem 2.4rem;
   font-size: 1.2rem;
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 2px 12px rgba(59,130,246,0.10);
   display: flex;
   align-items: center;
+	gap: 12px;
   transition: background 0.2s, transform 0.2s;
+}
+.start-retro-btn.paused {
+	background: linear-gradient(90deg, #0ea5e9 0%, #22c55e 100%);
+	box-shadow: 0 6px 20px rgba(34, 197, 94, 0.18);
+}
+.start-retro-text {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
+	text-align: left;
+}
+.start-retro-title {
+	font-size: 1.2rem;
+	font-weight: 700;
+	letter-spacing: 0.2px;
+}
+.start-retro-sub {
+	font-size: 0.92rem;
+	font-weight: 500;
+	color: rgba(255, 255, 255, 0.85);
+	max-width: 520px;
 }
 .start-retro-btn:hover {
   background: linear-gradient(90deg, #a78bfa 0%, #3b82f6 100%);
   transform: scale(1.04);
+}
+.start-retro-btn.paused:hover {
+	background: linear-gradient(90deg, #22c55e 0%, #0ea5e9 100%);
+}
+
+@media (max-width: 900px) {
+	.retro-header-row {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.start-retro-btn-container {
+		width: 100%;
+		justify-content: flex-start;
+	}
+	.start-retro-btn {
+		width: 100%;
+		justify-content: center;
+	}
 }
