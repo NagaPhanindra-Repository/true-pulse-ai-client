@@ -19,7 +19,7 @@
 }
 .dashboard-card h2 {
 	color: #6ee7b7;
-	font-size: 1.3rem;
+	font-size: var(--fs-lg);
 	font-weight: 700;
 	margin-bottom: 8px;
 }
@@ -27,7 +27,7 @@
 	border: none;
 	border-radius: 12px;
 	padding: 12px;
-	font-size: 1rem;
+	font-size: var(--fs-sm);
 	margin-bottom: 8px;
 	background: #23294644;
 	color: #f4f4f8;
@@ -49,7 +49,7 @@
 	border: none;
 	border-radius: 24px;
 	padding: 12px 32px;
-	font-size: 1.1rem;
+	font-size: var(--fs-md);
 	cursor: pointer;
 	box-shadow: 0 2px 12px 0 rgba(59,130,246,0.12);
 	transition: background 0.2s, transform 0.2s;
@@ -58,4 +58,15 @@
 .action-btn:hover {
 	background: linear-gradient(90deg, #3b82f6 0%, #6ee7b7 100%);
 	transform: translateY(-2px) scale(1.04);
+}
+
+@media (max-width: 600px) {
+	.dashboard-card {
+		min-width: 0;
+		max-width: 100%;
+		padding: 20px 18px 18px;
+	}
+	.action-btn {
+		width: 100%;
+	}
 }

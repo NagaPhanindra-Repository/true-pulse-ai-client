@@ -691,7 +691,7 @@
 	background: linear-gradient(135deg, #232946 0%, #3b82f6 100%);
 	color: #f4f4f8;
 	font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-	padding: 0 0 48px 0;
+	padding: clamp(72px, 10vh, 110px) 0 48px 0;
 	overflow: hidden;
 }
 .retro-bg-svg {
@@ -704,8 +704,8 @@
 	position: relative;
 	z-index: 1;
 	text-align: left;
-	padding: 24px 0 12px 0;
-	margin-top: 56px;
+	padding: 12px 0 12px 0;
+	margin-top: 0;
 }
 .retro-header-row {
 	width: min(1100px, 92vw);
@@ -720,7 +720,7 @@
 	min-width: 0;
 }
 .retro-title {
-	font-size: 1.45rem;
+	font-size: var(--fs-xl);
 	font-weight: 800;
 	margin-bottom: 6px;
 	letter-spacing: 0.5px;
@@ -740,12 +740,12 @@
 }
 .retro-description {
 	color: #b5c7e3;
-	font-size: 1.18rem;
+	font-size: var(--fs-sm);
 	margin-bottom: 10px;
 }
 .retro-meta {
 	color: #6ee7b7;
-	font-size: 1rem;
+	font-size: var(--fs-sm);
 	display: flex;
 	justify-content: center;
 	gap: 18px;
@@ -797,14 +797,14 @@
 .retro-lane.lacked { border-top: 5px solid #3b82f6; }
 .retro-lane.longed { border-top: 5px solid #fbbf24; }
 .lane-title {
-	font-size: 1.05rem;
+	font-size: var(--fs-md);
 	font-weight: 700;
 	margin-bottom: 2px;
 	letter-spacing: 0.5px;
 }
 .lane-desc {
 	color: #b5c7e3;
-	font-size: 0.92rem;
+	font-size: var(--fs-xs);
 	margin-bottom: 4px;
 	min-height: 48px;
 	display: flex;
@@ -820,7 +820,7 @@
 	border: none;
 	border-radius: 7px;
 	padding: 7px;
-	font-size: 0.95rem;
+	font-size: var(--fs-sm);
 	background: #23294644;
 	color: #f4f4f8;
 	box-shadow: 0 1px 4px 0 #3b82f622;
@@ -870,6 +870,11 @@
 	border: 1.5px solid #232946;
 	transition: box-shadow 0.18s, border 0.18s;
 }
+.feedback-desc,
+.discussion-content {
+	word-break: break-word;
+	overflow-wrap: anywhere;
+}
 .feedback-card:hover, .feedback-edit-row:hover {
 	box-shadow: 0 6px 24px 0 #3b82f655;
 	border: 1.5px solid #6ee7b7;
@@ -905,10 +910,10 @@
 	background: none;
 	border: none;
 	color: #4f8cff;
-	font-size: 1.08rem;
+	font-size: 0.68rem;
 	font-weight: 600;
 	cursor: pointer;
-	padding: 0 8px;
+	padding: 0 6px;
 	border-radius: 6px;
 	transition: background 0.18s, color 0.18s;
 }
@@ -1042,15 +1047,19 @@
 }
 .edit-btn .material-icons {
 	color: #4f8cff;
-	font-size: 22px;
+	font-size: 11px;
+}
+.delete-btn .material-icons {
+	color: #ff4f4f;
+	font-size: 11px;
 }
 .save-btn .material-icons {
 	color: #2ecc40;
-	font-size: 22px;
+	font-size: 11px;
 }
 .cancel-btn .material-icons {
 	color: #ff4f4f;
-	font-size: 22px;
+	font-size: 11px;
 }
 .add-btn .material-icons {
 	color: #4f8cff;
@@ -1161,5 +1170,41 @@
 	.start-retro-btn {
 		width: 100%;
 		justify-content: center;
+	}
+}
+
+@media (max-width: 900px) {
+	.retro-lanes-container {
+		flex-direction: column;
+	}
+	.retro-lane {
+		width: 100%;
+		min-width: 0;
+	}
+	.action-items-card {
+		width: 100%;
+		margin: 24px 0;
+		padding: 24px 18px;
+	}
+	.action-items-entry-row,
+	.retro-lane.action-items-lane .action-entry-row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+@media (max-width: 600px) {
+	.retro-header {
+		padding: 18px 0 8px 0;
+	}
+	.retro-title {
+		font-size: var(--fs-xl);
+	}
+	.retro-description {
+		font-size: var(--fs-sm);
+	}
+	.action-items-table td {
+		padding: 10px 12px;
+		font-size: var(--fs-sm);
 	}
 }

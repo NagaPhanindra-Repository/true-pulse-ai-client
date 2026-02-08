@@ -1,7 +1,7 @@
 .entity-create-root {
   position: relative;
   min-height: 100vh;
-  padding: 120px 24px 80px;
+  padding: 120px var(--pad-page) 80px;
   background: #0f172a;
   color: #e2e8f0;
   overflow: hidden;
@@ -69,7 +69,7 @@
 }
 
 .entity-hero h1 {
-  font-size: 2.2rem;
+  font-size: var(--fs-xl);
   font-weight: 700;
   color: #f8fafc;
 }
@@ -77,6 +77,7 @@
 .entity-hero p {
   margin-top: 6px;
   color: #cbd5f5;
+  font-size: var(--fs-sm);
 }
 
 .entity-type-grid {
@@ -108,13 +109,13 @@
 }
 
 .card-title {
-  font-size: 1.05rem;
+  font-size: var(--fs-md);
   font-weight: 700;
 }
 
 .card-desc {
   margin-top: 6px;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   color: #cbd5f5;
 }
 
@@ -132,7 +133,7 @@
 }
 
 .section-title {
-  font-size: 1.1rem;
+  font-size: var(--fs-md);
   font-weight: 700;
   margin-bottom: 12px;
   color: #f8fafc;
@@ -148,7 +149,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 0.95rem;
+  font-size: var(--fs-sm);
 }
 
 .field input {
@@ -159,6 +160,7 @@
   color: #f8fafc;
   outline: none;
   transition: border 0.2s ease, box-shadow 0.2s ease;
+  font-size: var(--fs-sm);
 }
 
 .field input:focus {
@@ -233,5 +235,14 @@ button.primary:disabled {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .entity-create-root {
+    padding: 100px 12px 50px;
+  }
+  .entity-type-grid {
+    grid-template-columns: 1fr;
   }
 }

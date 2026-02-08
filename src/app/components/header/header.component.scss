@@ -16,7 +16,7 @@
   }
   .profile-label {
     color: #b5c7e3;
-    font-size: 1.08rem;
+    font-size: 0.86rem;
     font-weight: 600;
     margin-right: 6px;
   }
@@ -36,7 +36,7 @@
       color: #b5c7e3;
       text-decoration: none;
       padding: 10px 22px;
-      font-size: 1rem;
+      font-size: 0.8rem;
       font-weight: 500;
       transition: background 0.2s, color 0.2s;
       border-radius: 8px;
@@ -61,8 +61,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 32px;
+    padding: 0 var(--pad-page);
     height: 72px;
+    gap: 10px;
+    flex-wrap: nowrap;
   }
   .brand {
     display: flex;
@@ -72,7 +74,7 @@
       margin-right: 12px;
     }
     .brand-name {
-      font-size: 1.7rem;
+      font-size: calc(var(--fs-xl) * 0.8);
       font-weight: 700;
       letter-spacing: 1px;
       .ai-gradient {
@@ -84,17 +86,24 @@
   }
   .nav-links {
     display: flex;
-    gap: 28px;
+    gap: clamp(8px, 1.4vw, 20px);
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
     a {
       color: #b5c7e3;
       text-decoration: none;
-      font-size: 1.08rem;
+      font-size: calc(var(--fs-md) * 0.9);
       font-weight: 500;
       transition: color 0.2s;
       &:hover {
         color: #3b82f6;
       }
     }
+  }
+  .nav-links::-webkit-scrollbar {
+    display: none;
   }
   .header-actions {
     .login-btn {
@@ -103,7 +112,7 @@
       border: none;
       border-radius: 8px;
       padding: 8px 22px;
-      font-size: 1rem;
+      font-size: calc(var(--fs-sm) * 0.8);
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s, box-shadow 0.2s;
@@ -118,7 +127,7 @@
       border: none;
       border-radius: 8px;
       padding: 8px 22px;
-      font-size: 1rem;
+      font-size: calc(var(--fs-sm) * 0.8);
       font-weight: 600;
       cursor: pointer;
       margin-left: 12px;
@@ -159,34 +168,32 @@ html, body {
 
 @media (max-width: 900px) {
   .main-header .header-content {
-    flex-direction: column;
-    height: auto;
-    gap: 10px;
-    padding: 0 6px;
+    height: 64px;
+    gap: 8px;
+    padding: 0 8px;
   }
   .main-header .nav-links {
-    gap: 14px;
+    gap: 12px;
   }
 }
 
 @media (max-width: 600px) {
   .main-header .header-content {
-    flex-direction: column;
-    height: auto;
-    gap: 8px;
-    padding: 0 2vw;
+    height: 60px;
+    gap: 6px;
+    padding: 0 8px;
   }
   .main-header .brand-name {
-    font-size: 1.1rem;
+    font-size: calc(var(--fs-lg) * 0.8);
   }
   .main-header .nav-links {
-    gap: 8px;
-    font-size: 0.95rem;
+    gap: 10px;
+    font-size: calc(var(--fs-sm) * 0.8);
   }
   .main-header .header-actions .login-btn,
   .main-header .header-actions .signup-btn {
     padding: 6px 12px;
-    font-size: 0.95rem;
+    font-size: calc(var(--fs-sm) * 0.8);
   }
 }
 

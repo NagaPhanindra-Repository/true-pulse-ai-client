@@ -65,7 +65,7 @@
   text-align: center;
 }
 .retro-feedback-title {
-  font-size: 1.35rem;
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: #a78bfa;
   margin-bottom: 0.5rem;
@@ -95,7 +95,7 @@
 }
 .feedback-desc {
   flex: 1 1 auto;
-  font-size: 1.13rem;
+  font-size: var(--fs-md);
   color: #f4f4f8;
   font-weight: 500;
 }
@@ -125,7 +125,7 @@
   background: none;
   border: none;
   color: #a78bfa;
-  font-size: 1.3rem;
+  font-size: 0.41rem;
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 6px;
@@ -145,7 +145,7 @@
 .icon-btn.save-btn {
   background: #6ee7b7;
   color: #232946;
-  font-size: 1.3rem;
+  font-size: 0.65rem;
   margin-left: 4px;
 }
 .icon-btn.save-btn:hover {
@@ -155,7 +155,7 @@
 .icon-btn.cancel-btn {
   background: #f87171;
   color: #fff;
-  font-size: 1.3rem;
+  font-size: 0.65rem;
   margin-left: 4px;
 }
 .icon-btn.cancel-btn:hover {
@@ -184,7 +184,7 @@
 .discussion-content {
   flex: 1 1 auto;
   color: #e0e7ff;
-  font-size: 1.04rem;
+  font-size: var(--fs-sm);
 }
 .discussion-edit-input {
   width: 100%;
@@ -273,6 +273,27 @@
   flex-direction: column;
   align-items: center;
   animation: popIn 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+@media (max-width: 600px) {
+  .retro-session-modal {
+    width: 100vw;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    padding: 24px 16px 20px;
+  }
+  .feedback-card {
+    padding: 1.1rem 1.2rem 1rem;
+  }
+  .retro-feedback-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ghost-btn,
+  .next-btn {
+    width: 100%;
+  }
 }
 
 @media (max-width: 640px) {

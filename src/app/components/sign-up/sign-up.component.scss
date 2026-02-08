@@ -1,7 +1,7 @@
 .signup-wrapper {
   max-width: 600px;
   margin: 32px auto 18px auto;
-  padding: 18px 12px 12px 12px;
+  padding: 18px var(--pad-page) 12px;
   box-sizing: border-box;
   @extend .glassy-card !optional;
   background: rgba(24, 31, 42, 0.95);
@@ -13,7 +13,7 @@
 }
 .signup-title {
   text-align: center;
-  font-size: 1.5rem;
+  font-size: var(--fs-xl);
   font-weight: 700;
   margin-bottom: 12px;
   letter-spacing: 1px;
@@ -38,7 +38,7 @@ form {
   gap: 3px;
   label {
     color: #b5c7e3;
-    font-size: 0.95rem;
+    font-size: var(--fs-sm);
     font-weight: 500;
     margin-bottom: 1px;
   }
@@ -48,7 +48,7 @@ form {
     border: 1.2px solid #3b82f6;
     background: rgba(35, 43, 62, 0.85);
     color: #f3f6fa;
-    font-size: 0.97rem;
+    font-size: var(--fs-sm);
     outline: none;
     transition: border 0.2s, box-shadow 0.2s;
     box-shadow: 0 1px 6px #3b82f655;
@@ -61,11 +61,11 @@ form {
 .form-row.compact {
   gap: 2px;
   label {
-    font-size: 0.92rem;
+    font-size: var(--fs-xs);
   }
   input, select {
     padding: 6px 8px;
-    font-size: 0.93rem;
+    font-size: var(--fs-xs);
   }
 }
 .checkbox-row {
@@ -79,7 +79,7 @@ form {
   }
   label {
     margin-bottom: 0;
-    font-size: 0.97rem;
+    font-size: var(--fs-sm);
     color: #a78bfa;
   }
 }
@@ -97,7 +97,7 @@ form {
   border: none;
   border-radius: 8px;
   padding: 8px 24px;
-  font-size: 1rem;
+  font-size: var(--fs-md);
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 2px 8px #22c55e55;
@@ -131,7 +131,7 @@ form {
     grid-template-columns: 1fr;
   }
   .signup-title {
-    font-size: 1.1rem;
+    font-size: var(--fs-lg);
   }
   .signup-btn {
     min-width: 90px;

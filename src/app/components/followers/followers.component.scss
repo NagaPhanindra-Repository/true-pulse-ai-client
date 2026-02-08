@@ -199,8 +199,8 @@
   overflow-x: hidden;
   background: transparent;
   box-sizing: border-box;
-  padding-left: 32px;
-  padding-right: 32px;
+  padding-left: var(--pad-page);
+  padding-right: var(--pad-page);
 }
 .animated-bg {
   position: absolute;
@@ -218,7 +218,7 @@
   z-index: 1;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 48px 32px 32px 32px;
+  padding: 48px var(--pad-page) 32px;
   background: rgba(35,41,70,0.75);
   border-radius: 32px;
   box-shadow: 0 8px 32px 0 #3b82f655;
@@ -230,7 +230,7 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .followers-title {
-  font-size: 2.2rem;
+  font-size: var(--fs-xxl);
   font-weight: 800;
   color: #6ee7b7;
   margin-bottom: 18px;
@@ -240,7 +240,7 @@
   margin-top: 32px;
 }
 .followers-subtitle {
-  font-size: 1.3rem;
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: #a78bfa;
   margin-bottom: 12px;
@@ -272,25 +272,29 @@
   gap: 2px;
 }
 .question-title {
-  font-size: 1.1rem;
+  font-size: var(--fs-md);
   font-weight: 700;
   color: #e0e7ff;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 .question-meta {
-  font-size: 0.95rem;
+  font-size: var(--fs-sm);
   color: #6ee7b7;
 }
 .question-date {
-  font-size: 0.85rem;
+  font-size: var(--fs-xs);
   color: #a78bfa;
 }
 .question-desc {
   color: #e0e7ff;
-  font-size: 1.05rem;
+  font-size: var(--fs-sm);
   margin-bottom: 6px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 .question-answers {
-  font-size: 0.98rem;
+  font-size: var(--fs-sm);
   color: #a78bfa;
   margin-bottom: 8px;
 }
@@ -416,4 +420,36 @@
   font-size: 1.13rem;
   margin: 12px 0;
   text-align: center;
+}
+
+@media (max-width: 900px) {
+  .followers-content {
+    padding: 36px var(--pad-page) 24px;
+  }
+  .followers-question-card {
+    padding: 18px 20px;
+  }
+  .custom-modal {
+    padding: 28px 22px 24px;
+    min-width: 0;
+    width: 92vw;
+  }
+}
+
+@media (max-width: 600px) {
+  .followers-content {
+    padding: 28px 16px 20px;
+    border-radius: 20px;
+  }
+  .followers-questions-list {
+    gap: 16px;
+  }
+  .question-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .followers-user-card {
+    min-width: 0;
+    width: 100%;
+  }
 }

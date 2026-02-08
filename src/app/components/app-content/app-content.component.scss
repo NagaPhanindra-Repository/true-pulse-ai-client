@@ -1,7 +1,9 @@
 
 .app-content {
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding-top: clamp(70px, 10vh, 96px);
+  padding-bottom: clamp(60px, 10vh, 96px);
+  padding-left: var(--pad-page);
+  padding-right: var(--pad-page);
   min-height: calc(100vh - 160px);
   box-sizing: border-box;
   width: 100vw;
@@ -49,15 +51,15 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 800;
-  font-size: 2.6rem;
+  font-size: var(--fs-xxl);
 }
 .subtitle {
-  font-size: 1.5rem;
+  font-size: var(--fs-lg);
   font-weight: 600;
   color: #b5c7e3;
 }
 .hero-desc {
-  font-size: 1.1rem;
+  font-size: var(--fs-md);
   color: #e0e7ef;
 }
 .cta-group {
@@ -72,7 +74,7 @@
   border: none;
   border-radius: 24px;
   padding: 12px 32px;
-  font-size: 1.1rem;
+  font-size: var(--fs-md);
   cursor: pointer;
   box-shadow: 0 2px 12px 0 rgba(59,130,246,0.12);
   transition: background 0.2s, transform 0.2s;
@@ -87,7 +89,7 @@
   border: 2px solid #a78bfa;
   border-radius: 24px;
   padding: 12px 28px;
-  font-size: 1.1rem;
+  font-size: var(--fs-md);
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
@@ -100,11 +102,11 @@
   display: flex;
   gap: 32px;
   margin-top: 18px;
-  font-size: 1.1rem;
+  font-size: var(--fs-md);
   color: #b5c7e3;
 }
 .hero-stats span {
-  font-size: 1.3rem;
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: #6ee7b7;
 }
@@ -138,13 +140,13 @@
   margin-bottom: 8px;
 }
 .feature-card h3 {
-  font-size: 1.2rem;
+  font-size: var(--fs-md);
   color: #6ee7b7;
   font-weight: 700;
 }
 .feature-card p {
   color: #e0e7ef;
-  font-size: 1rem;
+  font-size: var(--fs-sm);
 }
 
 .why-section {
@@ -180,13 +182,13 @@
 }
 .why-card h4 {
   color: #a78bfa;
-  font-size: 1.1rem;
+  font-size: var(--fs-md);
   font-weight: 700;
   margin-bottom: 4px;
 }
 .why-card p {
   color: #e0e7ef;
-  font-size: 1rem;
+  font-size: var(--fs-sm);
 }
 
 .demo-section {
@@ -233,7 +235,7 @@
 }
 .demo-caption {
   color: #b5c7e3;
-  font-size: 1.1rem;
+  font-size: var(--fs-md);
   margin-top: 8px;
 }
 
@@ -261,6 +263,10 @@
     padding-top: 64px;
     padding-bottom: 90px;
     min-height: calc(100vh - 154px);
+  }
+  .cta-group {
+    flex-direction: column;
+    align-items: stretch;
   }
   .home-hero {
     padding: 18px 0 12px 0;

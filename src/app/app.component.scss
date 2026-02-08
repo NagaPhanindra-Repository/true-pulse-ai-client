@@ -3,11 +3,14 @@
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+	overflow-x: hidden;
 }
 .app-main-content {
 	flex: 1 0 auto;
 	display: flex;
 	flex-direction: column;
+	min-width: 0;
+	width: 100%;
 }
 app-footer {
 	flex-shrink: 0;

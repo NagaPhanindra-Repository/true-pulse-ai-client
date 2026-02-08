@@ -144,6 +144,7 @@
 	background: linear-gradient(135deg, #232946 0%, #3b82f6 100%);
 	color: #f4f4f8;
 	font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+	padding-top: clamp(78px, 12vh, 128px);
 	padding-bottom: 48px;
 	position: relative;
 	overflow: hidden;
@@ -268,6 +269,52 @@
 .action-btn:hover {
 	background: linear-gradient(90deg, #3b82f6 0%, #6ee7b7 100%);
 	transform: translateY(-2px) scale(1.04);
+}
+
+.dashboard-hero-content h1 {
+	font-size: var(--fs-xxl);
+}
+.dashboard-desc {
+	font-size: var(--fs-md);
+}
+.dashboard-card h2 {
+	font-size: var(--fs-lg);
+}
+.ai-feedback-slideshow {
+	width: 100%;
+	max-width: 520px;
+	min-width: 0;
+}
+.dashboard-card {
+	width: 100%;
+	min-width: 0;
+}
+
+@media (max-width: 1200px) {
+	.dashboard-actions {
+		gap: 20px;
+	}
+}
+
+@media (max-width: 900px) {
+	.dashboard-actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.ai-feedback-slideshow,
+	.dashboard-card {
+		max-width: 100%;
+	}
+}
+
+@media (max-width: 600px) {
+	.dashboard-root {
+		padding: 0 var(--pad-page) 32px;
+	}
+	.ai-feedback-slide,
+	.dashboard-card {
+		padding: 20px 16px 16px;
+	}
 }
 .action-btn.secondary {
 	background: transparent;

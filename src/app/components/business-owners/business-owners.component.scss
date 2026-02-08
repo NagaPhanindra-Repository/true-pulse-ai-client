@@ -22,7 +22,7 @@
 .business-owners-root {
   position: relative;
   min-height: 100vh;
-  padding: 80px 2vw 0 2vw; /* Add top margin to move below header */
+  padding: 80px var(--pad-page) 0; /* Add top margin to move below header */
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -47,7 +47,7 @@
   align-items: flex-start;
 }
 .business-list-panel {
-  width: 15%;
+  width: clamp(200px, 20vw, 260px);
   min-width: 180px;
   max-width: 240px;
   background: rgba(35,41,70,0.7);
@@ -121,7 +121,9 @@
 .business-name {
   font-weight: 600;
   color: #a78bfa;
-  font-size: 1.08rem;
+  font-size: var(--fs-md);
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 .business-chat-panel {
   flex: 1 1 75%;
@@ -140,13 +142,13 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 1.18rem;
+  font-size: var(--fs-lg);
   font-weight: 700;
   color: #6ee7b7;
   margin-bottom: 8px;
 }
 .chat-title {
-  font-size: 1.18rem;
+  font-size: var(--fs-lg);
   font-weight: 700;
 }
 .chat-body {
@@ -163,11 +165,13 @@
 .chat-message {
   padding: 8px 12px;
   border-radius: 10px;
-  font-size: 1.05rem;
+  font-size: var(--fs-md);
   max-width: 80%;
   background: rgba(59,130,246,0.13);
   color: #e0e7ef;
   animation: messageIn 0.25s ease;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 .chat-message.bot {
   background: linear-gradient(135deg, rgba(106,231,183,0.22), rgba(59,130,246,0.18));
@@ -231,7 +235,7 @@
   border: none;
   border-radius: 8px;
   padding: 8px 12px;
-  font-size: 1rem;
+  font-size: var(--fs-sm);
   background: #23294644;
   color: #f4f4f8;
   outline: none;
@@ -242,7 +246,7 @@
   border: none;
   border-radius: 12px;
   padding: 7px 16px;
-  font-size: 1.08rem;
+  font-size: var(--fs-sm);
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 2px 8px 0 #3b82f655;
@@ -253,7 +257,7 @@
 }
 .chat-placeholder {
   color: #b5c7e3;
-  font-size: 1.08rem;
+  font-size: var(--fs-md);
   text-align: center;
   margin-top: 120px;
 }
@@ -273,5 +277,19 @@
     min-width: 0;
     flex: 1 1 100%;
     padding: 18px 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .chat-body {
+    height: 40vh;
+    max-height: 420px;
+  }
+  .chat-input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .send-btn {
+    width: 100%;
   }
 }
