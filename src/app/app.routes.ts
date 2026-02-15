@@ -12,9 +12,11 @@ import { QuestionsComponent } from './components/questions/questions.component';
 import { RetrosComponent } from './components/retros/retros.component';
 import { CreateEntityComponent } from './components/create-entity/create-entity.component';
 import { MyEntitiesComponent } from './components/my-entities/my-entities.component';
+import { AboutFounderComponent } from './components/about-founder/about-founder.component';
 
 export const routes: Routes = [
   { path: '', component: AppContentComponent },
+  { path: 'about', component: AboutFounderComponent },
   { path: 'login', component: LoginInComponent },
   { path: 'signup', component: SignUpComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },

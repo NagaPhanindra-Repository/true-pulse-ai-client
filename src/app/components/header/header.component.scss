@@ -69,9 +69,14 @@
   .brand {
     display: flex;
     align-items: center;
+    text-decoration: none;
+    color: inherit;
+    gap: 12px;
+    &:hover {
+      text-decoration: none;
+    }
     .brand-logo {
       height: 38px;
-      margin-right: 12px;
     }
     .brand-name {
       font-size: calc(var(--fs-xl) * 0.8);
