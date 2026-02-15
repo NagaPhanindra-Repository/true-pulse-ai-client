@@ -11,7 +11,7 @@ export function app(): express.Express {
   const server = express();
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
-  const indexHtml = join(serverDistFolder, 'index.server.html');
+  const indexHtml = join(browserDistFolder, 'index.html');
 
   const commonEngine = new CommonEngine();
 
