@@ -10,7 +10,8 @@ import bootstrap from './src/main.server';
 export function app(): express.Express {
   const server = express();
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-  const browserDistFolder = resolve(serverDistFolder, '../browser');
+  // Use absolute path for browserDistFolder to work both locally and on Render
+  const browserDistFolder = join(process.cwd(), 'dist/true-pulse-ai-client/browser');
   const indexHtml = join(browserDistFolder, 'index.html');
 
   const commonEngine = new CommonEngine();
