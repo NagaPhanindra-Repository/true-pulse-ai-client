@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "build:ssr": "ng build --configuration production && ng run true-pulse-ai-client:server:production",
-    "serve:ssr:true-pulse-ai-client": "node dist/true-pulse-ai-client/server/server.mjs"
+    "serve:ssr:true-pulse-ai-client": "node dist/true-pulse-ai-client/server/main.js"
   },
   "private": true,
   "dependencies": {
