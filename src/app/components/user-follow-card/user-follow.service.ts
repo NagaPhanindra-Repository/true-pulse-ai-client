@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserFollow } from '../../models/user-follow.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UserFollowService {
-  private randomUsersUrl = 'http://localhost:8080/api/user/random';
-  private followUrl = 'http://localhost:8080/api/followers/follow';
+  private randomUsersUrl = environment.apiUrl + '/api/user/random';
+  private followUrl = environment.apiUrl + '/api/followers/follow';
 
   constructor(private http: HttpClient) {}
 

@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { AuthService } from './security/auth.service';
 
 export interface Question {
@@ -15,7 +16,7 @@ export interface Question {
 
 @Injectable({ providedIn: 'root' })
 export class QuestionService {
-  private apiUrl = 'http://localhost:8080/api/questions';
+  private apiUrl = environment.apiUrl + '/api/questions';
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 
@@ -39,7 +40,7 @@ export class QuestionService {
    */
   getMyQuestionsAnalysis(): Observable<any[]> {
     return this.http.get<any[]>(
-      'http://localhost:8080/api/v1/chat/my-questions/analyze',
+      environment.apiUrl + '/api/v1/chat/my-questions/analyze',
       { headers: { 'Content-Type': 'application/json' } }
     );
   }

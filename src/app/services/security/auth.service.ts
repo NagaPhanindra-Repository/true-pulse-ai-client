@@ -7,6 +7,7 @@ import { Observable, of, BehaviorSubject } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { UserModel } from '../../models/user-model';
 import { LoggedInUserModel } from '../../models/logged-in-user.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class AuthService {
   private tokenKey = 'auth_token';
   private userSubject = new BehaviorSubject<LoggedInUserModel | null>(null);
   user$ = this.userSubject.asObservable();
-  private baseUrl = "http://localhost:8080";
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient, private router: Router) {}
 

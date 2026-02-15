@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AiChatRequest, AiChatResponse } from '../../models/ai-chat.model';
 import { SpecificFeedbackRequest } from '../../models/specific-feedback.model';
+import { environment } from '../../../environments/environment';
 
 export interface ChatMessage {
   role: 'user' | 'ai';
@@ -12,8 +13,8 @@ export interface ChatMessage {
 
 @Injectable({ providedIn: 'root' })
 export class AiChatBotService {
-  private apiUrl = 'http://localhost:8080/api/v1/chat/question/analyze';
-  private specificFeedbackUrl = 'http://localhost:8080/api/v1/chat/specific-feedback/analyze';
+  private apiUrl = environment.apiUrl + '/api/v1/chat/question/analyze';
+  private specificFeedbackUrl = environment.apiUrl + '/api/v1/chat/specific-feedback/analyze';
 
   constructor(private http: HttpClient) {}
 

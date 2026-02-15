@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { FeedbackPoint } from '../models/feedback-point.model';
 import { Discussion } from '../models/discussion.model';
 
@@ -8,8 +9,8 @@ import { Discussion } from '../models/discussion.model';
   providedIn: 'root'
 })
 export class FeedbackService {
-  private readonly feedbackUrl = 'http://localhost:8080/api/feedback-points';
-  private readonly discussionUrl = 'http://localhost:8080/api/discussions';
+  private readonly feedbackUrl = environment.apiUrl + '/api/feedback-points';
+  private readonly discussionUrl = environment.apiUrl + '/api/discussions';
 
   constructor(private http: HttpClient) {}
 

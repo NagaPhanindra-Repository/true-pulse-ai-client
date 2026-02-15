@@ -2,15 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Retro } from '../models/retro.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RetroService {
-  private readonly baseUrl = 'http://localhost:8080/api/retros';
+  private readonly baseUrl = environment.apiUrl + '/api/retros';
 
-  private readonly actionItemsUrl = 'http://localhost:8080/api/action-items';
-  private readonly justBaseUrl = 'http://localhost:8080';
+  private readonly actionItemsUrl = environment.apiUrl + '/api/action-items';
+  private readonly justBaseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
