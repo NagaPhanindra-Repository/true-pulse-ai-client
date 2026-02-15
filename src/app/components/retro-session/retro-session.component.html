@@ -34,6 +34,9 @@
             <div class="feedback-card" [class.edit-mode]="feedbackEdit[feedback.id!]" (dblclick)="!feedbackEdit[feedback.id!] && startEditFeedback(feedback)">
               <ng-container *ngIf="!feedbackEdit[feedback.id!]">
                 <div class="feedback-desc-row">
+                  <span class="feedback-type-pill" [attr.data-type]="feedback.type">
+                    {{ getFeedbackTypeLabel(feedback.type) }}
+                  </span>
                   <span class="feedback-desc">{{ feedback.description }}</span>
                   <button class="icon-btn edit-btn" (click)="startEditFeedback(feedback)" title="Edit">
                     <span class="material-icons">edit</span>

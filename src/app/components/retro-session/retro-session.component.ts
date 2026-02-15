@@ -70,7 +70,17 @@ export class RetroSessionComponent implements OnInit {
           createdAt: data.createdAt,
           updatedAt: data.updatedAt
         };
-        this.feedbackPoints = (data.feedbackPoints || []).map((fp: any) => ({ ...fp, discussions: undefined }));
+        const typeOrder = ['LIKED', 'LEARNED', 'LACKED', 'LONGED_FOR'];
+        const typeRank = new Map(typeOrder.map((type, index) => [type, index]));
+        this.feedbackPoints = (data.feedbackPoints || [])
+          .map((fp: any, index: number) => ({ ...fp, discussions: undefined, __orderIndex: index }))
+          .sort((a: any, b: any) => {
+            const rankA = typeRank.get(a.type) ?? Number.MAX_SAFE_INTEGER;
+            const rankB = typeRank.get(b.type) ?? Number.MAX_SAFE_INTEGER;
+            if (rankA !== rankB) return rankA - rankB;
+            return (a.__orderIndex ?? 0) - (b.__orderIndex ?? 0);
+          })
+          .map(({ __orderIndex, ...fp }: any) => fp);
         this.discussions = (data.feedbackPoints || []).flatMap((fp: any) =>
           (fp.discussions || []).map((d: any) => ({ ...d, feedbackPointId: fp.id }))
         );
@@ -162,6 +172,21 @@ export class RetroSessionComponent implements OnInit {
       return `Feedback ${current} of ${total}`;
     }
     return 'Wrap up';
+  }
+
+  getFeedbackTypeLabel(type: FeedbackPoint['type']): string {
+    switch (type) {
+      case 'LIKED':
+        return 'Liked';
+      case 'LEARNED':
+        return 'Learned';
+      case 'LACKED':
+        return 'Lacked';
+      case 'LONGED_FOR':
+        return 'Longed For';
+      default:
+        return type;
+    }
   }
 
   loadRetroSummary() {
