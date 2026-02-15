@@ -47,20 +47,6 @@
         <input id="isVerified" name="isVerified" type="checkbox" [(ngModel)]="user.isVerified" />
         <label for="isVerified">Get Verified</label>
       </div>
-      <div class="form-row">
-        <label for="roleName">Using as</label>
-        <select id="roleName" name="roleName" required [(ngModel)]="user.roleName">
-          <option value="">Select...</option>
-          <option value="ADMIN">Admin</option>
-          <option value="USER">User</option>
-          <option value="BUSINESS">Business</option>
-          <option value="LEADER">Leader</option>
-          <option value="CELEBRITY">Celebrity</option>
-          <option value="RESTAURANT">Restaurant</option>
-          <option value="POLITICIAN">Politician</option>
-          <option value="OTHER">Other</option>
-        </select>
-      </div>
     </div>
     <div *ngIf="error" class="error-message">{{ error }}</div>
     <div *ngIf="success" class="success-message">{{ success }}</div>

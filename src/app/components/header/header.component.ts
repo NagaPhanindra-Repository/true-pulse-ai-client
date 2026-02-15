@@ -18,9 +18,11 @@ export class HeaderComponent {
   showSignUp = false;
   showLogin = false;
   showProfileDropdown = false;
+  showMobileNav = false;
   loginSuccessMessage: string | null = null;
   userName: string | null = null;
   user: LoggedInUserModel | null = null;
+  profilePic: string = 'assets/default-profile.svg';
 
   constructor(public auth: AuthService) {}
 
@@ -30,7 +32,8 @@ export class HeaderComponent {
     }
     this.auth.user$.subscribe(user => {
       this.user = user;
-      this.userName = user?.firstName + ' ' + user?.lastName || null;
+      this.userName = user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.userName || null;
+      this.profilePic = 'assets/default-profile.svg';
     });
   }
 
@@ -38,18 +41,21 @@ export class HeaderComponent {
     return this.auth.isAuthenticated();
   }
 
-  // Placeholder for user profile picture
-  get profilePic(): string {
-    // Replace with actual user profile image logic if available
-    return 'assets/default-profile.png';
+  toggleMobileNav() {
+    this.showMobileNav = !this.showMobileNav;
   }
 
-  toggleProfileDropdown(state: boolean) {
-    this.showProfileDropdown = state;
+  closeMobileNav() {
+    this.showMobileNav = false;
+  }
+
+  toggleProfileDropdown(show: boolean) {
+    this.showProfileDropdown = show;
   }
 
   logout() {
     this.auth.logout();
-    this.showProfileDropdown = false;
+    this.closeMobileNav();
   }
+
 }

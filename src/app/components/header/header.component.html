@@ -4,18 +4,23 @@
       <img src="assets/logo.svg" alt="TruePulse AI Logo" class="brand-logo" />
       <span class="brand-name">TruePulse <span class="ai-gradient">AI</span></span>
     </div>
-    <nav class="nav-links">
-      <a routerLink="/dashboard">Home</a>
-      <a routerLink="/retros">Retros</a>
-      <a routerLink="/questions">Questions</a>
-      <a routerLink="/followers">Followers</a>
-      <a routerLink="/business">Business</a>
-      <a routerLink="/entities/create">Create Entity</a>
-      <a routerLink="/entities/my">My Entities</a>
+    <!-- Hamburger menu for mobile -->
+    <button class="hamburger" (click)="toggleMobileNav()" *ngIf="isLoggedIn">
+      <span></span><span></span><span></span>
+    </button>
+    <!-- Navigation links, only for logged in users -->
+    <nav class="nav-links" [class.mobile-open]="showMobileNav" *ngIf="isLoggedIn">
+      <a routerLink="/dashboard" (click)="closeMobileNav()">Home</a>
+      <a routerLink="/retros" (click)="closeMobileNav()">Retros</a>
+      <a routerLink="/questions" (click)="closeMobileNav()">Questions</a>
+      <a routerLink="/followers" (click)="closeMobileNav()">Followers</a>
+      <a routerLink="/business" (click)="closeMobileNav()">Business</a>
+      <a routerLink="/entities/create" (click)="closeMobileNav()">Create Entity</a>
+      <a routerLink="/entities/my" (click)="closeMobileNav()">My Entities</a>
     </nav>
     <div class="header-actions">
       <ng-container *ngIf="!isLoggedIn; else loggedInBlock">
-        <button class="login-btn" (click)="showLogin = true">Login In</button>
+        <button class="login-btn" (click)="showLogin = true">Login</button>
         <button class="signup-btn" (click)="showSignUp = true">Sign Up</button>
       </ng-container>
       <ng-template #loggedInBlock>

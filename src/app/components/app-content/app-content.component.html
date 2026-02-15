@@ -1,4 +1,20 @@
 <div class="app-content home-page">
+  <!-- Sign Up Modal -->
+  <div class="signup-modal" *ngIf="showSignUp">
+    <div class="signup-modal-backdrop" (click)="closeSignUpModal()"></div>
+    <div class="signup-modal-content">
+      <button class="signup-modal-close" (click)="closeSignUpModal()">×</button>
+      <app-sign-up (signupSuccess)="onSignUpSuccess($event)"></app-sign-up>
+    </div>
+  </div>
+  <!-- Login Modal -->
+  <div class="signup-modal" *ngIf="showLogin">
+    <div class="signup-modal-backdrop" (click)="closeLoginModal()"></div>
+    <div class="signup-modal-content">
+      <button class="signup-modal-close" (click)="closeLoginModal()">×</button>
+      <app-login-in [successMessage]="loginSuccessMessage" (closeLogin)="closeLoginModal()"></app-login-in>
+    </div>
+  </div>
   <!-- Animated Hero Section -->
   <section class="home-hero">
     <div class="hero-graphic animated">
