@@ -4,10 +4,6 @@
       <img src="assets/logo.svg" alt="TruePulse AI Logo" class="brand-logo" />
       <span class="brand-name">TruePulse <span class="ai-gradient">AI</span></span>
     </a>
-    <!-- Hamburger menu for mobile -->
-    <button class="hamburger" (click)="toggleMobileNav()" *ngIf="isLoggedIn">
-      <span></span><span></span><span></span>
-    </button>
     <!-- Navigation links, only for logged in users -->
     <nav class="nav-links" [class.mobile-open]="showMobileNav" *ngIf="isLoggedIn">
       <a routerLink="/dashboard" (click)="closeMobileNav()">Home</a>
@@ -24,6 +20,9 @@
         <button class="signup-btn" (click)="showSignUp = true">Sign Up</button>
       </ng-container>
       <ng-template #loggedInBlock>
+        <button class="hamburger" (click)="toggleMobileNav()" aria-label="Open navigation">
+          <span></span><span></span><span></span>
+        </button>
         <div class="profile-menu-wrapper"
              (mouseenter)="toggleProfileDropdown(true)"
              (mouseleave)="toggleProfileDropdown(false)">

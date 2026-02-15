@@ -226,11 +226,11 @@ html, body {
     height: 60px;
     gap: 6px;
     padding: 0 8px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
   .main-header .brand {
-    flex: 1 1 120px;
-    min-width: 120px;
+    flex: 0 1 auto;
+    min-width: 0;
   }
   .main-header .brand-name {
     font-size: calc(var(--fs-lg) * 0.8);
@@ -241,13 +241,26 @@ html, body {
   .main-header .nav-links.mobile-open {
     display: flex;
   }
+  .main-header .hamburger {
+    display: flex;
+    margin-left: 0;
+  }
+  .main-header .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .main-header .profile-menu-wrapper .profile-label {
+    display: none;
+  }
+  .main-header .profile-menu-wrapper .profile-pic {
+    width: 34px;
+    height: 34px;
+  }
   .main-header .header-actions .login-btn,
   .main-header .header-actions .signup-btn {
     padding: 6px 12px;
     font-size: calc(var(--fs-sm) * 0.8);
-  }
-  .hamburger {
-    display: flex;
   }
 }
 
