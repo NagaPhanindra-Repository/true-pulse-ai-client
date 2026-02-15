@@ -45,7 +45,9 @@ export function app(): express.Express {
   return server;
 }
 
+
 function run(): void {
+  console.log('run() function in server.ts called');
   try {
     const port = process.env['PORT'] || 4000;
     // Start up the Node server
@@ -53,6 +55,7 @@ function run(): void {
     server.listen(port, () => {
       console.log(`Node Express server listening on http://localhost:${port}`);
     });
+    console.log('server.listen() called, waiting for connections...');
   } catch (err) {
     console.error('Error starting server:', err);
     process.exit(1);
