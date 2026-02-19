@@ -21,7 +21,7 @@ export const routes: Routes = [
   { path: 'signup', component: SignUpComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'retros', component: RetrosComponent, canActivate: [AuthGuard] },
-  { path: 'retro-dashboard/:id', component: RetroDashboardComponent, },
+  { path: 'retro-dashboard/:id', component: RetroDashboardComponent },
   { path: 'questions', component: QuestionsComponent, canActivate: [AuthGuard] },
   { path: 'followers', component: FollowersComponent, canActivate: [AuthGuard] },
   { path: 'business', component: BusinessOwnersComponent },

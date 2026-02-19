@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -157,22 +158,26 @@ export class RetroDashboardComponent implements OnInit {
     private route: ActivatedRoute,
     private feedbackService: FeedbackService,
     private retroService: RetroService,
-    private auth: AuthService
+    private auth: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
-    // Try to get retro id from route params
-    this.route.paramMap.subscribe(params => {
-      const retroId = params.get('id');
-      if (retroId) {
-        this.fetchRetroDetails(retroId);
-      } else if (history.state && history.state.retro) {
-        // fallback for navigation state (e.g. after create)
-        this.retro = history.state.retro;
-        this.loadFeedbackPoints();
-        this.loadDiscussions();
-      }
-    });
+    // Only fetch data in browser, not during SSR
+    if (isPlatformBrowser(this.platformId)) {
+      // Try to get retro id from route params
+      this.route.paramMap.subscribe(params => {
+        const retroId = params.get('id');
+        if (retroId) {
+          this.fetchRetroDetails(retroId);
+        } else if (history.state && history.state.retro) {
+          // fallback for navigation state (e.g. after create)
+          this.retro = history.state.retro;
+          this.loadFeedbackPoints();
+          this.loadDiscussions();
+        }
+      });
+    }
   }
 
 
