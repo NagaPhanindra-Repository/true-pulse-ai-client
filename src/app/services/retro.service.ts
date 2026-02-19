@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class RetroService {
   private readonly baseUrl = environment.apiUrl + '/api/retros';
 
-  private readonly actionItemsUrl = environment.apiUrl + '/api/action-items';
+  private readonly actionItemsUrl = environment.apiUrl + '/api/public/action-items';
   private readonly justBaseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
@@ -23,7 +23,7 @@ export class RetroService {
    * Get all retro details (retro, feedbackPoints, discussions, actionItems, questions) by id
    */
   getRetroDetails(retroId: string | number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/${retroId}/details`);
+    return this.http.get<any>(`${this.baseUrl}/public/${retroId}/details`);
   }
 
   getMyRetros(): Observable<any[]> {
@@ -46,10 +46,10 @@ export class RetroService {
   }
 
     getRetroAnalysis(retroId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${retroId}/analysis`);
+    return this.http.get(`${this.baseUrl}/public/${retroId}/analysis`);
   }
 
   getFeedbackPointAnalysis(retroId: number, feedbackPointId: number): Observable<any> {
-    return this.http.post(`${this.justBaseUrl}/api/feedback-points/analysis`, { retroId, feedbackPointId });
+    return this.http.post(`${this.justBaseUrl}/api/public/feedback-points/analysis`, { retroId, feedbackPointId });
   }
 }

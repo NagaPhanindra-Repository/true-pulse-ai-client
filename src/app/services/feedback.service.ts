@@ -9,8 +9,8 @@ import { Discussion } from '../models/discussion.model';
   providedIn: 'root'
 })
 export class FeedbackService {
-  private readonly feedbackUrl = environment.apiUrl + '/api/feedback-points';
-  private readonly discussionUrl = environment.apiUrl + '/api/discussions';
+  private readonly feedbackUrl = environment.apiUrl + '/api/public/feedback-points';
+  private readonly discussionUrl = environment.apiUrl + '/api/public/discussions';
 
   constructor(private http: HttpClient) {}
 

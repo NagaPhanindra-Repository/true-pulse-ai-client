@@ -26,11 +26,11 @@ export class EntityService {
   }
 
   getRandomEntities(limit: number = 10): Observable<CreateEntityResponse[]> {
-    return this.http.get<CreateEntityResponse[]>(`${this.baseUrl}/entities/random?limit=${limit}`);
+    return this.http.get<CreateEntityResponse[]>(`${this.baseUrl}/entities/public/random?limit=${limit}`);
   }
 
   searchEntities(query: string): Observable<CreateEntityResponse[]> {
-    return this.http.get<CreateEntityResponse[]>(`${this.baseUrl}/entities/search?q=${encodeURIComponent(query)}`);
+    return this.http.get<CreateEntityResponse[]>(`${this.baseUrl}/entities/public/search?q=${encodeURIComponent(query)}`);
   }
 
   getBusinessProfile(entityId: number): Observable<BusinessProfile> {
