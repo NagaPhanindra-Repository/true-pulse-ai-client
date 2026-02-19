@@ -22,13 +22,12 @@ export function app(): express.Express {
   // Example Express Rest API endpoints
   // server.get('/api/**', (req, res) => { });
   // Serve static files from /browser
-  server.get('**', express.static(browserDistFolder, {
-    maxAge: '1y',
-    index: 'index.html',
+  server.use('*.*', express.static(browserDistFolder, {
+    maxAge: '1y'
   }));
 
   // All regular routes use the Angular engine
-  server.get('**', (req, res, next) => {
+  server.get('*', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
 
     commonEngine
@@ -40,7 +39,11 @@ export function app(): express.Express {
         providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
       })
       .then((html) => res.send(html))
-      .catch((err) => next(err));
+      .catch((err) => {
+        console.error('SSR Error:', err);
+        // Send a fallback HTML with basic structure to avoid 500
+        res.status(200).sendFile(indexHtml);
+      });
   });
 
   return server;

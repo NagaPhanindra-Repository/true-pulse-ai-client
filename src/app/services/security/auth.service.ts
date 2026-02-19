@@ -72,6 +72,9 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
+    // Return false during SSR
+    if (typeof window === 'undefined') return false;
+    
     const token = this.getToken();
     if (!token) return false;
     // Check token expiry (JWT)
@@ -83,6 +86,9 @@ export class AuthService {
   }
 
   private decodeToken(token: string): any {
+    // Return null during SSR since atob is not available
+    if (typeof window === 'undefined') return null;
+    
     try {
       const payload = token.split('.')[1];
       return JSON.parse(atob(payload));

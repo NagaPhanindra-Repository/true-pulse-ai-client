@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SignUpComponent } from '../sign-up/sign-up.component';
@@ -24,10 +25,11 @@ export class HeaderComponent {
   user: LoggedInUserModel | null = null;
   profilePic: string = 'assets/default-profile.svg';
 
-  constructor(public auth: AuthService) {}
+  constructor(public auth: AuthService, @Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit() {
-    if (this.auth.isAuthenticated() && !this.auth.user) {
+    // Only fetch user details in browser, not during SSR
+    if (isPlatformBrowser(this.platformId) && this.auth.isAuthenticated() && !this.auth.user) {
       this.auth.fetchUserDetails().subscribe();
     }
     this.auth.user$.subscribe(user => {
