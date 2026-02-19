@@ -136,8 +136,14 @@ export class RetroSessionComponent implements OnInit {
   deleteDiscussion(disc: Discussion) {
     if (!disc.id) return;
     if (!confirm('Are you sure you want to delete this discussion?')) return;
-    this.feedbackService.deleteDiscussion(disc.id).subscribe(() => {
-      this.fetchRetroDetails(this.retroId);
+    this.feedbackService.deleteDiscussion(disc.id).subscribe({
+      next: () => {
+        console.log('Discussion deleted successfully');
+        this.fetchRetroDetails(this.retroId);
+      },
+      error: (err) => {
+        console.error('Error deleting discussion:', err);
+      }
     });
   }
 
@@ -233,16 +239,32 @@ export class RetroSessionComponent implements OnInit {
 
   addDiscussion(feedback: FeedbackPoint) {
     const note = this.discussionEntry[feedback.id!]?.trim();
-     const user = this.auth.user;
-    if (!note || !user?.id) return;
+    if (!note) {
+      console.error('Cannot add discussion - missing note');
+      return;
+    }
+    
+    // Try to get logged-in user ID, fallback to retro creator ID
+    const userId = this.auth.user?.id || this.retro?.userId;
+    if (!userId) {
+      console.error('Cannot add discussion - user ID not found and no retro user ID available');
+      return;
+    }
+    
     const discussion: Discussion = {
       note,
       feedbackPointId: feedback.id!,
-      userId: user.id
+      userId: userId
     };
-    this.feedbackService.createDiscussion(discussion).subscribe(() => {
-      this.fetchRetroDetails(this.retroId);
-      this.discussionEntry[feedback.id!] = '';
+    this.feedbackService.createDiscussion(discussion).subscribe({
+      next: () => {
+        console.log('Discussion added successfully', { userId: userId });
+        this.fetchRetroDetails(this.retroId);
+        this.discussionEntry[feedback.id!] = '';
+      },
+      error: (err) => {
+        console.error('Error adding discussion:', err);
+      }
     });
   }
 
@@ -254,14 +276,32 @@ export class RetroSessionComponent implements OnInit {
 
   saveEditDiscussion(disc: Discussion) {
     const newNote = this.discussionEditValue[disc.id!]?.trim();
-    if (!newNote) return;
+    if (!newNote) {
+      console.error('Cannot save discussion - missing note');
+      return;
+    }
+    
+    // Try to get logged-in user ID, fallback to retro creator ID or original discussion user ID
+    const userId = this.auth.user?.id || this.retro?.userId || disc.userId;
+    if (!userId) {
+      console.error('Cannot save discussion - user ID not found');
+      return;
+    }
+    
     const updated: Discussion = {
       ...disc,
-      note: newNote
+      note: newNote,
+      userId: userId
     };
-    this.feedbackService.updateDiscussion(disc.id!, updated).subscribe(() => {
-      this.discussionEdit[disc.id!] = false;
-      this.fetchRetroDetails(this.retroId);
+    this.feedbackService.updateDiscussion(disc.id!, updated).subscribe({
+      next: () => {
+        console.log('Discussion updated successfully', { userId: userId });
+        this.discussionEdit[disc.id!] = false;
+        this.fetchRetroDetails(this.retroId);
+      },
+      error: (err) => {
+        console.error('Error updating discussion:', err);
+      }
     });
   }
 
