@@ -570,6 +570,134 @@
 	background: #232946;
 	color: #f87171;
 }
+
+// Past Action Items Section
+.past-action-items-card {
+	width: 90%;
+	background: rgba(35, 41, 70, 0.95);
+	border-radius: 22px;
+	box-shadow: 0 4px 32px 0 rgba(245, 158, 11, 0.15);
+	padding: 32px 32px 24px 32px;
+	margin: 24px 24px 32px 24px;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	border: 2px solid rgba(245, 158, 11, 0.2);
+}
+
+.past-action-items-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+
+.past-action-items-title {
+	font-size: 2.1rem;
+	font-weight: 700;
+	color: #f59e0b;
+	letter-spacing: 0.5px;
+	display: flex;
+	align-items: center;
+}
+
+.past-action-items-count-badge {
+	background: linear-gradient(90deg, #f59e0b 0%, #fb923c 100%);
+	color: #fff;
+	padding: 6px 16px;
+	border-radius: 20px;
+	font-size: 0.95rem;
+	font-weight: 700;
+	box-shadow: 0 2px 8px 0 rgba(245, 158, 11, 0.3);
+}
+
+.past-action-items-desc {
+	font-size: 1.09rem;
+	color: #e0e7ff;
+	margin-bottom: 22px;
+	opacity: 0.9;
+}
+
+.past-action-items-table-container {
+	width: 100%;
+	background: transparent;
+	border-radius: 0 0 18px 18px;
+	box-shadow: none;
+	padding: 0;
+	margin: 0;
+}
+
+.past-action-items-table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0 10px;
+	background: transparent;
+	margin: 0;
+}
+
+.past-action-items-table tr {
+	background: rgba(35, 41, 70, 0.98);
+	border-radius: 16px;
+	box-shadow: 0 2px 12px 0 rgba(245, 158, 11, 0.15);
+	transition: box-shadow 0.18s, background 0.18s;
+	position: relative;
+	overflow: hidden;
+	border-left: 3px solid rgba(245, 158, 11, 0.5);
+}
+
+.past-action-items-table tr:not(.edit-mode):hover {
+	background: rgba(245, 158, 11, 0.1);
+	box-shadow: 0 6px 24px 0 rgba(245, 158, 11, 0.3);
+	border-left: 3px solid #f59e0b;
+}
+
+.past-action-items-table td {
+	border: none;
+	padding: 14px 20px;
+	font-size: 1.09rem;
+	color: #f4f4f8;
+	vertical-align: middle;
+	background: none;
+}
+
+.past-action-retro-cell {
+	min-width: 100px;
+}
+
+.past-retro-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	background: linear-gradient(90deg, #f59e0b 0%, #fb923c 100%);
+	color: #fff;
+	padding: 4px 12px;
+	border-radius: 12px;
+	font-size: 0.9rem;
+	font-weight: 700;
+	box-shadow: 0 2px 8px 0 rgba(245, 158, 11, 0.3);
+	white-space: nowrap;
+}
+
+.past-retro-badge-inline {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	background: linear-gradient(90deg, #f59e0b 0%, #fb923c 100%);
+	color: #fff;
+	padding: 6px 14px;
+	border-radius: 12px;
+	font-size: 0.95rem;
+	font-weight: 700;
+	box-shadow: 0 2px 8px 0 rgba(245, 158, 11, 0.3);
+	white-space: nowrap;
+	margin-right: 12px;
+}
+
+.action-due.overdue {
+	color: #f87171 !important;
+	font-weight: 700;
+}
+
 // Reduced font size for feedback point card
 .feedback-point-card {
 	background: #232946cc;
@@ -1108,11 +1236,43 @@
 	}
 }
 
-.start-retro-btn-container {
+.retro-action-buttons {
 	display: flex;
 	justify-content: flex-end;
+	align-items: center;
+	gap: 16px;
 	margin: 0;
 }
+
+.export-pdf-btn {
+	background: linear-gradient(90deg, #ef4444 0%, #f97316 100%);
+	color: #fff;
+	border: none;
+	border-radius: 1.2rem;
+	padding: 0.75rem 1.8rem;
+	font-size: 1.05rem;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 2px 12px rgba(239, 68, 68, 0.15);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+	white-space: nowrap;
+}
+
+.export-pdf-btn:hover {
+	background: linear-gradient(90deg, #dc2626 0%, #ea580c 100%);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 20px rgba(239, 68, 68, 0.25);
+}
+
+.export-pdf-text {
+	font-size: 1.05rem;
+	font-weight: 600;
+	letter-spacing: 0.3px;
+}
+
 .start-retro-btn {
   background: linear-gradient(90deg, #3b82f6 0%, #a78bfa 100%);
   color: #fff;
@@ -1163,9 +1323,15 @@
 		flex-direction: column;
 		align-items: flex-start;
 	}
-	.start-retro-btn-container {
+	.retro-action-buttons {
 		width: 100%;
 		justify-content: flex-start;
+		flex-direction: column;
+	}
+	.export-pdf-btn {
+		width: 100%;
+		justify-content: center;
+		padding: 0.85rem 1.5rem;
 	}
 	.start-retro-btn {
 		width: 100%;

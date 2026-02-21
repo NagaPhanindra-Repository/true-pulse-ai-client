@@ -34,6 +34,10 @@ export class RetroService {
     return this.http.get<any[]>(`${this.actionItemsUrl}/retro/${retroId}`);
   }
 
+  getActionItemsWithPast(retroId: string | number): Observable<{currentRetroActionItems: any[], pastRetroActionItems: any[]}> {
+    return this.http.get<{currentRetroActionItems: any[], pastRetroActionItems: any[]}>(`${this.actionItemsUrl}/retro/${retroId}/with-past`);
+  }
+
   createActionItem(actionItem: any): Observable<any> {
     return this.http.post<any>(this.actionItemsUrl, actionItem);
   }

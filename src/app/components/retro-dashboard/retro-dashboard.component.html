@@ -27,14 +27,22 @@
 				<div class="retro-title dynamic-gradient">{{ retro.title }}</div>
 				<div class="retro-description">{{ retro.description }}</div>
 			</div>
-			<!-- Start Retro Button -->
-			<div class="start-retro-btn-container" *ngIf="retro && !showSession">
+			<!-- Action Buttons Container -->
+			<div class="retro-action-buttons" *ngIf="retro && !showSession">
+
+				<!-- Start Retro Button -->
 				<button class="start-retro-btn" [class.paused]="sessionPaused" (click)="startRetroSession()">
 					<span class="material-icons" style="font-size:2.2rem;vertical-align:middle;">play_circle_filled</span>
 					<span class="start-retro-text">
 						<span class="start-retro-title">{{ startRetroLabel }}</span>
 						<span class="start-retro-sub">{{ startRetroSubLabel }}</span>
 					</span>
+				</button>
+
+								<!-- Export PDF Button -->
+				<button class="export-pdf-btn" (click)="exportToPDF()" title="Export to PDF">
+					<span class="material-icons" style="font-size:1.8rem;vertical-align:middle;">picture_as_pdf</span>
+					<span class="export-pdf-text">Export PDF</span>
 				</button>
 			</div>
 		</div>
@@ -384,6 +392,79 @@
 								<input class="action-edit-input" type="text" [(ngModel)]="actionEditValue[item.id].assignedUserName" placeholder="Assign to (username)" />
 								<button class="icon-btn save-btn" (click)="saveEditAction(item)" title="Save"><span class="material-icons">check_circle</span></button>
 								<button class="icon-btn cancel-btn" (click)="cancelEditAction(item)" title="Cancel"><span class="material-icons">cancel</span></button>
+							</div>
+						</td>
+					</ng-container>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- Past Retro Action Items Section -->
+<div class="past-action-items-card" *ngIf="retro && pastActionItems.length > 0">
+	<div class="past-action-items-header">
+		<div class="past-action-items-title">
+			<span class="material-icons" style="vertical-align: middle; margin-right: 8px; color: #f59e0b;">history</span>
+			Pending Items from Past Retros
+		</div>
+		<div class="past-action-items-count-badge">{{ pastActionItems.length }} {{ pastActionItems.length === 1 ? 'item' : 'items' }}</div>
+	</div>
+	<div class="past-action-items-desc">
+		Carry-over action items from your previous retros that are still in progress or not yet started. Update their status or complete them here.
+	</div>
+	
+	<div class="past-action-items-table-container">
+		<table class="past-action-items-table">
+			<tbody>
+				<tr *ngFor="let item of pastActionItems" [class.edit-mode]="pastActionEdit[item.id]">
+					<ng-container *ngIf="!pastActionEdit[item.id]">
+						<td class="past-action-retro-cell">
+							<span class="past-retro-badge" title="From Retro #{{ item.retroId }}">
+								<span class="material-icons" style="font-size: 14px; vertical-align: middle;">flag</span>
+								#{{ item.retroId }}
+							</span>
+						</td>
+						<td class="action-desc-cell">
+							<span class="action-desc">{{ item.description }}</span>
+						</td>
+						<td class="action-due-cell">
+							<span class="action-due" [class.overdue]="isOverdue(item.dueDate)">
+								<span class="material-icons" style="font-size: 14px; vertical-align: middle; margin-right: 4px;" *ngIf="isOverdue(item.dueDate)">warning</span>
+								{{ item.dueDate | date:'MMM d, yyyy' }}
+							</span>
+						</td>
+						<td class="action-status-cell">
+							<span class="action-status-pill" [ngClass]="item.status?.toLowerCase()">{{ item.status }}</span>
+						</td>
+						<td class="action-assigned-cell">
+							<span class="action-assigned-pill">{{ '@' + item.assignedUserName }}</span>
+						</td>
+						<td class="action-edit-cell">
+							<button class="icon-btn edit-btn" (click)="startEditPastAction(item)" title="Edit"><span class="material-icons">edit</span></button>
+						</td>
+						<td class="action-edit-cell">
+							<button class="icon-btn delete-btn" (click)="deletePastActionItem(item)" title="Delete" style="color: #e53935;"><span class="material-icons">delete</span></button>
+						</td>
+					</ng-container>
+					<ng-container *ngIf="pastActionEdit[item.id]">
+						<td colspan="7" class="action-edit-row">
+							<div class="action-edit-flex">
+								<span class="past-retro-badge-inline" title="From Retro #{{ item.retroId }}">
+									<span class="material-icons" style="font-size: 14px; vertical-align: middle;">flag</span>
+									#{{ item.retroId }}
+								</span>
+								<input class="action-edit-input" type="text" [(ngModel)]="pastActionEditValue[item.id].description" placeholder="Edit action..." />
+								<input class="action-edit-input" type="date" [(ngModel)]="pastActionEditValue[item.id].dueDate" />
+								<select class="action-edit-input" [(ngModel)]="pastActionEditValue[item.id].status">
+									<option value="OPEN">OPEN</option>
+									<option value="IN_PROGRESS">IN PROGRESS</option>
+									<option value="COMPLETED">COMPLETED</option>
+									<option value="CANCELLED">CANCELLED</option>
+								</select>
+								<input class="action-edit-input" type="text" [(ngModel)]="pastActionEditValue[item.id].assignedUserName" placeholder="Assign to (username)" />
+								<button class="icon-btn save-btn" (click)="saveEditPastAction(item)" title="Save"><span class="material-icons">check_circle</span></button>
+								<button class="icon-btn cancel-btn" (click)="cancelEditPastAction(item)" title="Cancel"><span class="material-icons">cancel</span></button>
 							</div>
 						</td>
 					</ng-container>
