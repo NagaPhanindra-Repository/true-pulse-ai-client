@@ -474,3 +474,16 @@
     max-width: none;
   }
 }
+
+@media (max-width: 600px) {
+  .entity-icon {
+    width: 44px;
+    height: 44px;
+  }
+  .my-entities-list-panel {
+    padding: 16px 12px;
+  }
+  .my-entities-detail-panel {
+    padding: 20px 12px;
+  }
+}

@@ -326,6 +326,11 @@
   .next-btn {
     width: 100%;
   }
+  // Touch-friendly button size (44px minimum)
+  .icon-btn.add-btn {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 @media (max-width: 640px) {
