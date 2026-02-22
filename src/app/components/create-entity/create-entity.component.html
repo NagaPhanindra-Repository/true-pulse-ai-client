@@ -33,7 +33,8 @@
               type="text"
               formControlName="displayName"
               placeholder="Public-facing name"
-              [class.invalid]="isInvalid('displayName')" />
+              [class.invalid]="isInvalid('displayName')"
+              autofocus />
             <small *ngIf="isInvalid('displayName')">Display name is required.</small>
           </label>
 

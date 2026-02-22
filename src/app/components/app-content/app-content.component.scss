@@ -168,6 +168,121 @@
   color: #6ee7b7;
 }
 
+// Privacy & Trust Section
+.privacy-trust-section {
+  margin: 48px 0;
+  padding: 32px 24px;
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  text-align: center;
+  
+  h2 {
+    margin-bottom: 32px;
+    font-size: var(--fs-xl);
+    color: #e8f0ff;
+  }
+}
+
+.privacy-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 32px;
+  
+  @media (min-width: 900px) {
+    flex-direction: row;
+    justify-content: center;
+    gap: 16px;
+  }
+}
+
+.privacy-step {
+  flex: 1;
+  min-width: 140px;
+  padding: 24px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(110, 231, 183, 0.3);
+  border-radius: 12px;
+  
+  .step-number {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6ee7b7 0%, #3b82f6 100%);
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: var(--fs-md);
+    color: #1f2a44;
+  }
+  
+  h3 {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #e8f0ff;
+  }
+  
+  p {
+    font-size: 13px;
+    color: #9fb3d9;
+    line-height: 1.4;
+  }
+}
+
+.step-arrow {
+  display: none;
+  color: #6ee7b7;
+  font-size: 24px;
+  
+  @media (min-width: 900px) {
+    display: block;
+  }
+}
+
+.privacy-promise {
+  background: rgba(110, 231, 183, 0.08);
+  border: 1px solid rgba(110, 231, 183, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: left;
+  
+  h3 {
+    font-size: var(--fs-md);
+    color: #6ee7b7;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 12px;
+    
+    @media (min-width: 900px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  li {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #b5c7e3;
+    
+    strong {
+      color: #6ee7b7;
+      display: block;
+      margin-bottom: 4px;
+    }
+  }
+}
+
 .features-section {
   margin: 48px 0 0 0;
   text-align: center;
