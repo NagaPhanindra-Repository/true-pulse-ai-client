@@ -25,16 +25,33 @@
         </button>
         <div class="profile-menu-wrapper"
              (mouseenter)="toggleProfileDropdown(true)"
-             (mouseleave)="toggleProfileDropdown(false)">
-          <img [src]="profilePic" alt="Profile" class="profile-pic" />
+             (mouseleave)="toggleProfileDropdown(false)"
+             (click)="toggleProfileClick()">
+          <!-- Profile Picture or Initials Avatar -->
+          <div class="profile-pic-wrapper">
+            <img *ngIf="!showInitialsAvatar" 
+                 [src]="profilePic" 
+                 alt="Profile" 
+                 class="profile-pic" 
+                 (error)="onProfilePicError()" />
+            <div *ngIf="showInitialsAvatar" 
+                 class="profile-initials" 
+                 [style.background]="avatarColor">
+              {{ userInitials }}
+            </div>
+          </div>
           <span class="profile-label">
             <ng-container *ngIf="userName; else profileText">{{ userName }}</ng-container>
             <ng-template #profileText>Profile</ng-template>
           </span>
-          <div class="profile-dropdown glassy-card" *ngIf="showProfileDropdown">
-            <a href="#">My Profile</a>
-            <a href="#">Settings</a>
-            <a href="#" (click)="logout()">Logout</a>
+          <div class="profile-dropdown glassy-card" 
+               *ngIf="showProfileDropdown"
+               (mouseenter)="toggleProfileDropdown(true)"
+               (mouseleave)="toggleProfileDropdown(false)"
+               (click)="$event.stopPropagation()">
+            <a href="#" (click)="closeProfileDropdown(); $event.preventDefault()">My Profile</a>
+            <a href="#" (click)="closeProfileDropdown(); $event.preventDefault()">Settings</a>
+            <a href="#" (click)="logout(); $event.preventDefault()">Logout</a>
           </div>
         </div>
       </ng-template>

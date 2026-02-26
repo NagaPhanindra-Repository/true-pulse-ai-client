@@ -4,47 +4,113 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  .profile-pic {
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+  
+  &:hover {
+    background: rgba(59, 130, 246, 0.1);
+  }
+  
+  .profile-pic-wrapper {
+    position: relative;
     width: 38px;
     height: 38px;
-    border-radius: 50%;
     margin-right: 10px;
+    flex-shrink: 0;
+  }
+  
+  .profile-pic {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
     border: 2px solid #3b82f6;
     box-shadow: 0 2px 8px #3b82f655;
     background: #232b3e;
     object-fit: cover;
+    display: block;
   }
+  
+  .profile-initials {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, var(--avatar-color, #3b82f6) 0%, color-mix(in srgb, var(--avatar-color, #3b82f6) 70%, black) 100%);
+    user-select: none;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+    }
+  }
+  
   .profile-label {
     color: #b5c7e3;
     font-size: 0.86rem;
     font-weight: 600;
     margin-right: 6px;
+    user-select: none;
   }
+  
   .profile-dropdown {
     position: absolute;
-    top: 48px;
-    right: 0;
+    top: calc(100% + 4px);
+    right: -8px;
     min-width: 170px;
     background: rgba(35, 43, 62, 0.98);
-    border-radius: 14px;
+    border-radius: 12px;
     box-shadow: 0 8px 32px #3b82f655, 0 1.5px 16px #a78bfa55;
-    padding: 12px 0;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 8px;
     display: flex;
     flex-direction: column;
+    gap: 2px;
     z-index: 100;
+    animation: dropdownSlideIn 0.2s ease;
+    
     a {
       color: #b5c7e3;
       text-decoration: none;
-      padding: 10px 22px;
+      padding: 10px 16px;
       font-size: 0.8rem;
       font-weight: 500;
-      transition: background 0.2s, color 0.2s;
+      transition: all 0.2s ease;
       border-radius: 8px;
+      display: block;
+      white-space: nowrap;
+      
       &:hover {
         background: linear-gradient(90deg, #3b82f6 0%, #a78bfa 100%);
         color: #fff;
+        transform: translateX(2px);
+      }
+      
+      &:active {
+        transform: scale(0.98);
       }
     }
+  }
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 .main-header {
@@ -84,6 +150,7 @@
       letter-spacing: 1px;
       .ai-gradient {
         background: linear-gradient(90deg, #6ee7b7, #3b82f6, #a78bfa);
+        background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
@@ -253,9 +320,13 @@ html, body {
   .main-header .profile-menu-wrapper .profile-label {
     display: none;
   }
-  .main-header .profile-menu-wrapper .profile-pic {
+  .main-header .profile-menu-wrapper .profile-pic-wrapper {
     width: 34px;
     height: 34px;
+    margin-right: 0;
+  }
+  .main-header .profile-menu-wrapper .profile-initials {
+    font-size: 12px;
   }
   .main-header .header-actions .login-btn,
   .main-header .header-actions .signup-btn {
@@ -265,5 +336,33 @@ html, body {
   .main-header .hamburger {
     width: 44px;
     height: 44px;
+  }
+  
+  // Mobile profile dropdown adjustments
+  .profile-menu-wrapper {
+    padding: 4px;
+    
+    .profile-dropdown {
+      right: -4px;
+      min-width: 150px;
+      
+      a {
+        padding: 9px 14px;
+        font-size: 0.78rem;
+      }
+    }
+  }
+}
+
+// Tablet specific adjustments
+@media (min-width: 601px) and (max-width: 900px) {
+  .profile-menu-wrapper {
+    .profile-label {
+      font-size: 0.8rem;
+    }
+    
+    .profile-dropdown {
+      min-width: 160px;
+    }
   }
 }
