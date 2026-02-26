@@ -637,6 +637,9 @@
 }
 
 @media (max-width: 768px) {
+  .about-hero {
+    padding-top: 40px;
+  }
   .hero-actions {
     flex-direction: column;
     align-items: stretch;
