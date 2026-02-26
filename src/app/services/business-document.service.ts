@@ -24,7 +24,7 @@ export class BusinessDocumentService {
   }
 
   searchDocuments(entityId: number, displayName: string, query: string, topK: number = 5): Observable<any> {
-    return this.http.post(`${this.baseUrl}/search`, {
+    return this.http.post(`${this.baseUrl}/public/search`, {
       entityId,
       displayName,
       query,
