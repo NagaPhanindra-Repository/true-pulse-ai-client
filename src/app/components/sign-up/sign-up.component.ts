@@ -50,7 +50,12 @@ export class SignUpComponent {
     private verificationService: VerificationService,
     private router: Router
   ) {
-    this.syncSelectedCountryFromCode();
+    // Set default to United States
+    const usOption = this.countryOptions.find(opt => opt.code === '+1' && opt.name === 'United States');
+    if (usOption) {
+      this.selectedCountryKey = usOption.key;
+      this.user.countryCode = usOption.code;
+    }
   }
 
   get selectedCountry() {
