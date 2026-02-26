@@ -1,57 +1,117 @@
 <div class="signup-wrapper glassy-card">
-  <h2 class="signup-title accent-gradient">Sign Up</h2>
-  <form #signupForm="ngForm" (ngSubmit)="onSubmit(signupForm)">
-    <div class="form-grid-2col compact">
-      <div class="form-row">
-        <label for="userName">Username</label>
-        <input id="userName" name="userName" type="text" required [(ngModel)]="user.userName" autofocus />
-      </div>
-      <div class="form-row">
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" required [(ngModel)]="user.password" />
-      </div>
-      <div class="form-row">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" required [(ngModel)]="user.email" />
-      </div>
-      <div class="form-row">
-        <label for="mobileNumber">Mobile Number</label>
-        <input id="mobileNumber" name="mobileNumber" type="tel" required [(ngModel)]="user.mobileNumber" />
-      </div>
-      <div class="form-row">
-        <label for="countryCode">Country Code</label>
-        <input id="countryCode" name="countryCode" type="text" required [(ngModel)]="user.countryCode" />
-      </div>
-      <div class="form-row">
-        <label for="firstName">First Name</label>
-        <input id="firstName" name="firstName" type="text" required [(ngModel)]="user.firstName" />
-      </div>
-      <div class="form-row">
-        <label for="lastName">Last Name</label>
-        <input id="lastName" name="lastName" type="text" required [(ngModel)]="user.lastName" />
-      </div>
-      <div class="form-row">
-        <label for="gender">Gender</label>
-        <select id="gender" name="gender" required [(ngModel)]="user.gender">
-          <option value="">Select...</option>
-          <option value="MALE">Male</option>
-          <option value="FEMALE">Female</option>
-          <option value="OTHER">Other</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label for="dateOfBirth">Date of Birth</label>
-        <input id="dateOfBirth" name="dateOfBirth" type="date" required [(ngModel)]="user.dateOfBirth" />
-      </div>
-      <div class="form-row checkbox-row full-width">
-        <input id="isVerified" name="isVerified" type="checkbox" [(ngModel)]="user.isVerified" />
-        <label for="isVerified">Get Verified</label>
-      </div>
+  <h2 class="signup-title accent-gradient">Create Verified Account</h2>
+  
+  <!-- Step 1: Signup Form -->
+  <div class="signup-form-section">
+    <div class="step-header">
+      <span class="step-number">1</span>
+      <h3>Create Your Account</h3>
     </div>
-    <div *ngIf="error" class="error-message">{{ error }}</div>
-    <div *ngIf="success" class="success-message">{{ success }}</div>
-    <div class="signup-btn-row">
-      <button class="signup-btn" type="submit" [disabled]="loading">{{ loading ? 'Signing up...' : 'Sign Up' }}</button>
+    
+    <form #signupForm="ngForm" (ngSubmit)="onSubmit(signupForm)">
+      <div class="form-grid-2col compact">
+        <div class="form-row">
+          <label for="userName">Username *</label>
+          <input id="userName" name="userName" type="text" required [(ngModel)]="user.userName" autofocus />
+        </div>
+        <div class="form-row">
+          <label for="password">Password *</label>
+          <input id="password" name="password" type="password" required [(ngModel)]="user.password" />
+        </div>
+        <div class="form-row">
+          <label for="email">Email *</label>
+          <input id="email" name="email" type="email" required [(ngModel)]="user.email" />
+        </div>
+        <div class="form-row">
+          <label for="countryCode">Country Code</label>
+          <select
+            id="countryCode"
+            name="countryCode"
+            [(ngModel)]="selectedCountryKey"
+            (ngModelChange)="onCountryChange($event)"
+          >
+            <option value="">Select...</option>
+            <option *ngFor="let option of countryOptions" [value]="option.key">
+              {{ option.flag }} {{ option.code }} ({{ option.name }})
+            </option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="mobileNumber">Mobile Number</label>
+          <input id="mobileNumber" name="mobileNumber" type="tel" [(ngModel)]="user.mobileNumber" placeholder="Enter number without country code" />
+        </div>
+        <div class="form-row">
+          <label for="firstName">First Name *</label>
+          <input id="firstName" name="firstName" type="text" required [(ngModel)]="user.firstName" />
+        </div>
+        <div class="form-row">
+          <label for="lastName">Last Name *</label>
+          <input id="lastName" name="lastName" type="text" required [(ngModel)]="user.lastName" />
+        </div>
+        <div class="form-row">
+          <label for="gender">Gender</label>
+          <select id="gender" name="gender" [(ngModel)]="user.gender">
+            <option value="">Select...</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="dateOfBirth">Date of Birth</label>
+          <input id="dateOfBirth" name="dateOfBirth" type="date" [(ngModel)]="user.dateOfBirth" />
+        </div>
+      </div>
+      
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+      <div *ngIf="success" class="success-message">{{ success }}</div>
+      
+      <div class="signup-btn-row">
+        <button class="signup-btn" type="button" (click)="verifyAndCreate(signupForm)" [disabled]="loading || isIDVerifying">
+          {{ isIDVerified ? (loading ? 'Creating Account...' : 'Create Account') : (isIDVerifying ? 'Opening Verification...' : 'Verify & Create Account') }}
+        </button>
+      </div>
+      
+      <p class="form-note" *ngIf="!isIDVerified">
+        * indicates required fields. Complete identity verification after filling required fields.
+      </p>
+    </form>
+  </div>
+
+  <!-- Step 2: ID Verification -->
+  <div class="verification-section" [class.completed]="isIDVerified">
+    <div class="step-header">
+      <span class="step-number" [class.done]="isIDVerified">{{ isIDVerified ? 'checkmark_icon' : '2' }}</span>
+      <h3>Verify Your Identity</h3>
+      <p class="step-desc">We verify everyone with government ID. Takes 2 minutes.</p>
     </div>
-  </form>
+    
+    <div *ngIf="!isIDVerified" class="verification-form">
+      <div class="form-row">
+        <label>Country Code</label>
+        <input
+          type="text"
+          [value]="selectedCountry ? (selectedCountry.flag + ' ' + selectedCountry.name + ' (' + selectedCountry.code + ')') : 'Not selected'"
+          disabled
+        />
+      </div>
+      
+      <div *ngIf="verificationError" class="verification-error">{{ verificationError }}</div>
+      
+      <button type="button" class="verify-btn" (click)="openVerification()" [disabled]="isIDVerifying" [class.loading]="isIDVerifying">
+        {{ isIDVerifying ? 'Opening Verification...' : 'Verify with Government ID' }}
+      </button>
+      
+      <p class="verification-note">Your identity is verified securely. We never store or share your ID data.</p>
+    </div>
+    
+    <div *ngIf="isIDVerified" class="verification-success">
+      <div class="success-badge">
+        <span class="badge-icon">checkmark</span>
+        <span class="badge-text">Identity Verified</span>
+      </div>
+      <p class="success-msg">Your {{ user.countryCode }} government ID has been verified.</p>
+      <button type="button" class="change-btn" (click)="resetVerification()">Change Country</button>
+    </div>
+  </div>
 </div>

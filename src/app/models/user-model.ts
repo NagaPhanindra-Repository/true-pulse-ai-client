@@ -3,6 +3,7 @@ export class UserModel {
 	password: string = '';
 	email: string = '';
 	mobileNumber: string = '';
+	mobileCountryCode: string = '';
 	countryCode: string = '';
 	firstName: string = '';
 	lastName: string = '';
@@ -10,4 +11,5 @@ export class UserModel {
 	roleName: string = '';
 	dateOfBirth?: string;
 	isVerified?: boolean;
+	verificationSessionId?: string;
 }
