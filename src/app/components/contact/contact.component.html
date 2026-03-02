@@ -1,0 +1,154 @@
+<div class="contact-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <h1>Get In Touch</h1>
+      <p>Have questions about TruePulse AI? Our team is ready to help you transform your organization's intelligence.</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="contact-content">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Contact Info -->
+        <div class="contact-info">
+          <h2>Contact Information</h2>
+          <div class="info-list">
+            <div class="info-item" *ngFor="let info of contactInfo">
+              <div class="info-icon">{{ info.icon }}</div>
+              <div class="info-details">
+                <h3>{{ info.title }}</h3>
+                <a [href]="info.link">{{ info.value }}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="social-section">
+            <h3>Follow Us</h3>
+            <div class="social-links">
+              <a href="#" class="social-link" aria-label="LinkedIn">
+                <i class="fab fa-linkedin"></i>
+              </a>
+              <a href="#" class="social-link" aria-label="Twitter">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a href="#" class="social-link" aria-label="GitHub">
+                <i class="fab fa-github"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-section">
+          <h2>Send us a Message</h2>
+          
+          <div *ngIf="submitted" class="success-message">
+            <div class="success-icon">✓</div>
+            <h3>Message Sent Successfully!</h3>
+            <p>We'll get back to you shortly. Thank you for your interest in TruePulse AI.</p>
+          </div>
+
+          <form (ngSubmit)="submitForm()" *ngIf="!submitted">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input 
+                type="text" 
+                [(ngModel)]="contactForm.name" 
+                name="name"
+                placeholder="Your full name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input 
+                type="email" 
+                [(ngModel)]="contactForm.email" 
+                name="email"
+                placeholder="your@email.com"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Company</label>
+              <input 
+                type="text" 
+                [(ngModel)]="contactForm.company" 
+                name="company"
+                placeholder="Your company name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Subject *</label>
+              <select [(ngModel)]="contactForm.subject" name="subject" required>
+                <option value="">Select a subject</option>
+                <option value="demo">Request a Demo</option>
+                <option value="enterprise">Enterprise Inquiry</option>
+                <option value="support">Technical Support</option>
+                <option value="partnership">Partnership Opportunity</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Message *</label>
+              <textarea 
+                [(ngModel)]="contactForm.message" 
+                name="message"
+                placeholder="Tell us more about your needs..."
+                rows="6"
+                required
+              ></textarea>
+            </div>
+
+            <button 
+              type="submit" 
+              class="btn-submit"
+              [disabled]="!isFormValid() || loading"
+            >
+              {{ loading ? 'Sending...' : 'Send Message' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="container">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h3>How do I get started?</h3>
+          <p>Sign up for a free account, create your first team retrospective, and start collecting verified feedback. Our onboarding guide will walk you through everything.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Is there a trial period?</h3>
+          <p>Yes! All new accounts get 14 days of full access to TruePulse AI. No credit card required to start.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How is my data protected?</h3>
+          <p>We use enterprise-grade security with end-to-end encryption, SOC 2 compliance, and regular security audits. Your data is your data.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Do you offer API access?</h3>
+          <p>Yes. Enterprise customers get full API access for custom integrations with your existing tools and workflows.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Can I export my data?</h3>
+          <p>Absolutely. You can export all your data in standard formats (JSON, CSV) at any time. No vendor lock-in.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What about team collaboration?</h3>
+          <p>TruePulse AI is built for teams. Unlimited team members, real-time collaboration, and role-based access control.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,108 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="discussion-form">
+  <div class="form-header">
+    <h3>Add Discussion Note</h3>
+    <p>Document decisions, edge cases, and important context</p>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="form-section">
+    <label class="form-label required">What was discussed?</label>
+    <textarea 
+      formControlName="discussionText"
+      placeholder="Describe the discussion, decision, or important note here. Be specific and detailed..."
+      class="form-textarea"
+      rows="6"
+    ></textarea>
+    <span class="error-message" *ngIf="form.get('discussionText')?.invalid && form.get('discussionText')?.touched">
+      {{ getErrorMessage('discussionText') }}
+    </span>
+    <span class="char-count">
+      {{ (form.get('discussionText')?.value || '').length }} / 5000 characters
+    </span>
+  </div>
+
+  <!-- Decision Type -->
+  <div class="form-row">
+    <div class="form-group">
+      <label class="form-label required">Decision Type</label>
+      <div class="decision-type-grid">
+        <button
+          type="button"
+          *ngFor="let type of decisionTypes"
+          class="decision-type-btn"
+          [class.active]="form.get('decisionType')?.value === type"
+          (click)="form.patchValue({decisionType: type})"
+        >
+          <app-decision-tag [decisionType]="type" size="md" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced Options -->
+  <div class="form-section">
+    <button 
+      type="button" 
+      class="btn-advanced" 
+      (click)="showAdvanced = !showAdvanced">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" [class.rotated]="showAdvanced">
+        <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Advanced Options
+    </button>
+
+    <div class="advanced-options" *ngIf="showAdvanced" [@slideDown]>
+      <!-- Meeting Date -->
+      <div class="form-group">
+        <label class="form-label">When was this discussed?</label>
+        <input 
+          type="date"
+          formControlName="meetingDate"
+          class="form-input"
+        />
+        <span class="help-text">The date this was discussed in a meeting</span>
+      </div>
+
+      <!-- Tags -->
+      <div class="form-group">
+        <label class="form-label">Tags</label>
+        <div class="tags-input-wrapper">
+          <input 
+            type="text"
+            [(ngModel)]="tagsInput"
+            [ngModelOptions]="{standalone: true}"
+            placeholder="Add tags separated by commas (e.g., critical, urgent, blocked)"
+            class="form-input"
+            (keyup.enter)="addTag(tagsInput); tagsInput = ''"
+          />
+        </div>
+        <div class="tags-display" *ngIf="tags.length > 0">
+          <span class="tag-item" *ngFor="let tag of tags; let idx = index">
+            {{ tag }}
+            <button type="button" class="tag-remove" (click)="removeTag(idx)">×</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="form-actions">
+    <button type="button" class="btn-cancel" (click)="cancel()" [disabled]="isLoading">
+      Cancel
+    </button>
+    <button 
+      type="submit" 
+      class="btn-submit" 
+      [disabled]="form.invalid || isLoading"
+    >
+      <span *ngIf="!isLoading">Save Discussion Note</span>
+      <span *ngIf="isLoading">
+        <svg width="16" height="16" viewBox="0 0 16 16" class="spinner">
+          <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="12, 20" />
+        </svg>
+        Saving...
+      </span>
+    </button>
+  </div>
+</form>

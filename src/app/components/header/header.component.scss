@@ -194,6 +194,40 @@
       &:hover {
         color: #3b82f6;
       }
+      
+      &.memory-link {
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+        padding: 6px 14px;
+        border-radius: 8px;
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        color: #a78bfa;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(167, 139, 250, 0.2);
+        
+        svg {
+          animation: memoryPulse 2s ease-in-out infinite;
+        }
+        
+        &:hover {
+          background: linear-gradient(135deg, rgba(167, 139, 250, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
+          color: #c4b5fd;
+          border-color: rgba(167, 139, 250, 0.5);
+          box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
+        }
+      }
+    }
+  }
+  
+  @keyframes memoryPulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.1);
     }
   }
 

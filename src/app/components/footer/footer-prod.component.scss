@@ -1,8 +1,3 @@
-// Production-Ready Footer Styles
-// TruePulse AI - Enterprise Grade Design
-// Author: Senior UI/UX Engineer
-// Unified, cohesive design with single background gradient
-
 .main-footer {
   width: 100%;
   background: linear-gradient(180deg, #0f172a 0%, #0d1425 100%);
@@ -18,9 +13,7 @@
     padding: 0 var(--pad-page);
   }
 
-  // ============================================================================
-  // SECTION 1: CTA Bar - Enterprise Calls-to-Action
-  // ============================================================================
+  // CTA Bar - Compact Enterprise Section
   .footer-cta-bar {
     padding: 1.5rem 0;
     background: linear-gradient(90deg, rgba(6, 182, 212, 0.08) 0%, rgba(139, 92, 246, 0.04) 100%);
@@ -93,9 +86,7 @@
     }
   }
 
-  // ============================================================================
-  // SECTION 2: Main Footer Content - Link Grid
-  // ============================================================================
+  // Main Footer Content
   .footer-main {
     padding: 2.5rem 0;
 
@@ -145,7 +136,7 @@
     }
   }
 
-  // Column 1 - Brand Section
+  // Column 1 - Brand
   .footer-col-1 {
     display: flex;
     flex-direction: column;
@@ -258,15 +249,13 @@
     }
   }
 
-  // Generic Columns
+  // Other Columns
   .footer-col {
     display: flex;
     flex-direction: column;
   }
 
-  // ============================================================================
-  // SECTION 3: Trust Bar - Compliance Badges
-  // ============================================================================
+  // Trust Bar - Horizontal Badges
   .footer-trust-bar {
     padding: 1.75rem 0;
     background: rgba(6, 182, 212, 0.06);
@@ -306,9 +295,7 @@
     }
   }
 
-  // ============================================================================
-  // SECTION 4: Bottom Bar - Copyright & Legal Links
-  // ============================================================================
+  // Bottom Bar
   .footer-bottom {
     padding: 1.5rem 0;
     background: rgba(0, 0, 0, 0.2);
@@ -390,24 +377,4 @@
       }
     }
   }
-
-  // ============================================================================
-  // Responsive Design Adjustments
-  // ============================================================================
-  @media (max-width: 640px) {
-    .footer-brand {
-      .footer-logo {
-        height: 32px;
-      }
-    }
-
-    h4 {
-      font-size: 0.8rem;
-    }
-
-    .footer-cta-bar .cta-text h3 {
-      font-size: 1rem;
-    }
-  }
 }
-

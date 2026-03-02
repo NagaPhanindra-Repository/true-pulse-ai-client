@@ -7,6 +7,13 @@
     <!-- Navigation links, only for logged in users -->
     <nav class="nav-links" [class.mobile-open]="showMobileNav" *ngIf="isLoggedIn">
       <a routerLink="/dashboard" (click)="closeMobileNav()">Home</a>
+      <a routerLink="/memories" (click)="closeMobileNav()" class="memory-link">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 4px;">
+          <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="8" cy="8" r="2" fill="currentColor"/>
+        </svg>
+        Memory
+      </a>
       <a routerLink="/retros" (click)="closeMobileNav()">Retros</a>
       <a routerLink="/questions" (click)="closeMobileNav()">Questions</a>
       <a routerLink="/followers" (click)="closeMobileNav()">Followers</a>

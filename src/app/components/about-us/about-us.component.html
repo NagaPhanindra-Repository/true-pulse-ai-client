@@ -1,0 +1,159 @@
+<div class="about-us-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-content">
+        <p class="eyebrow">About TruePulse AI</p>
+        <h1>Enterprise Intelligence Platform for Teams</h1>
+        <p class="hero-subtitle">
+          TruePulse AI transforms how teams collect feedback, preserve context, and make evidence-based decisions through verified signals, memory architecture, and RAG-powered synthesis.
+        </p>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-value">$B+ Scale</span>
+            <span class="stat-label">Experience</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">7+ Years</span>
+            <span class="stat-label">Enterprise Track Record</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">100%</span>
+            <span class="stat-label">Authentic Signals</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="glow-orb"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section class="problem-section">
+    <div class="container">
+      <h2>The Challenge</h2>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <h3>🔴 Corrupted Signals</h3>
+          <p>Teams collect feedback that's contaminated with politics, bias, and incomplete context. Decisions based on bad data lead to systemic failure.</p>
+        </div>
+        <div class="problem-card">
+          <h3>🧩 Fragmented Context</h3>
+          <p>Developers lose critical context during sprints. Requirements disappear into wikis. Implementation decisions repeat previous mistakes.</p>
+        </div>
+        <div class="problem-card">
+          <h3>⚠️ Guesswork Decisions</h3>
+          <p>Without grounded truth, leadership makes decisions based on intuition, not evidence. This scales poorly beyond the founding team.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Section -->
+  <section class="features-section">
+    <div class="container">
+      <h2>Our Solution</h2>
+      <div class="features-grid">
+        <div class="feature-card" *ngFor="let feature of features">
+          <div class="feature-icon">{{ feature.icon }}</div>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="values-section">
+    <div class="container">
+      <h2>What We Stand For</h2>
+      <div class="values-grid">
+        <div class="value-card" *ngFor="let value of values">
+          <h3>{{ value.title }}</h3>
+          <p>{{ value.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platform Capabilities -->
+  <section class="capabilities-section">
+    <div class="container">
+      <h2>Platform Capabilities</h2>
+      <div class="capabilities-list">
+        <div class="capability-item">
+          <div class="capability-number">01</div>
+          <div class="capability-content">
+            <h4>Team Retrospectives</h4>
+            <p>Structured feedback collection with verified signal validation. Eliminate bias, capture truth.</p>
+          </div>
+        </div>
+        <div class="capability-item">
+          <div class="capability-number">02</div>
+          <div class="capability-content">
+            <h4>Requirements Memory</h4>
+            <p>MCP-integrated context preservation. Your team never loses critical implementation details.</p>
+          </div>
+        </div>
+        <div class="capability-item">
+          <div class="capability-number">03</div>
+          <div class="capability-content">
+            <h4>Entity Management</h4>
+            <p>Organize business concepts, track relationships, and maintain authoritative source of truth.</p>
+          </div>
+        </div>
+        <div class="capability-item">
+          <div class="capability-number">04</div>
+          <div class="capability-content">
+            <h4>AI-Powered Questions</h4>
+            <p>Generate insights from historical data. Pattern recognition across retrospectives and decisions.</p>
+          </div>
+        </div>
+        <div class="capability-item">
+          <div class="capability-number">05</div>
+          <div class="capability-content">
+            <h4>Follower Network</h4>
+            <p>Track influential voices within your organization. Build knowledge networks for distributed teams.</p>
+          </div>
+        </div>
+        <div class="capability-item">
+          <div class="capability-number">06</div>
+          <div class="capability-content">
+            <h4>Enterprise Analytics</h4>
+            <p>Dashboards and reporting for organizational intelligence. See bottlenecks before they become crises.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section class="timeline-section">
+    <div class="container">
+      <h2>Our Journey</h2>
+      <div class="timeline">
+        <div class="timeline-item" *ngFor="let item of timeline">
+          <div class="timeline-marker">{{ item.year }}</div>
+          <div class="timeline-content">
+            <h3>{{ item.event }}</h3>
+            <p>{{ item.detail }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Ready to Transform Your Team's Intelligence?</h2>
+      <p>Join enterprise teams using TruePulse AI for verified feedback, context preservation, and evidence-based decisions.</p>
+      <div class="cta-buttons">
+        <a [routerLink]="'/signup'" class="btn-primary">Start Free Trial</a>
+        <a [routerLink]="'/about'" class="btn-secondary">Meet the Founder</a>
+        <a href="mailto:ravurinagaphanindra&#64;gmail.com" class="btn-ghost">Schedule Demo</a>
+      </div>
+    </div>
+  </section>
+</div>

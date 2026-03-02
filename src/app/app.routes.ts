@@ -13,13 +13,25 @@ import { RetrosComponent } from './components/retros/retros.component';
 import { CreateEntityComponent } from './components/create-entity/create-entity.component';
 import { MyEntitiesComponent } from './components/my-entities/my-entities.component';
 import { AboutFounderComponent } from './components/about-founder/about-founder.component';
+import { MemoryDashboardComponent } from './components/memory-dashboard/memory-dashboard.component';
+import { MemoryDetailComponent } from './components/memory-detail/memory-detail.component';
+import { AboutUsComponent } from './components/about-us/about-us.component';
+import { ContactComponent } from './components/contact/contact.component';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
+import { TermsOfServiceComponent } from './components/terms-of-service/terms-of-service.component';
 
 export const routes: Routes = [
   { path: '', component: AppContentComponent },
   { path: 'about', component: AboutFounderComponent },
+  { path: 'about-us', component: AboutUsComponent },
+  { path: 'contact', component: ContactComponent },
+  { path: 'privacy', component: PrivacyPolicyComponent },
+  { path: 'terms', component: TermsOfServiceComponent },
   { path: 'login', component: LoginInComponent },
   { path: 'signup', component: SignUpComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'memories', component: MemoryDashboardComponent, canActivate: [AuthGuard] },
+  { path: 'memories/:id', component: MemoryDetailComponent, canActivate: [AuthGuard] },
   { path: 'retros', component: RetrosComponent, canActivate: [AuthGuard] },
   { path: 'retro-dashboard/:id', component: RetroDashboardComponent },
   { path: 'questions', component: QuestionsComponent, canActivate: [AuthGuard] },

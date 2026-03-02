@@ -1,0 +1,69 @@
+<div class="timeline-container">
+  <h3 class="timeline-title">{{ title }}</h3>
+  
+  <div class="timeline" *ngIf="discussions.length > 0">
+    <div class="timeline-item" *ngFor="let discussion of discussions; let last = last" [class.last]="last">
+      <!-- Timeline connector line -->
+      <div class="timeline-connector">
+        <div class="connector-line"></div>
+        <div class="connector-dot" [style.backgroundColor]="getTagColor(discussion.decisionType)"></div>
+      </div>
+
+      <!-- Timeline content -->
+      <div class="timeline-content glassy-card">
+        <!-- Header -->
+        <div class="content-header">
+          <div class="author-info">
+            <div class="avatar" [style.backgroundColor]="getAvatarColor(discussion.authorName)">
+              {{ getInitials(discussion.authorName) }}
+            </div>
+            <div class="author-details">
+              <span class="author-name">{{ discussion.authorName || 'Anonymous' }}</span>
+              <span class="author-timestamp">{{ formatDate(discussion.recordedAt) }}</span>
+            </div>
+          </div>
+          <app-decision-tag [decisionType]="discussion.decisionType" size="sm" />
+        </div>
+
+        <!-- Content -->
+        <div class="content-body">
+          <p class="discussion-text">{{ discussion.discussionText }}</p>
+
+          <!-- Meeting date if present -->
+          <div class="meeting-date" *ngIf="discussion.meetingDate">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 5h12M5 1v3M11 1v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span>Discussed: {{ formatMeetingDate(discussion.meetingDate) }}</span>
+          </div>
+
+          <!-- Tags -->
+          <div class="tags" *ngIf="discussion.tags && discussion.tags.length > 0">
+            <span class="tag" *ngFor="let tag of discussion.tags">{{ tag }}</span>
+          </div>
+        </div>
+
+        <!-- Attachments -->
+        <div class="attachments" *ngIf="discussion.attachments && discussion.attachments.length > 0">
+          <div class="attachment-item" *ngFor="let attachment of discussion.attachments">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3.5 2h9A1.5 1.5 0 0 1 14 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 12.5v-9A1.5 1.5 0 0 1 3.5 2z" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="5.5" cy="4.5" r="0.75" fill="currentColor"/>
+              <path d="M2 12l3-3 3 3 4-4 2 2v2" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+            <span>{{ attachment.fileName }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="timeline-empty" *ngIf="discussions.length === 0">
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <path d="M24 8v32M8 24h32" stroke="#64748b" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+    </svg>
+    <p>No discussions yet</p>
+  </div>
+</div>

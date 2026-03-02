@@ -1,0 +1,305 @@
+<div class="wizard-overlay">
+  <div class="wizard-container">
+    <!-- Header -->
+    <div class="wizard-header">
+      <h1>Record New Feature Memory</h1>
+      <button class="close-btn" (click)="close()">✕</button>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="wizard-progress">
+      <div *ngFor="let step of steps; let i = index" 
+           class="progress-step" 
+           [ngClass]="{ 
+             'completed': isStepCompleted(step.id), 
+             'active': isStepActive(step.id) 
+           }">
+        <div class="step-indicator">
+          <div class="step-number" *ngIf="!isStepCompleted(step.id)">{{ i + 1 }}</div>
+          <div class="step-check" *ngIf="isStepCompleted(step.id)">✓</div>
+        </div>
+        <div class="step-label">{{ step.label }}</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Jira Integration -->
+    <div class="wizard-step" *ngIf="currentStep === 'integration'">
+      <h2>Step 1: Select Jira Integration</h2>
+      <p class="step-description">Choose which Jira workspace you want to link this memory to.</p>
+
+      <div *ngIf="isLoading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading Jira integrations...</p>
+      </div>
+
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+
+      <div *ngIf="!isLoading && jiraIntegrations.length > 0" class="integrations-grid">
+        <div *ngFor="let integration of jiraIntegrations" 
+             class="integration-card"
+             [ngClass]="{ 'selected': selectedIntegration?.id === integration.id }"
+             (click)="selectIntegration(integration)">
+          <div class="integration-icon">🔗</div>
+          <div class="integration-info">
+            <h3>{{ integration.name || integration.jiraEmail }}</h3>
+            <p>URL: {{ integration.baseUrl || integration.jiraUrl }}</p>
+            <p *ngIf="integration.projects">Projects: {{ integration.projects.length }}</p>
+            <p *ngIf="integration.projectKeys">Projects: {{ integration.projectKeys.length }}</p>
+          </div>
+          <div *ngIf="selectedIntegration?.id === integration.id" class="selected-indicator">✓</div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-secondary" (click)="close()">Cancel</button>
+        <button class="btn-primary" (click)="proceedToStory()" [disabled]="!selectedIntegration">
+          Next: Story Details
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Story Key -->
+    <div class="wizard-step" *ngIf="currentStep === 'story'">
+      <h2>Step 2: Enter Story Details</h2>
+      <p class="step-description">Provide the Jira story key and project information.</p>
+
+      <form [formGroup]="storyForm" class="wizard-form">
+        <div class="form-group">
+          <label for="projectKey">Project Key *</label>
+          <select id="projectKey" formControlName="projectKey" (change)="onProjectChange()">
+            <option value="" disabled>Select a project...</option>
+            <option *ngFor="let key of getProjectKeys()" [value]="key">{{ key }}</option>
+          </select>
+          <div class="form-error" *ngIf="storyForm.get('projectKey')?.hasError('required') && storyForm.get('projectKey')?.touched">
+            Project is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="storyKey">Story Key * (e.g., PROJ-123)</label>
+          <input type="text" 
+                 id="storyKey" 
+                 formControlName="storyKey" 
+                 placeholder="PROJ-123"
+                 (keyup.enter)="proceedToFetch()">
+          <div class="form-error" *ngIf="storyForm.get('storyKey')?.hasError('required') && storyForm.get('storyKey')?.touched">
+            Story key is required
+          </div>
+          <div class="form-error" *ngIf="storyForm.get('storyKey')?.hasError('pattern') && storyForm.get('storyKey')?.touched">
+            Invalid story key format (e.g., PROJ-123)
+          </div>
+        </div>
+      </form>
+
+      <div class="step-actions">
+        <button class="btn-secondary" (click)="goBackToIntegration()">Back</button>
+        <button class="btn-primary" (click)="proceedToFetch()" [disabled]="!storyForm.valid">
+          Next: Fetch Story
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3: Fetch Story -->
+    <div class="wizard-step" *ngIf="currentStep === 'fetch'">
+      <h2>Step 3: Fetch & Verify Story</h2>
+      <p class="step-description">Fetch the story details from Jira and verify the information.</p>
+
+      <div *ngIf="!jiraStory && !isFetching" class="fetch-action">
+        <div class="info-box">
+          <p>Ready to fetch story: <strong>{{ storyForm.get('storyKey')?.value }}</strong></p>
+          <p class="small-text">Click the button below to retrieve the story from Jira.</p>
+        </div>
+        <button class="btn-fetch" (click)="fetchStoryFromJira()" [disabled]="isFetching">
+          🔄 Fetch from Jira
+        </button>
+      </div>
+
+      <div *ngIf="isFetching" class="loading-state">
+        <div class="spinner"></div>
+        <p>Fetching story from Jira...</p>
+      </div>
+
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+
+      <div *ngIf="jiraStory" class="story-preview glassy-card">
+        <div class="story-header">
+          <h3>{{ jiraStory.summary }}</h3>
+          <a [href]="jiraStory.url" target="_blank" class="story-link">
+            {{ jiraStory.key }} ↗
+          </a>
+        </div>
+
+        <div class="story-meta">
+          <div class="meta-item">
+            <span class="label">Project:</span>
+            <span class="value">{{ jiraStory.project }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">Type:</span>
+            <span class="value">{{ jiraStory.type }}</span>
+          </div>
+          <div class="meta-item" *ngIf="jiraStory.assignee">
+            <span class="label">Assignee:</span>
+            <span class="value">{{ jiraStory.assignee }}</span>
+          </div>
+          <div class="meta-item" *ngIf="jiraStory.status">
+            <span class="label">Status:</span>
+            <span class="value">{{ jiraStory.status }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="jiraStory.description" class="story-description">
+          <strong>Description:</strong>
+          <p>{{ jiraStory.description }}</p>
+        </div>
+
+        <div *ngIf="jiraStory.labels && jiraStory.labels.length > 0" class="story-labels">
+          <strong>Labels:</strong>
+          <div class="label-list">
+            <span *ngFor="let label of jiraStory.labels" class="label-badge">{{ label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-secondary" (click)="goBackToStory()">Back</button>
+        <button class="btn-primary" (click)="proceedToContext()" [disabled]="!jiraStory">
+          Next: Add Context
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 4: Initial Context -->
+    <div class="wizard-step" *ngIf="currentStep === 'context'">
+      <h2>Step 4: Add Initial Context</h2>
+      <p class="step-description">Provide the initial context and important details about this feature.</p>
+
+      <form [formGroup]="contextForm" class="wizard-form">
+        <div class="form-group">
+          <label for="context">Initial Context * (minimum 20 characters)</label>
+          <textarea id="context" 
+                    formControlName="context"
+                    placeholder="Describe the feature requirements, edge cases, technical considerations, design decisions, or any other important context that developers should know about..."
+                    rows="8"></textarea>
+          <div class="char-counter">
+            {{ contextForm.get('context')?.value?.length || 0 }} / 5000
+          </div>
+          <div class="form-error" *ngIf="contextForm.get('context')?.hasError('required') && contextForm.get('context')?.touched">
+            Context is required
+          </div>
+          <div class="form-error" *ngIf="contextForm.get('context')?.hasError('minlength') && contextForm.get('context')?.touched">
+            Context must be at least 20 characters
+          </div>
+        </div>
+      </form>
+
+      <div class="step-actions">
+        <button class="btn-secondary" (click)="goBackToContext()">Back</button>
+        <button class="btn-primary" (click)="proceedToBranch()" [disabled]="!contextForm.valid">
+          Next: Link Branch (Optional)
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 5: Git Branch -->
+    <div class="wizard-step" *ngIf="currentStep === 'branch'">
+      <h2>Step 5: Link Git Branch</h2>
+      <p class="step-description">Optionally link a Git branch to this feature memory.</p>
+
+      <form [formGroup]="branchForm" class="wizard-form">
+        <div class="form-group">
+          <div class="checkbox-group">
+            <input type="checkbox" 
+                   id="linkBranch" 
+                   formControlName="linkBranch">
+            <label for="linkBranch">Link a Git branch to this memory</label>
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="branchForm.get('linkBranch')?.value">
+          <label for="branch">Branch Name</label>
+          <input type="text" 
+                 id="branch" 
+                 formControlName="branch"
+                 placeholder="feature/memory-system or bugfix/edge-case">
+          <p class="hint">Enter the feature branch name without 'origin/' prefix</p>
+        </div>
+      </form>
+
+      <div class="step-actions">
+        <button class="btn-secondary" (click)="goBackToBranch()">Back</button>
+        <button class="btn-secondary" (click)="skipToReview()">Skip</button>
+        <button class="btn-primary" (click)="proceedToReview()">
+          Next: Review
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 6: Review -->
+    <div class="wizard-step" *ngIf="currentStep === 'review'">
+      <h2>Step 6: Review & Create</h2>
+      <p class="step-description">Review your feature memory details before creating.</p>
+
+      <div class="review-sections">
+        <!-- Story Info -->
+        <div class="review-section glassy-card">
+          <h3>📋 Story Information</h3>
+          <div class="review-item">
+            <span class="label">Story:</span>
+            <span class="value">{{ jiraStory?.key }} - {{ jiraStory?.summary }}</span>
+          </div>
+          <div class="review-item">
+            <span class="label">URL:</span>
+            <a [href]="jiraStory?.url" target="_blank" class="story-link">
+              {{ jiraStory?.url }} ↗
+            </a>
+          </div>
+          <div class="review-item">
+            <span class="label">Project:</span>
+            <span class="value">{{ jiraStory?.project }}</span>
+          </div>
+        </div>
+
+        <!-- Integration Info -->
+        <div class="review-section glassy-card">
+          <h3>🔗 Jira Integration</h3>
+          <div class="review-item">
+            <span class="label">Integration:</span>
+            <span class="value">{{ selectedIntegration?.name || selectedIntegration?.jiraEmail }}</span>
+          </div>
+          <div class="review-item">
+            <span class="label">Base URL:</span>
+            <span class="value">{{ selectedIntegration?.baseUrl || selectedIntegration?.jiraUrl }}</span>
+          </div>
+        </div>
+
+        <!-- Initial Context -->
+        <div class="review-section glassy-card">
+          <h3>📝 Initial Context</h3>
+          <p class="context-preview">{{ initialContext }}</p>
+        </div>
+
+        <!-- Branch Info -->
+        <div class="review-section glassy-card" *ngIf="branchForm.get('linkBranch')?.value && branchForm.get('branch')?.value">
+          <h3>🌿 Git Branch</h3>
+          <div class="review-item">
+            <span class="label">Branch:</span>
+            <span class="value">{{ branchForm.get('branch')?.value }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+
+      <div class="step-actions">
+        <button class="btn-secondary" (click)="goBackToReview()">Back</button>
+        <button class="btn-primary btn-submit" 
+                (click)="submitMemory()" 
+                [disabled]="isLoading">
+          <div *ngIf="isLoading" class="spinner-small"></div>
+          {{ isLoading ? 'Creating...' : '✓ Create Memory' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

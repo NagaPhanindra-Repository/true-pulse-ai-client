@@ -1,19 +1,123 @@
 
 
 <footer class="main-footer">
-  <div class="footer-content">
-    <div class="footer-brand">
-      <img src="assets/logo.svg" alt="TruePulse AI Logo" class="footer-logo" />
-      <span>TruePulse AI &copy; 2026</span>
+  <!-- Single CTA Section - Compact Enterprise Call -->
+  <div class="footer-cta-bar">
+    <div class="footer-container">
+      <div class="cta-content">
+        <div class="cta-text">
+          <h3>Ready for Enterprise-Grade Intelligence?</h3>
+        </div>
+        <div class="cta-actions">
+          <a [routerLink]="'/contact'" class="btn-cta-primary">Request Demo</a>
+          <a href="mailto:ravurinagaphanindra&#64;gmail.com" class="btn-cta-secondary">Contact Sales</a>
+        </div>
+      </div>
     </div>
-    <div class="footer-links">
-      <a [routerLink]="'/about'">About</a>
-      <a [routerLink]="'/about'">Contact</a>
+  </div>
+
+  <!-- Main Footer -->
+  <div class="footer-main">
+    <div class="footer-container">
+      <!-- Column 1: Brand & CTA -->
+      <div class="footer-col-1">
+        <div class="footer-brand">
+          <img src="assets/logo.svg" alt="TruePulse AI" class="footer-logo" />
+          <div>
+            <h3>TruePulse AI</h3>
+            <p>Enterprise Intelligence Platform</p>
+          </div>
+        </div>
+        
+        <p class="footer-tagline">Transform how teams collect feedback, preserve context, and make evidence-based decisions.</p>
+        
+        <div class="footer-btns">
+          <a [routerLink]="'/signup'" class="btn-primary">Start Free Trial</a>
+          <a [routerLink]="'/contact'" class="btn-secondary">Learn More</a>
+        </div>
+
+        <div class="social-icons">
+          <a *ngFor="let social of socialLinks" [href]="social.url" [attr.aria-label]="social.label" target="_blank" rel="noopener">
+            <i [class]="social.icon"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Column 2: Product -->
+      <div class="footer-col">
+        <h4>Product</h4>
+        <nav>
+          <a *ngFor="let link of productLinks" [routerLink]="link.route">{{ link.label }}</a>
+        </nav>
+      </div>
+
+      <!-- Column 3: Company -->
+      <div class="footer-col">
+        <h4>Company</h4>
+        <nav>
+          <a *ngFor="let link of companyLinks" [routerLink]="link.route">{{ link.label }}</a>
+        </nav>
+      </div>
+
+      <!-- Column 4: Resources -->
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <nav>
+          <a *ngFor="let link of resourceLinks" [routerLink]="link.route">{{ link.label }}</a>
+        </nav>
+      </div>
+
+      <!-- Column 5: Legal -->
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <nav>
+          <a *ngFor="let link of legalLinks" [routerLink]="link.route">{{ link.label }}</a>
+        </nav>
+      </div>
     </div>
-    <div class="footer-social">
-      <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-      <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-      <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+  </div>
+
+  <!-- Trust Badges - Horizontal Row -->
+  <div class="footer-trust-bar">
+    <div class="footer-container">
+      <div class="trust-grid">
+        <div class="trust-item">
+          <span class="trust-icon">🔒</span>
+          <span class="trust-label">SOC 2 Type II</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🛡️</span>
+          <span class="trust-label">GDPR Compliant</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🔐</span>
+          <span class="trust-label">ISO 27001</span>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">⚡</span>
+          <span class="trust-label">99.9% Uptime SLA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Bar - Copyright & Meta -->
+  <div class="footer-bottom">
+    <div class="footer-container">
+      <div class="bottom-content">
+        <div class="copyright">
+          <p>&copy; {{ currentYear }} TruePulse AI. All rights reserved.</p>
+          <p class="byline">Verified Signals • Memory Architecture • Evidence-Based Decisions</p>
+        </div>
+        <div class="footer-links">
+          <a [routerLink]="'/privacy'">Privacy</a>
+          <a [routerLink]="'/terms'">Terms</a>
+          <a [routerLink]="'/contact'">Contact</a>
+        </div>
+        <div class="status">
+          <span class="dot"></span> System Operational
+        </div>
+      </div>
     </div>
   </div>
 </footer>

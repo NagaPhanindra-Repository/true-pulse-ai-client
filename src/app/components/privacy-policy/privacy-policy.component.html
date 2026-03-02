@@ -1,0 +1,45 @@
+<div class="legal-page privacy-policy-page">
+  <div class="container">
+    <!-- Header -->
+    <div class="legal-header">
+      <h1>Privacy Policy</h1>
+      <p class="last-updated">Last Updated: {{ lastUpdated }}</p>
+    </div>
+
+    <!-- Content -->
+    <div class="legal-content">
+      <div class="section-intro">
+        <p>
+          At TruePulse AI, we respect your privacy and are committed to protecting your personal data. 
+          This Privacy Policy outlines how we collect, use, disclose, and safeguard your information.
+        </p>
+      </div>
+
+      <div *ngFor="let section of sections" class="section">
+        <h2>{{ section.title }}</h2>
+        
+        <p *ngIf="section.content" class="section-content">{{ section.content }}</p>
+
+        <div *ngIf="section.subsections" class="subsections">
+          <div *ngFor="let subsection of section.subsections" class="subsection">
+            <h3>{{ subsection.subtitle }}</h3>
+            <p>{{ subsection.content }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Section -->
+      <div class="section contact-section">
+        <h2>Contact Us</h2>
+        <p>
+          If you have questions about this Privacy Policy or our privacy practices, please contact us at:
+        </p>
+        <div class="contact-details">
+          <p><strong>Email:</strong> <a href="mailto:ravurinagaphanindra&#64;gmail.com">ravurinagaphanindra&#64;gmail.com</a></p>
+          <p><strong>Organization:</strong> TruePulse AI</p>
+          <p><strong>Purpose:</strong> Privacy & Data Protection Inquiries</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

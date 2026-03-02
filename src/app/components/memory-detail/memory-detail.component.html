@@ -1,0 +1,271 @@
+<div class="memory-detail" *ngIf="!loading && !error && memory">
+  <!-- Header Section -->
+  <div class="detail-header glassy-card">
+    <div class="header-top">
+      <div class="breadcrumb">
+        <a routerLink="/memories" class="breadcrumb-link">← Memories</a>
+        <span class="separator">/</span>
+        <span class="current">{{ memory.jiraStoryKey }}</span>
+      </div>
+      <div class="header-actions">
+        <button class="action-btn" (click)="startEditingMemory()" *ngIf="!editingMemory">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M2 14.5v2.5h2.5L14.81 7.19l-2.5-2.5L2 14.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M12.5 2.5l2.5-2.5 2.5 2.5-2.5 2.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          Edit
+        </button>
+        <div class="btn-group">
+          <button class="action-btn" (click)="completeMemory()" *ngIf="memory.status !== 'completed'">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M15 4.5L6.75 13.5L2 8.25" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Complete
+          </button>
+          <button class="action-btn" (click)="archiveMemory()" *ngIf="memory.status !== 'archived'">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M2 3h14v1H2V3zm1 3v10a1 1 0 001 1h10a1 1 0 001-1V6H3z" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            Archive
+          </button>
+          <button class="action-btn delete-btn" (click)="deleteMemory()">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M3 4h12M7 7v6M11 7v6M2 4h14a1 1 0 011 1v1H1V5a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story Info -->
+    <div class="story-header">
+      <div class="story-meta">
+        <span class="story-key">{{ memory.jiraStoryKey }}</span>
+        <span class="status-badge" [style.backgroundColor]="getStatusColor(memory.status) + '30'" [style.borderColor]="getStatusColor(memory.status)">
+          {{ getStatusLabel(memory.status) }}
+        </span>
+      </div>
+      <h1 class="story-title">{{ memory.jiraStoryTitle }}</h1>
+      <div class="story-details">
+        <div class="detail-item">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M9 5v4l3 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>{{ formatDate(memory.updatedAt) }}</span>
+        </div>
+        <div class="detail-item">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M3 5h12v10a1 1 0 01-1 1H4a1 1 0 01-1-1V5z" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M6 1v4M12 1v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>Created: {{ formatDate(memory.createdAt) }}</span>
+        </div>
+        <div class="detail-item" *ngIf="memory.jiraStatus">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span>Jira Status: {{ memory.jiraStatus }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Description Section (Edit Mode) -->
+  <div class="edit-section glassy-card" *ngIf="editingMemory">
+    <label class="edit-label">Edit Description</label>
+    <textarea 
+      [(ngModel)]="editDescription"
+      class="edit-textarea"
+      rows="6"
+      placeholder="Update the memory description..."
+    ></textarea>
+    <div class="edit-actions">
+      <button class="btn-cancel" (click)="cancelEditingMemory()">Cancel</button>
+      <button class="btn-save" (click)="saveMemory()">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation glassy-card">
+    <button 
+      class="tab-btn"
+      [class.active]="activeTab === 'overview'"
+      (click)="switchTab('overview')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="2" width="14" height="14" rx="1" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M2 6h14M6 2v12" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Overview
+    </button>
+    <button 
+      class="tab-btn"
+      [class.active]="activeTab === 'timeline'"
+      (click)="switchTab('timeline')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M2 4h14M6 2v3M12 2v3M3 10h12M3 14h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Timeline ({{ memory.discussions.length }})
+    </button>
+    <button 
+      class="tab-btn"
+      [class.active]="activeTab === 'requirements'"
+      (click)="switchTab('requirements')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Requirements ({{ requirementDiscussions.length }})
+    </button>
+    <button 
+      class="tab-btn"
+      [class.active]="activeTab === 'edgecases'"
+      (click)="switchTab('edgecases')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M9 6v4M9 13v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Edge Cases ({{ edgeCaseDiscussions.length }})
+    </button>
+    <button 
+      class="tab-btn"
+      [class.active]="activeTab === 'conflicts'"
+      (click)="switchTab('conflicts')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M6 6l6 6M12 6l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Conflicts ({{ conflictDiscussions.length }})
+    </button>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-area">
+    <!-- Overview Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'overview'">
+      <div class="glassy-card">
+        <h2 class="section-title">Story Description</h2>
+        <p class="story-description">{{ memory.jiraStoryDescription }}</p>
+
+        <h2 class="section-title">Initial Context</h2>
+        <p class="story-description">{{ memory.initialDescription }}</p>
+
+        <h2 class="section-title" *ngIf="memory.branches && memory.branches.length > 0">Git Branches</h2>
+        <div class="branches" *ngIf="memory.branches && memory.branches.length > 0">
+          <div class="branch-item" *ngFor="let branch of memory.branches">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="2" cy="2" r="1.5" fill="currentColor"/>
+              <path d="M3 2h6M9 2v6M3 8h6M9 8v6M3 14h6M12 2v4M12 8v4M12 14h2M12 12v2" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+            </svg>
+            <span class="branch-name">{{ branch.branchName }}</span>
+          </div>
+        </div>
+
+        <h2 class="section-title">Quick Stats</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">{{ memory.discussions.length }}</div>
+            <div class="stat-label">Total Discussions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ requirementDiscussions.length }}</div>
+            <div class="stat-label">Requirements</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ edgeCaseDiscussions.length }}</div>
+            <div class="stat-label">Edge Cases</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ conflictDiscussions.length }}</div>
+            <div class="stat-label">Conflicts</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'timeline'">
+      <div class="glassy-card">
+        <div class="timeline-header">
+          <h2 class="section-title">All Discussions</h2>
+          <button class="btn-add-discussion" (click)="addDiscussionHandler()">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M9 3v12M3 9h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Add Discussion
+          </button>
+        </div>
+
+        <app-timeline 
+          [discussions]="filteredDiscussions"
+          title="Discussion Timeline"
+          [showDecisionTypeBadges]="true"
+        />
+      </div>
+    </div>
+
+    <!-- Requirements Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'requirements'">
+      <div class="glassy-card">
+        <h2 class="section-title">All Requirements</h2>
+        <app-timeline 
+          [discussions]="requirementDiscussions"
+          title="Requirements"
+          [showDecisionTypeBadges]="true"
+        />
+      </div>
+    </div>
+
+    <!-- Edge Cases Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'edgecases'">
+      <div class="glassy-card">
+        <h2 class="section-title">All Edge Cases</h2>
+        <app-timeline 
+          [discussions]="edgeCaseDiscussions"
+          title="Edge Cases"
+          [showDecisionTypeBadges]="true"
+        />
+      </div>
+    </div>
+
+    <!-- Conflicts Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'conflicts'">
+      <div class="glassy-card">
+        <h2 class="section-title">Conflicting Decisions</h2>
+        <p class="conflict-notice">Review these carefully - they may contradict earlier decisions. Always refer to the latest decision in the timeline.</p>
+        <app-timeline 
+          [discussions]="conflictDiscussions"
+          title="Conflicts"
+          [showDecisionTypeBadges]="true"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Discussion Modal -->
+  <div class="modal-overlay" *ngIf="showAddDiscussion" (click)="onDiscussionCancel()">
+    <div class="modal-content glassy-card" (click)="$event.stopPropagation()">
+      <app-discussion-form 
+        (onSubmit)="onDiscussionSubmit($event)"
+        (onCancel)="onDiscussionCancel()"
+        [isLoading]="savingDiscussion"
+      />
+    </div>
+  </div>
+</div>
+
+<!-- Memory Creation Wizard Modal -->
+<app-memory-creation-wizard 
+  *ngIf="showWizard"
+  (onClose)="closeWizard()"
+  (onSuccess)="onWizardSuccess($event)"
+/>
+
+<div class="detail-error glassy-card" *ngIf="error && !loading">
+  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+    <circle cx="24" cy="24" r="20" stroke="#ef4444" stroke-width="2"/>
+    <path d="M24 16v12M24 32v2" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <p>{{ error }}</p>
+  <button class="btn-retry" (click)="ngOnInit()">Try Again</button>
+</div>
