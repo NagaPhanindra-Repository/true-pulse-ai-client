@@ -215,6 +215,7 @@ export class MemoryCreationWizardComponent implements OnInit {
     const createRequest: CreateMemoryRequest = {
       title: this.jiraStory.summary,
       description: this.initialContext,
+      jiraIntegrationId: this.selectedIntegration.id,
       jiraStoryKey: this.jiraStory.key,
       jiraStoryUrl: this.jiraStory.url,
       project: this.jiraStory.project,

@@ -314,7 +314,7 @@
       Start recording feature memories to ensure your development team never misses critical context, 
       edge cases, or important decisions.
     </p>
-    <button class="btn-create-large" (click)="openWizard()">
+    <button class="btn-create-large" (click)="openWizard()" [disabled]="integrations.length === 0">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
         <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
