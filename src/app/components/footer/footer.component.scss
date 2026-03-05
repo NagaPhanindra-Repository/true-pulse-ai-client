@@ -5,8 +5,8 @@
 
 .main-footer {
   width: 100%;
-  background: linear-gradient(180deg, #0f172a 0%, #0d1425 100%);
-  border-top: 1px solid rgba(6, 182, 212, 0.15);
+  background: linear-gradient(180deg, #0a0e27 0%, #0f1835 100%);
+  border-top: 1px solid rgba(0, 217, 255, 0.12);
   color: #cbd5e1;
   position: relative;
   z-index: 100;
@@ -23,8 +23,8 @@
   // ============================================================================
   .footer-cta-bar {
     padding: 1.5rem 0;
-    background: linear-gradient(90deg, rgba(6, 182, 212, 0.08) 0%, rgba(139, 92, 246, 0.04) 100%);
-    border-bottom: 1px solid rgba(6, 182, 212, 0.12);
+    background: linear-gradient(90deg, rgba(0, 217, 255, 0.06) 0%, rgba(139, 92, 246, 0.03) 100%);
+    border-bottom: 1px solid rgba(0, 217, 255, 0.1);
 
     .cta-content {
       display: grid;
@@ -42,9 +42,9 @@
     .cta-text h3 {
       font-size: 1.25rem;
       font-weight: 700;
-      color: #e0f2fe;
+      color: #f8fafc;
       margin: 0;
-      background: linear-gradient(135deg, #06b6d4, #7dd3fc);
+      background: linear-gradient(135deg, #00d9ff, #7dd3fc);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -71,23 +71,23 @@
       }
 
       .btn-cta-primary {
-        background: #06b6d4;
-        color: #0f172a;
+        background: #00d9ff;
+        color: #0a0e27;
 
         &:hover {
           transform: translateY(-1px);
-          box-shadow: 0 8px 16px rgba(6, 182, 212, 0.3);
+          box-shadow: 0 8px 16px rgba(0, 217, 255, 0.4);
         }
       }
 
       .btn-cta-secondary {
         background: transparent;
-        color: #06b6d4;
-        border: 1px solid rgba(6, 182, 212, 0.4);
+        color: #00d9ff;
+        border: 1px solid rgba(0, 217, 255, 0.4);
 
         &:hover {
-          border-color: #06b6d4;
-          background: rgba(6, 182, 212, 0.1);
+          border-color: #00d9ff;
+          background: rgba(0, 217, 255, 0.1);
         }
       }
     }
@@ -125,10 +125,10 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: #06b6d4;
+      color: #00d9ff;
       margin: 0 0 1rem 0;
       padding-bottom: 0.75rem;
-      border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+      border-bottom: 1px solid rgba(0, 217, 255, 0.2);
     }
 
     nav a {
@@ -140,7 +140,7 @@
       transition: color 0.2s ease;
 
       &:hover {
-        color: #06b6d4;
+        color: #00d9ff;
       }
     }
   }
@@ -210,23 +210,23 @@
       }
 
       .btn-primary {
-        background: #06b6d4;
-        color: #0f172a;
+        background: #00d9ff;
+        color: #0a0e27;
 
         &:hover {
-          background: #0891b2;
+          background: #00a8cc;
           transform: translateY(-1px);
         }
       }
 
       .btn-secondary {
-        background: rgba(6, 182, 212, 0.1);
-        color: #06b6d4;
-        border: 1px solid rgba(6, 182, 212, 0.3);
+        background: rgba(0, 217, 255, 0.1);
+        color: #00d9ff;
+        border: 1px solid rgba(0, 217, 255, 0.3);
 
         &:hover {
-          background: rgba(6, 182, 212, 0.2);
-          border-color: #06b6d4;
+          background: rgba(0, 217, 255, 0.2);
+          border-color: #00d9ff;
         }
       }
     }
@@ -241,17 +241,17 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(6, 182, 212, 0.1);
-        border: 1px solid rgba(6, 182, 212, 0.25);
+        background: rgba(0, 217, 255, 0.1);
+        border: 1px solid rgba(0, 217, 255, 0.25);
         border-radius: 0.3rem;
-        color: #06b6d4;
+        color: #00d9ff;
         font-size: 0.9rem;
         transition: all 0.2s ease;
 
         &:hover {
-          background: #06b6d4;
-          color: #0f172a;
-          border-color: #06b6d4;
+          background: #00d9ff;
+          color: #0a0e27;
+          border-color: #00d9ff;
           transform: translateY(-2px);
         }
       }
@@ -269,9 +269,9 @@
   // ============================================================================
   .footer-trust-bar {
     padding: 1.75rem 0;
-    background: rgba(6, 182, 212, 0.06);
-    border-top: 1px solid rgba(6, 182, 212, 0.12);
-    border-bottom: 1px solid rgba(6, 182, 212, 0.12);
+    background: rgba(0, 217, 255, 0.04);
+    border-top: 1px solid rgba(0, 217, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 217, 255, 0.1);
 
     .trust-grid {
       display: grid;

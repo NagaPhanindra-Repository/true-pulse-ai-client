@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(10, 14, 39, 0.9);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -24,9 +24,9 @@
 }
 
 .wizard-container {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(19, 28, 63, 0.8) 0%, rgba(25, 35, 85, 0.8) 100%);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid rgba(0, 217, 255, 0.15);
   border-radius: 20px;
   width: 100%;
   max-width: 800px;
@@ -50,7 +50,7 @@
 // Scrollbar styling
 .wizard-container {
   scrollbar-width: thin;
-  scrollbar-color: rgba(167, 139, 250, 0.3) transparent;
+  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -61,11 +61,11 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(167, 139, 250, 0.3);
+    background: rgba(139, 92, 246, 0.3);
     border-radius: 3px;
 
     &:hover {
-      background: rgba(167, 139, 250, 0.5);
+      background: rgba(139, 92, 246, 0.5);
     }
   }
 }
@@ -76,15 +76,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 2rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+  border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(0, 102, 255, 0.1) 100%);
 
   h1 {
     font-size: 1.75rem;
     font-weight: 800;
     color: #e2e8f0;
     margin: 0;
-    background: linear-gradient(135deg, #a78bfa 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, #8b5cf6 0%, #0066ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -110,8 +110,8 @@
   display: flex;
   justify-content: space-between;
   padding: 2rem;
-  background: rgba(15, 23, 42, 0.4);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  background: rgba(10, 14, 39, 0.4);
+  border-bottom: 1px solid rgba(0, 217, 255, 0.1);
   overflow-x: auto;
   gap: 0.5rem;
 }
@@ -129,8 +129,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(148, 163, 184, 0.1);
-  border: 2px solid rgba(148, 163, 184, 0.3);
+  background: rgba(0, 217, 255, 0.08);
+  border: 2px solid rgba(0, 217, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -140,10 +140,10 @@
 }
 
 .progress-step.active .step-indicator {
-  background: linear-gradient(135deg, #a78bfa 0%, #3b82f6 100%);
-  border-color: #a78bfa;
+  background: linear-gradient(135deg, #8b5cf6 0%, #0066ff 100%);
+  border-color: #8b5cf6;
   color: white;
-  box-shadow: 0 0 20px rgba(167, 139, 250, 0.4);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
   transform: scale(1.1);
 }
 

@@ -2,7 +2,7 @@
   position: relative;
   min-height: 100vh;
   padding: 90px var(--pad-page) 40px;
-  background: #0b1225;
+  background: #0a0e27;
   color: #e2e8f0;
   overflow: hidden;
 }
@@ -24,7 +24,7 @@
 .glow-1 {
   width: 320px;
   height: 320px;
-  background: radial-gradient(circle, rgba(110,231,183,0.5), transparent 70%);
+  background: radial-gradient(circle, rgba(0,217,255,0.5), transparent 70%);
   top: -60px;
   left: -40px;
 }
@@ -32,7 +32,7 @@
 .glow-2 {
   width: 420px;
   height: 420px;
-  background: radial-gradient(circle, rgba(59,130,246,0.45), transparent 70%);
+  background: radial-gradient(circle, rgba(139,92,246,0.45), transparent 70%);
   bottom: -120px;
   right: -80px;
   animation-delay: -3s;

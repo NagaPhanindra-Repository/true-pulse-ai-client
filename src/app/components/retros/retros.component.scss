@@ -2,7 +2,7 @@
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  background: linear-gradient(120deg, #232946 60%, #6ee7b7 100%);
+  background: linear-gradient(120deg, #0a0e27 60%, #00d9ff 100%);
   padding-top: 90px;
   box-sizing: border-box;
   display: flex;
@@ -142,8 +142,8 @@
 }
 
 .view-retro-btn {
-  background: linear-gradient(90deg, #6ee7b7 60%, #a78bfa 100%);
-  color: #232946;
+  background: linear-gradient(90deg, #00d9ff 60%, #8b5cf6 100%);
+  color: #0a0e27;
   font-weight: 700;
   padding: 10px 22px;
   border-radius: 10px;
@@ -152,7 +152,7 @@
   transition: background 0.2s, color 0.2s;
 }
 .view-retro-btn:hover {
-  background: linear-gradient(90deg, #a78bfa 60%, #6ee7b7 100%);
+  background: linear-gradient(90deg, #8b5cf6 60%, #00d9ff 100%);
   color: #f4f4f8;
 }
 

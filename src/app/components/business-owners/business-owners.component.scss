@@ -50,9 +50,9 @@
   width: clamp(200px, 20vw, 260px);
   min-width: 180px;
   max-width: 240px;
-  background: rgba(35,41,70,0.7);
+  background: rgba(19, 28, 63, 0.7);
   border-radius: 18px;
-  box-shadow: 0 2px 16px 0 #3b82f655;
+  box-shadow: 0 2px 16px 0 rgba(0, 217, 255, 0.15);
   padding: 18px 12px;
   display: flex;
   flex-direction: column;
