@@ -43,6 +43,12 @@ export class DiscussionFormComponent {
     }
   }
 
+  selectDecisionType(type: DecisionType) {
+    this.form.patchValue({ decisionType: type });
+    this.form.get('decisionType')?.markAsDirty();
+    this.form.get('decisionType')?.markAsTouched();
+  }
+
   removeTag(index: number) {
     const updatedTags = this.tags.filter((_, i) => i !== index);
     this.tagsInput = updatedTags.join(', ');

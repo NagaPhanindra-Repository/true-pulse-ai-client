@@ -2,11 +2,11 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.375rem 0.75rem;
+  padding: 0.32rem 0.65rem;
   border-radius: 8px;
   border: 1px solid;
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
@@ -26,8 +26,8 @@
   }
 
   &.size-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
+    padding: 0.26rem 0.56rem;
+    font-size: 0.76rem;
 
     .icon {
       width: 12px;
@@ -72,6 +72,10 @@
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px currentColor;
+    box-shadow: 0 4px 10px currentColor;
+  }
+
+  &.selected {
+    transform: translateY(-1px);
   }
 }

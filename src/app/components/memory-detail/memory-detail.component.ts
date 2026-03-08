@@ -140,29 +140,33 @@ export class MemoryDetailComponent implements OnInit {
   }
 
   addDiscussionHandler() {
-    this.savingDiscussion = true;
+    this.savingDiscussion = false;
     this.showAddDiscussion = true;
   }
 
   onDiscussionSubmit(formData: any) {
-    if (!this.memory) return;
+    if (!this.memory) {
+      return;
+    }
+
+    this.savingDiscussion = true;
 
     this.memoryService.addDiscussion(this.memory.id, formData).subscribe({
       next: () => {
+        this.savingDiscussion = false;
         this.showAddDiscussion = false;
         this.loadMemory(this.memory!.id);
       },
       error: (err) => {
-        console.error('Error adding discussion:', err);
-      },
-      complete: () => {
         this.savingDiscussion = false;
+        console.error('Error adding discussion:', err);
       }
     });
   }
 
   onDiscussionCancel() {
     this.showAddDiscussion = false;
+    this.savingDiscussion = false;
   }
 
   get filteredDiscussions() {

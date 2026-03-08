@@ -12,6 +12,7 @@ import { DecisionType, DecisionTypeLabels, DecisionTypeColors } from '../../../m
 export class DecisionTagComponent {
   @Input() decisionType: DecisionType = 'requirement';
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  @Input() selected = false;
 
   get label(): string {
     return DecisionTypeLabels[this.decisionType];

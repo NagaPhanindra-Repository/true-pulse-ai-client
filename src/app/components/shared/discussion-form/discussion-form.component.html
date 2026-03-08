@@ -31,9 +31,13 @@
           *ngFor="let type of decisionTypes"
           class="decision-type-btn"
           [class.active]="form.get('decisionType')?.value === type"
-          (click)="form.patchValue({decisionType: type})"
+          [attr.aria-pressed]="form.get('decisionType')?.value === type"
+          (click)="selectDecisionType(type)"
         >
-          <app-decision-tag [decisionType]="type" size="md" />
+          <app-decision-tag
+            [decisionType]="type"
+            size="sm"
+          />
         </button>
       </div>
     </div>

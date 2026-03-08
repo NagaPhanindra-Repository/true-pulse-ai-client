@@ -1,4 +1,10 @@
-<span class="decision-tag" [ngClass]="'size-' + size" [style.borderColor]="getColor()" [style.background]="getColor() + '15'">
+<span
+  class="decision-tag"
+  [ngClass]="['size-' + size, selected ? 'selected' : '']"
+  [style.borderColor]="getColor()"
+  [style.background]="selected ? getColor() + '26' : getColor() + '15'"
+  [style.boxShadow]="selected ? '0 0 0 1px ' + getColor() + ', 0 8px 18px ' + getColor() + '33' : 'none'"
+>
   <span class="icon" [innerHTML]="iconSvg" [style.color]="getColor()"></span>
   <span class="label" [style.color]="getColor()">{{ label }}</span>
 </span>
