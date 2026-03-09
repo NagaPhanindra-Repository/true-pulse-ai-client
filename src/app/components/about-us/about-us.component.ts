@@ -19,7 +19,7 @@ export class AboutUsComponent {
     {
       icon: '📚',
       title: 'Memory Architecture',
-      description: 'MCP-integrated requirements memory that keeps your team context complete during implementation cycles.'
+      description: 'MemoryVault-MCP requirements memory unifies Jira, meetings, and chat context so teams and AI agents build with complete requirements.'
     },
     {
       icon: '🎯',
@@ -43,6 +43,6 @@ export class AboutUsComponent {
   timeline = [
     { year: '2024', event: 'TruePulse AI Founded', detail: 'Solving the signal contamination problem in enterprise software.' },
     { year: '2025', event: 'Retrospective & Memory Platform Launch', detail: 'Teams worldwide gain access to verified feedback & context preservation.' },
-    { year: '2026', event: 'AI Integration & Expansion', detail: 'RAG, MCP, and advanced analytics for enterprise intelligence.' }
+    { year: '2026', event: 'AI Integration & Expansion', detail: 'RAG, MemoryVault-MCP, and advanced analytics for enterprise intelligence.' }
   ];
 }
