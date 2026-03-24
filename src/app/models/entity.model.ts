@@ -108,3 +108,21 @@ export interface CreateEntityResponse {
   politicianProfile?: PoliticianProfile;
   celebrityProfile?: CelebrityProfile;
 }
+
+export interface GenerateBusinessImageRequest {
+  prompt: string;
+  entityId: number;
+  displayName: string;
+  size: string;
+}
+
+export interface GenerateBusinessImageResponse {
+  success: boolean;
+  mimeType: string | null;
+  imageBase64: string | null;
+  revisedPrompt: string | null;
+  businessId: string | null;
+  entityId: number | null;
+  displayName: string | null;
+  error: string | null;
+}

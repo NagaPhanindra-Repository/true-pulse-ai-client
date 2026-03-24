@@ -222,6 +222,7 @@
               </label>
             </ng-container>
           </ng-container>
+
         </div>
 
         <div class="edit-actions">
@@ -236,6 +237,82 @@
           </div>
         </div>
       </div>
+
+      <section class="image-studio" *ngIf="selectedEntity">
+        <div class="image-studio-header">
+          <div>
+            <p class="image-studio-kicker">AI Creative Studio</p>
+            <h3>Generate a premium business image</h3>
+            <p>
+              Craft a prompt, keep your selected entity context, and generate a campaign-ready visual.
+            </p>
+          </div>
+          <span class="studio-entity-pill">{{ selectedEntity.displayName }}</span>
+        </div>
+
+        <div class="image-studio-form">
+          <label class="studio-field full">
+            <span>Prompt</span>
+            <textarea
+              rows="4"
+              [(ngModel)]="imagePrompt"
+              placeholder="Example: Design a luxury launch hero image for our new AI product line with cinematic lighting."></textarea>
+          </label>
+
+          <label class="studio-field">
+            <span>Output Size</span>
+            <select [(ngModel)]="selectedImageSize">
+              <option *ngFor="let size of imageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+          </label>
+
+          <div class="studio-action-wrap">
+            <button class="primary-action studio-generate" (click)="generateBusinessImage()" [disabled]="!canGenerateImage">
+              <mat-icon>{{ isGeneratingImage ? 'hourglass_top' : 'auto_awesome' }}</mat-icon>
+              <span>{{ isGeneratingImage ? 'Generating...' : 'Generate Image' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="studio-banner success" *ngIf="imageGenerationStatus">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ imageGenerationStatus }}</span>
+        </div>
+
+        <div class="studio-banner error" *ngIf="imageGenerationError">
+          <mat-icon>error</mat-icon>
+          <span>{{ imageGenerationError }}</span>
+          <button class="ghost-action" (click)="retryImageGeneration()" [disabled]="isGeneratingImage">Retry</button>
+        </div>
+
+        <div class="generated-image-card" *ngIf="generatedImageUrl">
+          <div class="generated-image-frame">
+            <img [src]="generatedImageUrl" [alt]="'AI generated artwork for ' + selectedEntity.displayName" />
+          </div>
+
+          <div class="generated-image-meta">
+            <div class="meta-top">
+              <h4>Generated for {{ generatedImage?.displayName || selectedEntity.displayName }}</h4>
+              <span>{{ generatedImage?.mimeType || 'image/png' }}</span>
+            </div>
+
+            <p class="revised-prompt" [attr.title]="generatedImage?.revisedPrompt || ''">
+              {{ generatedImage?.revisedPrompt || 'No revised prompt returned by the model.' }}
+            </p>
+
+            <div class="meta-actions">
+              <button class="primary-action" (click)="downloadGeneratedImage()">
+                <mat-icon>download</mat-icon>
+                <span>Download Image</span>
+              </button>
+              <button class="ghost-action" (click)="retryImageGeneration()" [disabled]="isGeneratingImage">
+                <mat-icon>refresh</mat-icon>
+                <span>Regenerate</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div class="status-row" *ngIf="deleteStatus">
         {{ deleteStatus }}

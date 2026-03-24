@@ -8,6 +8,8 @@ import {
   CelebrityProfile,
   CreateEntityRequest,
   CreateEntityResponse,
+  GenerateBusinessImageRequest,
+  GenerateBusinessImageResponse,
   PoliticianProfile
 } from '../models/entity.model';
 
@@ -79,5 +81,9 @@ export class EntityService {
 
   deleteCelebrityProfile(entityId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/entities/${entityId}/celebrity`);
+  }
+
+  generateBusinessImage(payload: GenerateBusinessImageRequest): Observable<GenerateBusinessImageResponse> {
+    return this.http.post<GenerateBusinessImageResponse>(`${this.baseUrl}/business-images/generate`, payload);
   }
 }

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { HttpErrorResponse } from '@angular/common/http';
 import { EntityService } from '../../services/entity.service';
 import {
   BusinessLeaderProfile,
@@ -9,6 +10,8 @@ import {
   CelebrityProfile,
   CreateEntityResponse,
   EntityType,
+  GenerateBusinessImageRequest,
+  GenerateBusinessImageResponse,
   PoliticianProfile
 } from '../../models/entity.model';
 import { BusinessDocumentService } from '../../services/business-document.service';
@@ -21,7 +24,7 @@ interface DetailRow {
 @Component({
   selector: 'app-my-entities',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, DatePipe],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './my-entities.component.html',
   styleUrls: ['./my-entities.component.scss']
 })
@@ -40,6 +43,15 @@ export class MyEntitiesComponent implements OnInit {
   saveStatus = '';
   deleteStatus = '';
   editForm: any = {};
+  imagePrompt = '';
+  selectedImageSize = '1024x1024';
+  readonly imageSizeOptions = ['1024x1024', '1024x1536', '1536x1024'];
+  isGeneratingImage = false;
+  imageGenerationStatus = '';
+  imageGenerationError = '';
+  generatedImage: GenerateBusinessImageResponse | null = null;
+  generatedImageUrl = '';
+  lastGenerationRequest: GenerateBusinessImageRequest | null = null;
 
   constructor(
     private entityService: EntityService,
@@ -75,6 +87,7 @@ export class MyEntitiesComponent implements OnInit {
     this.saveStatus = '';
     this.deleteStatus = '';
     this.isEditing = false;
+    this.resetImageGenerationState();
     this.loadProfile(entity);
   }
 
@@ -289,6 +302,105 @@ export class MyEntitiesComponent implements OnInit {
         this.isUploading = false;
       }
     });
+  }
+
+  generateBusinessImage(): void {
+    if (!this.selectedEntity || this.isGeneratingImage) return;
+
+    const prompt = this.imagePrompt.trim();
+    if (!prompt) {
+      this.imageGenerationError = 'Please enter a prompt before generating an image.';
+      this.imageGenerationStatus = '';
+      return;
+    }
+
+    const request: GenerateBusinessImageRequest = {
+      prompt,
+      entityId: this.selectedEntity.id,
+      displayName: this.selectedEntity.displayName,
+      size: this.selectedImageSize
+    };
+
+    this.lastGenerationRequest = request;
+    this.isGeneratingImage = true;
+    this.imageGenerationStatus = `Creating image for ${request.displayName}...`;
+    this.imageGenerationError = '';
+    this.generatedImage = null;
+    this.generatedImageUrl = '';
+
+    this.entityService.generateBusinessImage(request).subscribe({
+      next: response => {
+        this.isGeneratingImage = false;
+        this.generatedImage = response;
+
+        if (response.success && response.imageBase64 && response.mimeType) {
+          this.generatedImageUrl = `data:${response.mimeType};base64,${response.imageBase64}`;
+          this.imageGenerationStatus = 'Image generated successfully. You can preview and download it below.';
+          this.imageGenerationError = '';
+          return;
+        }
+
+        this.imageGenerationStatus = '';
+        this.imageGenerationError = response.error || 'Image generation failed. Please try again.';
+      },
+      error: (error: HttpErrorResponse) => {
+        this.isGeneratingImage = false;
+        this.imageGenerationStatus = '';
+        this.imageGenerationError = this.extractApiError(error);
+      }
+    });
+  }
+
+  retryImageGeneration(): void {
+    if (this.isGeneratingImage) return;
+    if (this.lastGenerationRequest) {
+      this.imagePrompt = this.lastGenerationRequest.prompt;
+      this.selectedImageSize = this.lastGenerationRequest.size;
+    }
+    this.generateBusinessImage();
+  }
+
+  downloadGeneratedImage(): void {
+    if (!this.generatedImageUrl) return;
+
+    const link = document.createElement('a');
+    const extension = this.getFileExtensionFromMimeType(this.generatedImage?.mimeType || 'image/png');
+    const baseName = (this.selectedEntity?.displayName || 'business-image')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'business-image';
+
+    link.href = this.generatedImageUrl;
+    link.download = `${baseName}-${Date.now()}.${extension}`;
+    link.click();
+  }
+
+  get canGenerateImage(): boolean {
+    return !!this.selectedEntity && !!this.imagePrompt.trim() && !this.isGeneratingImage;
+  }
+
+  private resetImageGenerationState(): void {
+    this.imagePrompt = '';
+    this.selectedImageSize = '1024x1024';
+    this.imageGenerationStatus = '';
+    this.imageGenerationError = '';
+    this.generatedImage = null;
+    this.generatedImageUrl = '';
+    this.lastGenerationRequest = null;
+    this.isGeneratingImage = false;
+  }
+
+  private extractApiError(error: HttpErrorResponse): string {
+    const apiError = error?.error?.error || error?.error?.message;
+    return apiError || 'Unable to generate the image right now. Please retry in a moment.';
+  }
+
+  private getFileExtensionFromMimeType(mimeType: string): string {
+    const normalized = mimeType.toLowerCase();
+    if (normalized.includes('jpeg') || normalized.includes('jpg')) return 'jpg';
+    if (normalized.includes('webp')) return 'webp';
+    if (normalized.includes('gif')) return 'gif';
+    return 'png';
   }
 
   get filteredEntities(): CreateEntityResponse[] {
