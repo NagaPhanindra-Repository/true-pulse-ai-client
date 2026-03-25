@@ -118,9 +118,15 @@ export class MyEntitiesComponent implements OnInit {
   ];
   overlayManualOffsets: Record<string, { x: number; y: number }> = {};
   overlayAnchorBounds: OverlayAnchorBounds[] = [];
+  overlayTextEdits: Record<string, string> = {};
+  overlayFontSizeScale: Record<string, number> = {};
+  customAddedOverlays: OverlaySpec[] = [];
+  selectedAnchorKey: string | null = null;
+  showAddOverlayForm = false;
+  newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium' };
   isPosterDragging = false;
   posterCanvasCursor: 'default' | 'grab' | 'grabbing' = 'default';
-  private dragState: { key: string; startX: number; startY: number; originX: number; originY: number } | null = null;
+  private dragState: { key: string; startX: number; startY: number; originX: number; originY: number; hasDragged: boolean } | null = null;
   private interactiveRenderQueued = false;
 
   constructor(
@@ -403,6 +409,11 @@ export class MyEntitiesComponent implements OnInit {
     this.posterRenderError = '';
     this.overlayManualOffsets = {};
     this.overlayAnchorBounds = [];
+    this.overlayTextEdits = {};
+    this.overlayFontSizeScale = {};
+    this.customAddedOverlays = [];
+    this.selectedAnchorKey = null;
+    this.showAddOverlayForm = false;
     this.posterCanvasCursor = 'default';
     this.dragState = null;
     this.isPosterDragging = false;
@@ -466,14 +477,27 @@ export class MyEntitiesComponent implements OnInit {
   }
 
   get generatedOverlays(): OverlaySpec[] {
-    return [...(this.generatedImage?.overlays || [])]
-      .map(overlay => ({
-        ...overlay,
-        zone: this.normalizeZone(overlay.zone),
-        text: this.sanitizeOverlayText(overlay.text, overlay.role)
-      }))
+    const fromImage = [...(this.generatedImage?.overlays || [])]
+      .map(overlay => {
+        const processed = {
+          ...overlay,
+          zone: this.normalizeZone(overlay.zone),
+          text: this.sanitizeOverlayText(overlay.text, overlay.role)
+        };
+        const key = this.getOverlayKey(processed);
+        const edited = this.overlayTextEdits[key];
+        return edited !== undefined ? { ...processed, text: edited } : processed;
+      })
       .filter(overlay => !!overlay.text)
       .sort((left, right) => left.slot - right.slot);
+
+    const fromCustom = this.customAddedOverlays.map(overlay => {
+      const key = this.getOverlayKey(overlay);
+      const edited = this.overlayTextEdits[key];
+      return edited !== undefined ? { ...overlay, text: edited } : { ...overlay };
+    });
+
+    return [...fromImage, ...fromCustom];
   }
 
   get overlayConstraintNotice(): string {
@@ -510,8 +534,74 @@ export class MyEntitiesComponent implements OnInit {
 
   resetOverlayTextPositions(): void {
     this.overlayManualOffsets = {};
+    this.selectedAnchorKey = null;
     this.posterCanvasCursor = this.generatedOverlays.length ? 'grab' : 'default';
     this.schedulePosterRender();
+  }
+
+  setOverlayText(overlay: OverlaySpec, text: string): void {
+    const key = this.getOverlayKey(overlay);
+    this.overlayTextEdits = { ...this.overlayTextEdits, [key]: text };
+    this.schedulePosterRender();
+  }
+
+  getOverlayFontSizeScale(overlay: OverlaySpec): number {
+    return this.overlayFontSizeScale[this.getOverlayKey(overlay)] ?? 1.0;
+  }
+
+  setOverlayFontSizeScale(overlay: OverlaySpec, value: number): void {
+    const key = this.getOverlayKey(overlay);
+    this.overlayFontSizeScale = { ...this.overlayFontSizeScale, [key]: Number(value) };
+    this.schedulePosterRender();
+  }
+
+  addCustomOverlay(): void {
+    const text = this.newOverlayDraft.text.trim();
+    if (!text) return;
+    const newOverlay: OverlaySpec = {
+      slot: 1000 + this.customAddedOverlays.length,
+      zone: this.newOverlayDraft.zone,
+      role: this.newOverlayDraft.role,
+      text,
+      size: this.newOverlayDraft.size
+    };
+    this.customAddedOverlays = [...this.customAddedOverlays, newOverlay];
+    this.newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium' };
+    this.showAddOverlayForm = false;
+    this.schedulePosterRender();
+  }
+
+  removeOverlay(overlay: OverlaySpec): void {
+    const idx = this.customAddedOverlays.findIndex(o => o.slot === overlay.slot && o.role === overlay.role && o.text === overlay.text);
+    if (idx !== -1) {
+      this.customAddedOverlays = this.customAddedOverlays.filter((_, i) => i !== idx);
+      this.schedulePosterRender();
+    }
+  }
+
+  isCustomOverlay(overlay: OverlaySpec): boolean {
+    return overlay.slot >= 1000;
+  }
+
+  onCanvasKeyDown(event: KeyboardEvent): void {
+    if (!this.selectedAnchorKey) return;
+    const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+    if (!arrowKeys.includes(event.key)) return;
+    event.preventDefault();
+    const step = event.shiftKey ? 10 : 2;
+    const current = this.overlayManualOffsets[this.selectedAnchorKey] || { x: 0, y: 0 };
+    const deltas: Record<string, { x: number; y: number }> = {
+      ArrowLeft: { x: -step, y: 0 },
+      ArrowRight: { x: step, y: 0 },
+      ArrowUp: { x: 0, y: -step },
+      ArrowDown: { x: 0, y: step }
+    };
+    const delta = deltas[event.key] || { x: 0, y: 0 };
+    this.overlayManualOffsets = {
+      ...this.overlayManualOffsets,
+      [this.selectedAnchorKey]: { x: current.x + delta.x, y: current.y + delta.y }
+    };
+    this.queueInteractivePosterRender();
   }
 
   onPosterPointerDown(event: MouseEvent | TouchEvent): void {
@@ -536,7 +626,8 @@ export class MyEntitiesComponent implements OnInit {
       startX: point.x,
       startY: point.y,
       originX: existingOffset.x,
-      originY: existingOffset.y
+      originY: existingOffset.y,
+      hasDragged: false
     };
     this.isPosterDragging = true;
     this.posterCanvasCursor = 'grabbing';
@@ -556,6 +647,9 @@ export class MyEntitiesComponent implements OnInit {
 
     const deltaX = point.x - this.dragState.startX;
     const deltaY = point.y - this.dragState.startY;
+    if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
+      this.dragState.hasDragged = true;
+    }
     this.overlayManualOffsets = {
       ...this.overlayManualOffsets,
       [this.dragState.key]: {
@@ -569,6 +663,12 @@ export class MyEntitiesComponent implements OnInit {
   }
 
   onPosterPointerUp(): void {
+    if (this.dragState && !this.dragState.hasDragged) {
+      // It was a click, not a drag — toggle selection for arrow-key nudging
+      const clicked = this.dragState.key;
+      this.selectedAnchorKey = this.selectedAnchorKey === clicked ? null : clicked;
+      this.queueInteractivePosterRender();
+    }
     this.dragState = null;
     this.isPosterDragging = false;
     this.posterCanvasCursor = this.generatedOverlays.length ? 'grab' : 'default';
@@ -588,6 +688,12 @@ export class MyEntitiesComponent implements OnInit {
     this.isPosterRendering = false;
     this.overlayManualOffsets = {};
     this.overlayAnchorBounds = [];
+    this.overlayTextEdits = {};
+    this.overlayFontSizeScale = {};
+    this.customAddedOverlays = [];
+    this.selectedAnchorKey = null;
+    this.showAddOverlayForm = false;
+    this.newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium' };
     this.posterCanvasCursor = 'default';
     this.dragState = null;
     this.isPosterDragging = false;
@@ -757,6 +863,22 @@ export class MyEntitiesComponent implements OnInit {
     const overlayRect = this.createOverlayRect(adjustedLayout.left, adjustedLayout.top, measuredWidth, textHeight);
     occupiedRects.push(overlayRect);
 
+    // Draw selection indicator for arrow-key nudging
+    if (this.selectedAnchorKey === overlayKey) {
+      context.save();
+      context.shadowBlur = 0;
+      context.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+      context.lineWidth = 1.5;
+      context.setLineDash([5, 4]);
+      context.strokeRect(
+        adjustedLayout.left - 6,
+        adjustedLayout.top - 6,
+        measuredWidth + 12,
+        textHeight + 12
+      );
+      context.restore();
+    }
+
     context.restore();
 
     return {
@@ -793,7 +915,8 @@ export class MyEntitiesComponent implements OnInit {
       baseSize += 2;
     }
 
-    return Math.round(baseSize * scale);
+    const sizeScale = this.overlayFontSizeScale[this.getOverlayKey(overlay)] ?? 1.0;
+    return Math.round(baseSize * scale * sizeScale);
   }
 
   private getOverlayMaxWidth(zone: string, width: number): number {

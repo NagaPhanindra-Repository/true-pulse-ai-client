@@ -301,6 +301,7 @@
               #posterCanvas
               class="poster-canvas"
               aria-label="Generated poster preview"
+              tabindex="0"
               [style.cursor]="posterCanvasCursor"
               (mousedown)="onPosterPointerDown($event)"
               (mousemove)="onPosterPointerMove($event)"
@@ -308,7 +309,8 @@
               (mouseleave)="onPosterPointerUp()"
               (touchstart)="onPosterPointerDown($event)"
               (touchmove)="onPosterPointerMove($event)"
-              (touchend)="onPosterPointerUp()"></canvas>
+              (touchend)="onPosterPointerUp()"
+              (keydown)="onCanvasKeyDown($event)"></canvas>
           </div>
 
           <div class="generated-image-meta">
@@ -326,11 +328,11 @@
               <span>{{ overlayConstraintNotice }}</span>
             </div>
 
-            <div class="overlay-style-controls" *ngIf="generatedOverlays.length">
+            <div class="overlay-style-controls" *ngIf="generatedImageUrl">
               <h5>Overlay Typography Controls</h5>
               <div class="overlay-style-header">
-                <span>Tip: drag text directly on the poster preview to fine-tune placement.</span>
-                <button class="ghost-action" (click)="resetOverlayTextPositions()">Reset Position</button>
+                <span>Click text on poster to select, then drag or use arrow keys to nudge.</span>
+                <button class="ghost-action" (click)="resetOverlayTextPositions()">Reset Positions</button>
               </div>
               <div class="overlay-style-grid">
                 <label class="studio-field compact">
@@ -383,18 +385,108 @@
               </div>
             </div>
 
-            <div class="overlay-summary" *ngIf="generatedOverlays.length">
+            <div class="overlay-summary" *ngIf="generatedOverlays.length || generatedImageUrl">
               <div class="overlay-summary-header">
-                <span>Applied text overlays</span>
-                <span>{{ generatedOverlays.length }} layers</span>
+                <span>Text Layers</span>
+                <span>{{ generatedOverlays.length }} layer{{ generatedOverlays.length !== 1 ? 's' : '' }}</span>
               </div>
+
               <div class="overlay-pill-list">
-                <div class="overlay-pill" *ngFor="let overlay of generatedOverlays">
+                <div class="overlay-pill" *ngFor="let overlay of generatedOverlays"
+                  [class.overlay-pill--selected]="selectedAnchorKey === (overlay.slot + '-' + overlay.zone + '-' + overlay.role.toLowerCase())">
+
                   <div class="overlay-pill-top">
                     <strong>{{ overlay.role }}</strong>
-                    <span>{{ overlay.zone }}</span>
+                    <span class="overlay-pill-zone">{{ overlay.zone }}</span>
+                    <button *ngIf="isCustomOverlay(overlay)" class="overlay-remove-btn"
+                      title="Remove this layer" (click)="removeOverlay(overlay)">
+                      <mat-icon>close</mat-icon>
+                    </button>
                   </div>
-                  <p>{{ overlay.text }}</p>
+
+                  <div class="overlay-edit-row">
+                    <label class="overlay-edit-label">Text</label>
+                    <input
+                      class="overlay-text-input"
+                      type="text"
+                      [value]="overlay.text"
+                      (input)="setOverlayText(overlay, $any($event.target).value)"
+                      placeholder="Enter overlay text..." />
+                  </div>
+
+                  <div class="overlay-size-row">
+                    <label class="overlay-edit-label">Size <span class="size-value">{{ (getOverlayFontSizeScale(overlay) * 100) | number:'1.0-0' }}%</span></label>
+                    <input
+                      class="overlay-size-slider"
+                      type="range"
+                      min="0.4"
+                      max="2.0"
+                      step="0.05"
+                      [value]="getOverlayFontSizeScale(overlay)"
+                      (input)="setOverlayFontSizeScale(overlay, $any($event.target).value)" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="add-overlay-section">
+                <button *ngIf="!showAddOverlayForm" class="ghost-action add-layer-btn"
+                  (click)="showAddOverlayForm = true">
+                  <mat-icon>add</mat-icon>
+                  <span>Add Text Layer</span>
+                </button>
+
+                <div *ngIf="showAddOverlayForm" class="add-overlay-form">
+                  <div class="add-overlay-form-title">New Text Layer</div>
+
+                  <label class="studio-field compact full">
+                    <span>Text Content</span>
+                    <input type="text" [(ngModel)]="newOverlayDraft.text" placeholder="Enter your text..." />
+                  </label>
+
+                  <div class="add-overlay-form-grid">
+                    <label class="studio-field compact">
+                      <span>Zone</span>
+                      <select [(ngModel)]="newOverlayDraft.zone">
+                        <option value="upper-middle">Upper Middle</option>
+                        <option value="top-banner">Top Banner</option>
+                        <option value="top-center">Top Center</option>
+                        <option value="bottom-bar">Bottom Bar</option>
+                        <option value="bottom-right">Bottom Right</option>
+                      </select>
+                    </label>
+                    <label class="studio-field compact">
+                      <span>Role</span>
+                      <select [(ngModel)]="newOverlayDraft.role">
+                        <option value="custom">Custom</option>
+                        <option value="title">Title</option>
+                        <option value="headline">Headline</option>
+                        <option value="brand">Brand</option>
+                        <option value="offer">Offer</option>
+                        <option value="price">Price</option>
+                        <option value="cta">CTA</option>
+                      </select>
+                    </label>
+                    <label class="studio-field compact">
+                      <span>Size</span>
+                      <select [(ngModel)]="newOverlayDraft.size">
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <div class="add-overlay-form-actions">
+                    <button class="primary-action small-action" (click)="addCustomOverlay()"
+                      [disabled]="!newOverlayDraft.text.trim()">
+                      <mat-icon>check</mat-icon>
+                      <span>Add</span>
+                    </button>
+                    <button class="ghost-action small-action" (click)="showAddOverlayForm = false; newOverlayDraft.text = ''">
+                      <mat-icon>close</mat-icon>
+                      <span>Cancel</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
