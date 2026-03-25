@@ -52,6 +52,12 @@ interface OverlayRect {
   bottom: number;
 }
 
+interface OverlayAnchorBounds extends OverlayRect {
+  key: string;
+  role: string;
+  text: string;
+}
+
 @Component({
   selector: 'app-my-entities',
   standalone: true,
@@ -110,6 +116,12 @@ export class MyEntitiesComponent implements OnInit {
     { value: 'mono', label: 'Neutral Monotone' },
     { value: 'custom', label: 'Custom Colors' }
   ];
+  overlayManualOffsets: Record<string, { x: number; y: number }> = {};
+  overlayAnchorBounds: OverlayAnchorBounds[] = [];
+  isPosterDragging = false;
+  posterCanvasCursor: 'default' | 'grab' | 'grabbing' = 'default';
+  private dragState: { key: string; startX: number; startY: number; originX: number; originY: number } | null = null;
+  private interactiveRenderQueued = false;
 
   constructor(
     private entityService: EntityService,
@@ -389,6 +401,11 @@ export class MyEntitiesComponent implements OnInit {
     this.generatedImageUrl = '';
     this.composedPosterUrl = '';
     this.posterRenderError = '';
+    this.overlayManualOffsets = {};
+    this.overlayAnchorBounds = [];
+    this.posterCanvasCursor = 'default';
+    this.dragState = null;
+    this.isPosterDragging = false;
 
     this.entityService.generateBusinessImage(request).subscribe({
       next: response => {
@@ -491,6 +508,72 @@ export class MyEntitiesComponent implements OnInit {
     this.schedulePosterRender();
   }
 
+  resetOverlayTextPositions(): void {
+    this.overlayManualOffsets = {};
+    this.posterCanvasCursor = this.generatedOverlays.length ? 'grab' : 'default';
+    this.schedulePosterRender();
+  }
+
+  onPosterPointerDown(event: MouseEvent | TouchEvent): void {
+    if (!this.generatedOverlays.length || !this.overlayAnchorBounds.length) {
+      return;
+    }
+
+    const point = this.getCanvasPoint(event);
+    if (!point) {
+      return;
+    }
+
+    const hit = this.findAnchorAtPoint(point.x, point.y);
+    if (!hit) {
+      this.posterCanvasCursor = 'grab';
+      return;
+    }
+
+    const existingOffset = this.overlayManualOffsets[hit.key] || { x: 0, y: 0 };
+    this.dragState = {
+      key: hit.key,
+      startX: point.x,
+      startY: point.y,
+      originX: existingOffset.x,
+      originY: existingOffset.y
+    };
+    this.isPosterDragging = true;
+    this.posterCanvasCursor = 'grabbing';
+    event.preventDefault();
+  }
+
+  onPosterPointerMove(event: MouseEvent | TouchEvent): void {
+    const point = this.getCanvasPoint(event);
+    if (!point) {
+      return;
+    }
+
+    if (!this.dragState) {
+      this.posterCanvasCursor = this.findAnchorAtPoint(point.x, point.y) ? 'grab' : 'default';
+      return;
+    }
+
+    const deltaX = point.x - this.dragState.startX;
+    const deltaY = point.y - this.dragState.startY;
+    this.overlayManualOffsets = {
+      ...this.overlayManualOffsets,
+      [this.dragState.key]: {
+        x: this.dragState.originX + deltaX,
+        y: this.dragState.originY + deltaY
+      }
+    };
+
+    this.queueInteractivePosterRender();
+    event.preventDefault();
+  }
+
+  onPosterPointerUp(): void {
+    this.dragState = null;
+    this.isPosterDragging = false;
+    this.posterCanvasCursor = this.generatedOverlays.length ? 'grab' : 'default';
+  }
+
   private resetImageGenerationState(): void {
     this.imagePrompt = '';
     this.selectedImageSize = '1024x1024';
@@ -503,6 +586,11 @@ export class MyEntitiesComponent implements OnInit {
     this.lastGenerationRequest = null;
     this.isGeneratingImage = false;
     this.isPosterRendering = false;
+    this.overlayManualOffsets = {};
+    this.overlayAnchorBounds = [];
+    this.posterCanvasCursor = 'default';
+    this.dragState = null;
+    this.isPosterDragging = false;
   }
 
   private extractApiError(error: HttpErrorResponse): string {
@@ -559,11 +647,14 @@ export class MyEntitiesComponent implements OnInit {
 
       const overlays = this.generatedOverlays;
       const occupiedTextRects: OverlayRect[] = [];
+      this.overlayAnchorBounds = [];
+      this.posterCanvasCursor = overlays.length ? (this.isPosterDragging ? 'grabbing' : 'grab') : 'default';
 
       const zoneOffsets = new Map<string, number>();
       for (const overlay of overlays) {
         const offsetIndex = zoneOffsets.get(overlay.zone) || 0;
-        this.drawOverlay(context, overlay, width, height, offsetIndex, occupiedTextRects);
+        const anchorBounds = this.drawOverlay(context, overlay, width, height, offsetIndex, occupiedTextRects);
+        this.overlayAnchorBounds.push(anchorBounds);
         zoneOffsets.set(overlay.zone, offsetIndex + 1);
       }
 
@@ -605,7 +696,7 @@ export class MyEntitiesComponent implements OnInit {
     height: number,
     stackIndex: number,
     occupiedRects: OverlayRect[]
-  ): void {
+  ): OverlayAnchorBounds {
     const normalizedZone = this.normalizeZone(overlay.zone);
     const zoneSample = this.getZoneSampleRect(normalizedZone, width, height);
     const palette = this.samplePalette(context, zoneSample.left, zoneSample.top, zoneSample.width, zoneSample.height);
@@ -629,34 +720,51 @@ export class MyEntitiesComponent implements OnInit {
     const text = style.uppercase ? overlay.text.toUpperCase() : overlay.text;
     const lines = this.wrapCanvasText(context, text, maxTextWidth, style.maxLines);
     const measuredWidth = Math.max(...lines.map(line => this.measureCanvasTextLine(context, line, style.letterSpacing)), 80);
-    const layout = this.getOverlayLayout(overlay.zone, width, height, measuredWidth, lines.length * lineHeight, stackIndex);
+    const textHeight = lines.length * lineHeight;
+    const layout = this.getOverlayLayout(overlay.zone, width, height, measuredWidth, textHeight, stackIndex);
     const resolvedLayout = this.resolveOverlayLayoutCollision(
       layout,
       measuredWidth,
-      lines.length * lineHeight,
+      textHeight,
       width,
       height,
       occupiedRects,
       normalizedZone
     );
 
-    context.textAlign = resolvedLayout.textAlign;
+    const overlayKey = this.getOverlayKey(overlay);
+    const manualOffset = this.overlayManualOffsets[overlayKey] || { x: 0, y: 0 };
+    const adjustedLayout = {
+      ...resolvedLayout,
+      left: this.clamp(resolvedLayout.left + manualOffset.x, 10, width - measuredWidth - 10),
+      top: this.clamp(resolvedLayout.top + manualOffset.y, 10, height - textHeight - 10)
+    };
 
-    const textX = resolvedLayout.textAlign === 'center'
-      ? resolvedLayout.left + measuredWidth / 2
-      : resolvedLayout.textAlign === 'right'
-        ? resolvedLayout.left + measuredWidth
-        : resolvedLayout.left;
+    context.textAlign = adjustedLayout.textAlign;
+
+    const textX = adjustedLayout.textAlign === 'center'
+      ? adjustedLayout.left + measuredWidth / 2
+      : adjustedLayout.textAlign === 'right'
+        ? adjustedLayout.left + measuredWidth
+        : adjustedLayout.left;
 
     lines.forEach((line, index) => {
-      const lineTop = resolvedLayout.top + index * lineHeight;
+      const lineTop = adjustedLayout.top + index * lineHeight;
       context.fillStyle = this.createTextFillGradient(context, lineTop, lineHeight, style);
-      this.drawCanvasTextLine(context, line, textX, lineTop, resolvedLayout.textAlign, style.letterSpacing);
+      this.drawCanvasTextLine(context, line, textX, lineTop, adjustedLayout.textAlign, style.letterSpacing);
     });
 
-    occupiedRects.push(this.createOverlayRect(resolvedLayout.left, resolvedLayout.top, measuredWidth, lines.length * lineHeight));
+    const overlayRect = this.createOverlayRect(adjustedLayout.left, adjustedLayout.top, measuredWidth, textHeight);
+    occupiedRects.push(overlayRect);
 
     context.restore();
+
+    return {
+      ...overlayRect,
+      key: overlayKey,
+      role: overlay.role,
+      text: overlay.text
+    };
   }
 
   private getOverlayFontSize(overlay: OverlaySpec, width: number): number {
@@ -1232,6 +1340,53 @@ export class MyEntitiesComponent implements OnInit {
       right: left + width + 8,
       bottom: top + height + 6
     };
+  }
+
+  private getOverlayKey(overlay: OverlaySpec): string {
+    return `${overlay.slot}-${this.normalizeZone(overlay.zone)}-${(overlay.role || '').toLowerCase()}`;
+  }
+
+  private findAnchorAtPoint(x: number, y: number): OverlayAnchorBounds | null {
+    for (let index = this.overlayAnchorBounds.length - 1; index >= 0; index -= 1) {
+      const anchor = this.overlayAnchorBounds[index];
+      if (x >= anchor.left && x <= anchor.right && y >= anchor.top && y <= anchor.bottom) {
+        return anchor;
+      }
+    }
+
+    return null;
+  }
+
+  private getCanvasPoint(event: MouseEvent | TouchEvent): { x: number; y: number } | null {
+    const canvas = this.posterCanvas?.nativeElement;
+    if (!canvas) {
+      return null;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    const pointer = 'touches' in event
+      ? (event.touches[0] || event.changedTouches[0])
+      : event;
+
+    if (!pointer || rect.width === 0 || rect.height === 0) {
+      return null;
+    }
+
+    const x = ((pointer.clientX - rect.left) / rect.width) * canvas.width;
+    const y = ((pointer.clientY - rect.top) / rect.height) * canvas.height;
+    return { x, y };
+  }
+
+  private queueInteractivePosterRender(): void {
+    if (this.interactiveRenderQueued) {
+      return;
+    }
+
+    this.interactiveRenderQueued = true;
+    requestAnimationFrame(() => {
+      this.interactiveRenderQueued = false;
+      void this.renderPosterCanvas();
+    });
   }
 
   private rectsOverlap(first: OverlayRect, second: OverlayRect): boolean {

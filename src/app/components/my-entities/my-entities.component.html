@@ -297,7 +297,18 @@
 
         <div class="generated-image-card" *ngIf="generatedImageUrl">
           <div class="generated-image-frame">
-            <canvas #posterCanvas class="poster-canvas" aria-label="Generated poster preview"></canvas>
+            <canvas
+              #posterCanvas
+              class="poster-canvas"
+              aria-label="Generated poster preview"
+              [style.cursor]="posterCanvasCursor"
+              (mousedown)="onPosterPointerDown($event)"
+              (mousemove)="onPosterPointerMove($event)"
+              (mouseup)="onPosterPointerUp()"
+              (mouseleave)="onPosterPointerUp()"
+              (touchstart)="onPosterPointerDown($event)"
+              (touchmove)="onPosterPointerMove($event)"
+              (touchend)="onPosterPointerUp()"></canvas>
           </div>
 
           <div class="generated-image-meta">
@@ -317,6 +328,10 @@
 
             <div class="overlay-style-controls" *ngIf="generatedOverlays.length">
               <h5>Overlay Typography Controls</h5>
+              <div class="overlay-style-header">
+                <span>Tip: drag text directly on the poster preview to fine-tune placement.</span>
+                <button class="ghost-action" (click)="resetOverlayTextPositions()">Reset Position</button>
+              </div>
               <div class="overlay-style-grid">
                 <label class="studio-field compact">
                   <span>Font Style</span>
