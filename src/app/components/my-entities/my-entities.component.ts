@@ -26,6 +26,7 @@ interface PosterTextStyle {
   fontFamily: string;
   fontWeight: number;
   fillStyle: string;
+  fillStyleSecondary: string;
   strokeStyle: string;
   strokeWidth: number;
   shadowColor: string;
@@ -41,6 +42,14 @@ interface SampledPalette {
   b: number;
   luminance: number;
   saturation: number;
+  hue: number;
+}
+
+interface OverlayRect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
 }
 
 @Component({
@@ -79,6 +88,28 @@ export class MyEntitiesComponent implements OnInit {
   posterRenderError = '';
   isPosterRendering = false;
   lastGenerationRequest: GenerateBusinessImageRequest | null = null;
+  selectedOverlayFontStyle = 'auto';
+  selectedOverlayColorStyle = 'auto';
+  customOverlayFontFamily = `Montserrat, 'Avenir Next', 'Segoe UI', Arial, sans-serif`;
+  customOverlayPrimaryColor = '#ffeeb9';
+  customOverlayHighlightColor = '#fff8df';
+  customOverlayStrokeColor = '#2a1422';
+  readonly overlayFontStyleOptions = [
+    { value: 'auto', label: 'Auto (Image Inspired)' },
+    { value: 'classic', label: 'Classic Serif' },
+    { value: 'modern', label: 'Modern Sans' },
+    { value: 'poster', label: 'Poster Bold' },
+    { value: 'elegant', label: 'Elegant Editorial' },
+    { value: 'condensed', label: 'Condensed Ad' },
+    { value: 'custom', label: 'Custom Font Family' }
+  ];
+  readonly overlayColorStyleOptions = [
+    { value: 'auto', label: 'Auto (Image Inspired)' },
+    { value: 'warm', label: 'Warm Festival' },
+    { value: 'cool', label: 'Cool Vibrant' },
+    { value: 'mono', label: 'Neutral Monotone' },
+    { value: 'custom', label: 'Custom Colors' }
+  ];
 
   constructor(
     private entityService: EntityService,
@@ -440,6 +471,26 @@ export class MyEntitiesComponent implements OnInit {
     return !!this.selectedEntity && !!this.imagePrompt.trim() && !this.isGeneratingImage;
   }
 
+  get isCustomOverlayPalette(): boolean {
+    return this.selectedOverlayColorStyle === 'custom';
+  }
+
+  get isCustomOverlayFontStyle(): boolean {
+    return this.selectedOverlayFontStyle === 'custom';
+  }
+
+  onOverlayStyleControlChange(): void {
+    if (this.isCustomOverlayFontStyle && !this.customOverlayFontFamily.trim()) {
+      this.customOverlayFontFamily = `Montserrat, 'Avenir Next', 'Segoe UI', Arial, sans-serif`;
+    }
+
+    if (!this.generatedImageUrl || this.isPosterRendering) {
+      return;
+    }
+
+    this.schedulePosterRender();
+  }
+
   private resetImageGenerationState(): void {
     this.imagePrompt = '';
     this.selectedImageSize = '1024x1024';
@@ -507,11 +558,12 @@ export class MyEntitiesComponent implements OnInit {
       context.drawImage(backgroundImage, 0, 0, width, height);
 
       const overlays = this.generatedOverlays;
+      const occupiedTextRects: OverlayRect[] = [];
 
       const zoneOffsets = new Map<string, number>();
       for (const overlay of overlays) {
         const offsetIndex = zoneOffsets.get(overlay.zone) || 0;
-        this.drawOverlay(context, overlay, width, height, offsetIndex);
+        this.drawOverlay(context, overlay, width, height, offsetIndex, occupiedTextRects);
         zoneOffsets.set(overlay.zone, offsetIndex + 1);
       }
 
@@ -551,9 +603,13 @@ export class MyEntitiesComponent implements OnInit {
     overlay: OverlaySpec,
     width: number,
     height: number,
-    stackIndex: number
+    stackIndex: number,
+    occupiedRects: OverlayRect[]
   ): void {
-    const baseStyle = this.getOverlayTextStyle(overlay);
+    const normalizedZone = this.normalizeZone(overlay.zone);
+    const zoneSample = this.getZoneSampleRect(normalizedZone, width, height);
+    const palette = this.samplePalette(context, zoneSample.left, zoneSample.top, zoneSample.width, zoneSample.height);
+    const baseStyle = this.getOverlayTextStyle(overlay, palette);
     const fontSize = this.getOverlayFontSize(overlay, width);
     const maxTextWidth = this.getOverlayMaxWidth(overlay.zone, width);
     const lineHeight = Math.round(fontSize * 1.2);
@@ -563,14 +619,10 @@ export class MyEntitiesComponent implements OnInit {
     context.textBaseline = 'top';
     context.lineJoin = 'round';
 
-    const normalizedZone = this.normalizeZone(overlay.zone);
-    const zoneSample = this.getZoneSampleRect(normalizedZone, width, height);
-    const palette = this.samplePalette(context, zoneSample.left, zoneSample.top, zoneSample.width, zoneSample.height);
     const style = this.getAdaptiveOverlayTextStyle(baseStyle, palette, overlay.role);
 
     context.lineWidth = style.strokeWidth;
     context.strokeStyle = style.strokeStyle;
-    context.fillStyle = style.fillStyle;
     context.shadowColor = style.shadowColor;
     context.shadowBlur = style.shadowBlur;
 
@@ -578,18 +630,31 @@ export class MyEntitiesComponent implements OnInit {
     const lines = this.wrapCanvasText(context, text, maxTextWidth, style.maxLines);
     const measuredWidth = Math.max(...lines.map(line => this.measureCanvasTextLine(context, line, style.letterSpacing)), 80);
     const layout = this.getOverlayLayout(overlay.zone, width, height, measuredWidth, lines.length * lineHeight, stackIndex);
+    const resolvedLayout = this.resolveOverlayLayoutCollision(
+      layout,
+      measuredWidth,
+      lines.length * lineHeight,
+      width,
+      height,
+      occupiedRects,
+      normalizedZone
+    );
 
-    context.textAlign = layout.textAlign;
+    context.textAlign = resolvedLayout.textAlign;
 
-    const textX = layout.textAlign === 'center'
-      ? layout.left + measuredWidth / 2
-      : layout.textAlign === 'right'
-        ? layout.left + measuredWidth
-        : layout.left;
+    const textX = resolvedLayout.textAlign === 'center'
+      ? resolvedLayout.left + measuredWidth / 2
+      : resolvedLayout.textAlign === 'right'
+        ? resolvedLayout.left + measuredWidth
+        : resolvedLayout.left;
 
     lines.forEach((line, index) => {
-      this.drawCanvasTextLine(context, line, textX, layout.top + index * lineHeight, layout.textAlign, style.letterSpacing);
+      const lineTop = resolvedLayout.top + index * lineHeight;
+      context.fillStyle = this.createTextFillGradient(context, lineTop, lineHeight, style);
+      this.drawCanvasTextLine(context, line, textX, lineTop, resolvedLayout.textAlign, style.letterSpacing);
     });
+
+    occupiedRects.push(this.createOverlayRect(resolvedLayout.left, resolvedLayout.top, measuredWidth, lines.length * lineHeight));
 
     context.restore();
   }
@@ -615,9 +680,9 @@ export class MyEntitiesComponent implements OnInit {
     if (role.includes('title') || role.includes('headline') || role.includes('name') || zone === 'upper-middle') {
       baseSize += 16;
     } else if (role.includes('price') || role.includes('offer') || role.includes('cta') || zone === 'bottom-right') {
-      baseSize += 10;
+      baseSize += 14;
     } else if (zone === 'top-banner' || zone === 'top-center') {
-      baseSize += 4;
+      baseSize += 2;
     }
 
     return Math.round(baseSize * scale);
@@ -650,19 +715,19 @@ export class MyEntitiesComponent implements OnInit {
       case 'top-banner':
         return {
           left: (width - textWidth) / 2,
-          top: height * 0.072 + stackIndex * (textHeight + gap),
+          top: height * 0.062 + stackIndex * (textHeight + gap),
           textAlign: 'center'
         };
       case 'upper-middle':
         return {
           left: (width - textWidth) / 2,
-          top: height * 0.2 + stackIndex * (textHeight + gap),
+          top: height * 0.182 + stackIndex * (textHeight + gap),
           textAlign: 'center'
         };
       case 'bottom-bar':
         return {
           left: (width - textWidth) / 2,
-          top: height * 0.805 - stackIndex * (textHeight + gap),
+          top: height * 0.858 - stackIndex * (textHeight + gap),
           textAlign: 'center'
         };
       case 'bottom-right':
@@ -820,8 +885,9 @@ export class MyEntitiesComponent implements OnInit {
     const b = Math.round(blueTotal / count);
     const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
     const saturation = saturationTotal / count;
+    const hue = this.rgbToHsl(r, g, b).h;
 
-    return { r, g, b, luminance, saturation };
+    return { r, g, b, luminance, saturation, hue };
   }
 
   private getAdaptiveOverlayTextStyle(
@@ -830,38 +896,81 @@ export class MyEntitiesComponent implements OnInit {
     role: string
   ): PosterTextStyle {
     const lowerRole = (role || '').toLowerCase();
-    const warmTarget = lowerRole.includes('offer') || lowerRole.includes('price')
-      ? { r: 255, g: 224, b: 142 }
-      : { r: 255, g: 239, b: 189 };
-    const deepTarget = lowerRole.includes('offer') || lowerRole.includes('price')
-      ? { r: 76, g: 26, b: 28 }
-      : { r: 55, g: 24, b: 44 };
+    if (this.selectedOverlayColorStyle === 'custom') {
+      const customFill = this.hexToRgb(this.customOverlayPrimaryColor) || { r: 255, g: 238, b: 185 };
+      const customHighlight = this.hexToRgb(this.customOverlayHighlightColor) || { r: 255, g: 248, b: 223 };
+      const customStroke = this.hexToRgb(this.customOverlayStrokeColor) || { r: 42, g: 20, b: 34 };
+
+      return {
+        ...base,
+        fillStyle: this.rgba(customFill.r, customFill.g, customFill.b, 0.98),
+        fillStyleSecondary: this.rgba(customHighlight.r, customHighlight.g, customHighlight.b, 0.99),
+        strokeStyle: this.rgba(customStroke.r, customStroke.g, customStroke.b, 0.86),
+        shadowColor: this.rgba(customStroke.r, customStroke.g, customStroke.b, 0.34),
+        shadowBlur: Math.max(6, base.shadowBlur)
+      };
+    }
+
+    const roleHueShift = lowerRole.includes('brand')
+      ? 28
+      : lowerRole.includes('offer') || lowerRole.includes('price')
+        ? 196
+        : 154;
+    const hueShiftMap: Record<string, number> = {
+      auto: roleHueShift,
+      warm: 26,
+      cool: 210,
+      mono: 0
+    };
+    const mode = this.selectedOverlayColorStyle || 'auto';
+    const mappedHueShift = hueShiftMap[mode] ?? roleHueShift;
+    const roleHue = (palette.hue + mappedHueShift) % 360;
+    const warmHue = (palette.hue + (mode === 'cool' ? 188 : 18)) % 360;
+    const saturationMultiplier = mode === 'mono' ? 0.28 : 0.55;
+    const saturated = this.clamp(0.32 + palette.saturation * saturationMultiplier, 0.12, mode === 'mono' ? 0.46 : 0.92);
 
     if (palette.luminance < 0.54) {
-      const fill = this.mixRgb(palette, warmTarget, 0.82);
-      const stroke = this.mixRgb(palette, deepTarget, 0.78);
-      const shadow = this.mixRgb(palette, { r: 0, g: 0, b: 0 }, 0.66);
+      const fill = this.hslToRgb(warmHue, this.clamp(saturated, 0.38, 0.9), 0.74);
+      const fillHighlight = this.hslToRgb(warmHue, this.clamp(saturated + 0.08, 0.45, 0.95), 0.88);
+      const stroke = this.hslToRgb(roleHue, this.clamp(saturated * 0.75, 0.28, 0.76), 0.22);
+      const shadow = this.hslToRgb(roleHue, this.clamp(saturated * 0.45, 0.12, 0.48), 0.08);
 
       return {
         ...base,
         fillStyle: this.rgba(fill.r, fill.g, fill.b, 0.98),
-        strokeStyle: this.rgba(stroke.r, stroke.g, stroke.b, 0.75),
-        shadowColor: this.rgba(shadow.r, shadow.g, shadow.b, 0.24),
-        shadowBlur: Math.max(4, base.shadowBlur + (palette.saturation > 0.45 ? 2 : 0))
+        fillStyleSecondary: this.rgba(fillHighlight.r, fillHighlight.g, fillHighlight.b, 0.99),
+        strokeStyle: this.rgba(stroke.r, stroke.g, stroke.b, 0.82),
+        shadowColor: this.rgba(shadow.r, shadow.g, shadow.b, 0.42),
+        shadowBlur: Math.max(6, base.shadowBlur + (palette.saturation > 0.45 ? 3 : 1))
       };
     }
 
-    const fill = this.mixRgb(palette, deepTarget, 0.74);
-    const stroke = this.mixRgb(palette, { r: 255, g: 246, b: 220 }, 0.66);
-    const shadow = this.mixRgb(palette, { r: 18, g: 22, b: 31 }, 0.45);
+    const fill = this.hslToRgb(roleHue, this.clamp(saturated * 0.88, 0.25, 0.72), 0.2);
+    const fillHighlight = this.hslToRgb(roleHue, this.clamp(saturated * 0.74, 0.22, 0.62), 0.3);
+    const stroke = this.hslToRgb((roleHue + 185) % 360, this.clamp(saturated * 0.4, 0.08, 0.35), 0.94);
+    const shadow = this.hslToRgb(roleHue, this.clamp(saturated * 0.24, 0.05, 0.2), 0.11);
 
     return {
       ...base,
       fillStyle: this.rgba(fill.r, fill.g, fill.b, 0.96),
-      strokeStyle: this.rgba(stroke.r, stroke.g, stroke.b, 0.55),
-      shadowColor: this.rgba(shadow.r, shadow.g, shadow.b, 0.18),
-      shadowBlur: Math.max(3, base.shadowBlur - 1)
+      fillStyleSecondary: this.rgba(fillHighlight.r, fillHighlight.g, fillHighlight.b, 0.98),
+      strokeStyle: this.rgba(stroke.r, stroke.g, stroke.b, 0.76),
+      shadowColor: this.rgba(shadow.r, shadow.g, shadow.b, 0.26),
+      shadowBlur: Math.max(5, base.shadowBlur)
     };
+  }
+
+  private createTextFillGradient(
+    context: CanvasRenderingContext2D,
+    top: number,
+    lineHeight: number,
+    style: PosterTextStyle
+  ): CanvasGradient {
+    const gradient = context.createLinearGradient(0, top, 0, top + lineHeight);
+    gradient.addColorStop(0, style.fillStyleSecondary || style.fillStyle);
+    gradient.addColorStop(0.46, style.fillStyle);
+    gradient.addColorStop(1, style.fillStyle);
+    return gradient;
   }
 
   private mixRgb(
@@ -884,20 +993,22 @@ export class MyEntitiesComponent implements OnInit {
     return `rgba(${red}, ${green}, ${blue}, ${clampedAlpha})`;
   }
 
-  private getOverlayTextStyle(overlay: OverlaySpec): PosterTextStyle {
+  private getOverlayTextStyle(overlay: OverlaySpec, palette: SampledPalette): PosterTextStyle {
     const role = (overlay.role || '').toLowerCase();
     const zone = this.normalizeZone(overlay.zone);
+    const fontFamily = this.pickFontFamily(role, zone, palette);
 
     if (role.includes('title') || role.includes('headline') || role.includes('name') || zone === 'upper-middle') {
       return {
-        fontFamily: `'Trebuchet MS', 'Segoe UI', Arial, sans-serif`,
-        fontWeight: 800,
-        fillStyle: '#ffe9a8',
-        strokeStyle: 'rgba(74, 24, 48, 0.72)',
-        strokeWidth: 2,
-        shadowColor: 'rgba(255, 200, 114, 0.22)',
-        shadowBlur: 8,
-        letterSpacing: 1.1,
+        fontFamily,
+        fontWeight: 700,
+        fillStyle: '#ffe8a4',
+        fillStyleSecondary: '#fff8d8',
+        strokeStyle: 'rgba(64, 23, 40, 0.8)',
+        strokeWidth: 2.3,
+        shadowColor: 'rgba(255, 189, 96, 0.28)',
+        shadowBlur: 10,
+        letterSpacing: 0.9,
         uppercase: true,
         maxLines: 2
       };
@@ -905,38 +1016,41 @@ export class MyEntitiesComponent implements OnInit {
 
     if (role.includes('price') || role.includes('offer') || role.includes('cta') || zone === 'bottom-right') {
       return {
-        fontFamily: `'Trebuchet MS', 'Segoe UI', Arial, sans-serif`,
+        fontFamily,
         fontWeight: 800,
-        fillStyle: '#fff2c7',
-        strokeStyle: 'rgba(94, 29, 33, 0.68)',
-        strokeWidth: 2,
-        shadowColor: 'rgba(248, 113, 113, 0.18)',
-        shadowBlur: 6,
-        letterSpacing: 0.5,
+        fillStyle: '#ffeeb9',
+        fillStyleSecondary: '#fff8df',
+        strokeStyle: 'rgba(74, 24, 24, 0.85)',
+        strokeWidth: 2.5,
+        shadowColor: 'rgba(14, 8, 20, 0.42)',
+        shadowBlur: 12,
+        letterSpacing: 0.3,
         uppercase: false,
-        maxLines: 3
+        maxLines: 2
       };
     }
 
     if (zone === 'top-banner' || zone === 'top-center') {
       return {
-        fontFamily: `'Segoe UI', 'Trebuchet MS', Arial, sans-serif`,
-        fontWeight: 700,
+        fontFamily,
+        fontWeight: 800,
         fillStyle: '#fef3c7',
-        strokeStyle: 'rgba(58, 18, 38, 0.62)',
-        strokeWidth: 1.8,
-        shadowColor: 'rgba(245, 158, 11, 0.18)',
-        shadowBlur: 5,
-        letterSpacing: 0.9,
+        fillStyleSecondary: '#fffbe8',
+        strokeStyle: 'rgba(42, 20, 34, 0.78)',
+        strokeWidth: 1.9,
+        shadowColor: 'rgba(14, 10, 21, 0.3)',
+        shadowBlur: 8,
+        letterSpacing: 0.55,
         uppercase: true,
         maxLines: 2
       };
     }
 
     return {
-      fontFamily: `'Segoe UI', 'Trebuchet MS', Arial, sans-serif`,
+      fontFamily,
       fontWeight: 700,
       fillStyle: '#fff8ef',
+      fillStyleSecondary: '#ffffff',
       strokeStyle: 'rgba(30, 41, 59, 0.92)',
       strokeWidth: 2,
       shadowColor: 'rgba(15, 23, 42, 0.22)',
@@ -947,19 +1061,212 @@ export class MyEntitiesComponent implements OnInit {
     };
   }
 
+  private pickFontFamily(role: string, zone: string, palette: SampledPalette): string {
+    if (this.selectedOverlayFontStyle === 'custom') {
+      return this.customOverlayFontFamily.trim() || `'Avenir Next', 'Segoe UI', Arial, sans-serif`;
+    }
+
+    if (this.selectedOverlayFontStyle === 'classic') {
+      return `Georgia, 'Palatino Linotype', 'Times New Roman', serif`;
+    }
+
+    if (this.selectedOverlayFontStyle === 'modern') {
+      return `'Avenir Next', 'Segoe UI', 'Trebuchet MS', Arial, sans-serif`;
+    }
+
+    if (this.selectedOverlayFontStyle === 'poster') {
+      if (role.includes('offer') || role.includes('price') || role.includes('cta')) {
+        return `'Arial Black', 'Franklin Gothic Heavy', 'Trebuchet MS', sans-serif`;
+      }
+      return `'Impact', 'Arial Black', 'Trebuchet MS', sans-serif`;
+    }
+
+    if (this.selectedOverlayFontStyle === 'elegant') {
+      return `'Baskerville', 'Palatino Linotype', Georgia, serif`;
+    }
+
+    if (this.selectedOverlayFontStyle === 'condensed') {
+      return `'Arial Narrow', 'Franklin Gothic Medium', 'Trebuchet MS', sans-serif`;
+    }
+
+    if (role.includes('offer') || role.includes('price') || role.includes('cta')) {
+      return `'Arial Black', 'Franklin Gothic Heavy', 'Trebuchet MS', 'Segoe UI', sans-serif`;
+    }
+
+    if (role.includes('brand') || zone === 'top-banner' || zone === 'top-center') {
+      if (palette.saturation > 0.52) {
+        return `'Avenir Next', 'Segoe UI', 'Trebuchet MS', Arial, sans-serif`;
+      }
+      return `'Gill Sans', 'Trebuchet MS', 'Segoe UI', Arial, sans-serif`;
+    }
+
+    if (palette.luminance < 0.48) {
+      return `Georgia, 'Palatino Linotype', 'Times New Roman', serif`;
+    }
+
+    if (palette.hue > 20 && palette.hue < 80) {
+      return `Cambria, Georgia, 'Times New Roman', serif`;
+    }
+
+    return `'Trebuchet MS', 'Segoe UI', Arial, sans-serif`;
+  }
+
+  private rgbToHsl(red: number, green: number, blue: number): { h: number; s: number; l: number } {
+    const r = red / 255;
+    const g = green / 255;
+    const b = blue / 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+    const lightness = (max + min) / 2;
+
+    if (delta === 0) {
+      return { h: 0, s: 0, l: lightness };
+    }
+
+    const saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+    let hue = 0;
+
+    if (max === r) {
+      hue = (g - b) / delta + (g < b ? 6 : 0);
+    } else if (max === g) {
+      hue = (b - r) / delta + 2;
+    } else {
+      hue = (r - g) / delta + 4;
+    }
+
+    return { h: Math.round(hue * 60), s: saturation, l: lightness };
+  }
+
+  private hslToRgb(hue: number, saturation: number, lightness: number): { r: number; g: number; b: number } {
+    const h = ((hue % 360) + 360) % 360;
+    const s = this.clamp(saturation, 0, 1);
+    const l = this.clamp(lightness, 0, 1);
+
+    if (s === 0) {
+      const grayscale = Math.round(l * 255);
+      return { r: grayscale, g: grayscale, b: grayscale };
+    }
+
+    const chroma = (1 - Math.abs(2 * l - 1)) * s;
+    const hPrime = h / 60;
+    const x = chroma * (1 - Math.abs((hPrime % 2) - 1));
+
+    let r1 = 0;
+    let g1 = 0;
+    let b1 = 0;
+
+    if (hPrime >= 0 && hPrime < 1) {
+      r1 = chroma;
+      g1 = x;
+    } else if (hPrime >= 1 && hPrime < 2) {
+      r1 = x;
+      g1 = chroma;
+    } else if (hPrime >= 2 && hPrime < 3) {
+      g1 = chroma;
+      b1 = x;
+    } else if (hPrime >= 3 && hPrime < 4) {
+      g1 = x;
+      b1 = chroma;
+    } else if (hPrime >= 4 && hPrime < 5) {
+      r1 = x;
+      b1 = chroma;
+    } else {
+      r1 = chroma;
+      b1 = x;
+    }
+
+    const match = l - chroma / 2;
+    return {
+      r: Math.round((r1 + match) * 255),
+      g: Math.round((g1 + match) * 255),
+      b: Math.round((b1 + match) * 255)
+    };
+  }
+
+  private clamp(value: number, minValue: number, maxValue: number): number {
+    return Math.min(maxValue, Math.max(minValue, value));
+  }
+
+  private resolveOverlayLayoutCollision(
+    layout: { left: number; top: number; textAlign: CanvasTextAlign },
+    textWidth: number,
+    textHeight: number,
+    canvasWidth: number,
+    canvasHeight: number,
+    occupiedRects: OverlayRect[],
+    zone: string
+  ): { left: number; top: number; textAlign: CanvasTextAlign } {
+    const moveUpward = zone === 'bottom-bar' || zone === 'bottom-right';
+    const direction = moveUpward ? -1 : 1;
+    const step = 12;
+
+    let top = this.clamp(layout.top, 10, canvasHeight - textHeight - 10);
+    const left = this.clamp(layout.left, 10, canvasWidth - textWidth - 10);
+
+    for (let attempt = 0; attempt < 16; attempt += 1) {
+      const candidate = this.createOverlayRect(left, top, textWidth, textHeight);
+      if (!occupiedRects.some(rect => this.rectsOverlap(rect, candidate))) {
+        return {
+          left,
+          top,
+          textAlign: layout.textAlign
+        };
+      }
+
+      top = this.clamp(top + direction * step, 10, canvasHeight - textHeight - 10);
+    }
+
+    return {
+      left,
+      top,
+      textAlign: layout.textAlign
+    };
+  }
+
+  private createOverlayRect(left: number, top: number, width: number, height: number): OverlayRect {
+    return {
+      left: left - 8,
+      top: top - 6,
+      right: left + width + 8,
+      bottom: top + height + 6
+    };
+  }
+
+  private rectsOverlap(first: OverlayRect, second: OverlayRect): boolean {
+    return first.left < second.right
+      && first.right > second.left
+      && first.top < second.bottom
+      && first.bottom > second.top;
+  }
+
+  private hexToRgb(color: string): { r: number; g: number; b: number } | null {
+    const normalized = (color || '').trim();
+    const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(normalized);
+    if (!match) {
+      return null;
+    }
+
+    return {
+      r: Number.parseInt(match[1], 16),
+      g: Number.parseInt(match[2], 16),
+      b: Number.parseInt(match[3], 16)
+    };
+  }
+
   private measureCanvasTextLine(
     context: CanvasRenderingContext2D,
     text: string,
     letterSpacing: number
   ): number {
+    const measured = context.measureText(text).width;
     if (letterSpacing <= 0 || text.length < 2) {
-      return context.measureText(text).width;
+      return measured;
     }
 
-    return [...text].reduce((totalWidth, character, index) => {
-      const extraSpacing = index === 0 ? 0 : letterSpacing;
-      return totalWidth + context.measureText(character).width + extraSpacing;
-    }, 0);
+    // Keep layout a bit roomier without breaking native kerning.
+    return measured + Math.max(0, text.length - 1) * letterSpacing * 0.2;
   }
 
   private drawCanvasTextLine(
@@ -970,28 +1277,10 @@ export class MyEntitiesComponent implements OnInit {
     align: CanvasTextAlign,
     letterSpacing: number
   ): void {
-    if (letterSpacing <= 0 || text.length < 2) {
-      context.strokeText(text, x, y);
-      context.fillText(text, x, y);
-      return;
-    }
-
-    const totalWidth = this.measureCanvasTextLine(context, text, letterSpacing);
-    let cursorX = align === 'center'
-      ? x - totalWidth / 2
-      : align === 'right'
-        ? x - totalWidth
-        : x;
-
-    [...text].forEach((character, index) => {
-      if (index > 0) {
-        cursorX += letterSpacing;
-      }
-
-      context.strokeText(character, cursorX, y);
-      context.fillText(character, cursorX, y);
-      cursorX += context.measureText(character).width;
-    });
+    void align;
+    void letterSpacing;
+    context.strokeText(text, x, y);
+    context.fillText(text, x, y);
   }
 
   private buildBusinessId(displayName: string): string {

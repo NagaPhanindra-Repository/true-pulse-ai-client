@@ -315,6 +315,59 @@
               <span>{{ overlayConstraintNotice }}</span>
             </div>
 
+            <div class="overlay-style-controls" *ngIf="generatedOverlays.length">
+              <h5>Overlay Typography Controls</h5>
+              <div class="overlay-style-grid">
+                <label class="studio-field compact">
+                  <span>Font Style</span>
+                  <select [(ngModel)]="selectedOverlayFontStyle" (change)="onOverlayStyleControlChange()">
+                    <option *ngFor="let option of overlayFontStyleOptions" [value]="option.value">{{ option.label }}</option>
+                  </select>
+                </label>
+
+                <label class="studio-field compact">
+                  <span>Color Style</span>
+                  <select [(ngModel)]="selectedOverlayColorStyle" (change)="onOverlayStyleControlChange()">
+                    <option *ngFor="let option of overlayColorStyleOptions" [value]="option.value">{{ option.label }}</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="overlay-font-custom" *ngIf="isCustomOverlayFontStyle">
+                <label class="studio-field compact full">
+                  <span>Custom Font Family</span>
+                  <input
+                    type="text"
+                    [(ngModel)]="customOverlayFontFamily"
+                    (input)="onOverlayStyleControlChange()"
+                    list="overlayFontSuggestions"
+                    placeholder="Example: Montserrat, 'Segoe UI', sans-serif" />
+                </label>
+                <datalist id="overlayFontSuggestions">
+                  <option value="Montserrat, 'Avenir Next', 'Segoe UI', Arial, sans-serif"></option>
+                  <option value="'Baskerville', 'Palatino Linotype', Georgia, serif"></option>
+                  <option value="'Arial Black', 'Franklin Gothic Heavy', 'Trebuchet MS', sans-serif"></option>
+                  <option value="'Arial Narrow', 'Franklin Gothic Medium', 'Trebuchet MS', sans-serif"></option>
+                  <option value="'Gill Sans', 'Trebuchet MS', 'Segoe UI', Arial, sans-serif"></option>
+                </datalist>
+              </div>
+
+              <div class="overlay-custom-colors" *ngIf="isCustomOverlayPalette">
+                <label class="color-control">
+                  <span>Primary</span>
+                  <input type="color" [(ngModel)]="customOverlayPrimaryColor" (input)="onOverlayStyleControlChange()" />
+                </label>
+                <label class="color-control">
+                  <span>Highlight</span>
+                  <input type="color" [(ngModel)]="customOverlayHighlightColor" (input)="onOverlayStyleControlChange()" />
+                </label>
+                <label class="color-control">
+                  <span>Stroke</span>
+                  <input type="color" [(ngModel)]="customOverlayStrokeColor" (input)="onOverlayStyleControlChange()" />
+                </label>
+              </div>
+            </div>
+
             <div class="overlay-summary" *ngIf="generatedOverlays.length">
               <div class="overlay-summary-header">
                 <span>Applied text overlays</span>
