@@ -491,6 +491,103 @@
               </div>
             </div>
 
+            <div class="social-broadcast" *ngIf="generatedImageUrl">
+              <button class="social-action" (click)="toggleSocialComposer()">
+                <mat-icon>share</mat-icon>
+                <span>{{ showSocialComposer ? 'Hide One-Click Social' : 'One-Click Post To All Handles' }}</span>
+              </button>
+
+              <div class="social-broadcast-panel" *ngIf="showSocialComposer">
+                <div class="social-panel-header">
+                  <div>
+                    <h5>Social Broadcast Studio</h5>
+                    <p>One click can publish this poster to all connected handles once integration is enabled.</p>
+                  </div>
+                  <span class="coming-soon-pill">Coming Soon</span>
+                </div>
+
+                <div class="social-handle-list" aria-label="Connected social handles">
+                  <div class="social-handle-pill" *ngFor="let handle of socialHandles">
+                    <mat-icon>{{ handle.icon }}</mat-icon>
+                    <span>{{ handle.label }}</span>
+                    <strong>{{ handle.enabled ? 'On' : 'Off' }}</strong>
+                    <button
+                      class="social-toggle"
+                      type="button"
+                      (click)="toggleSocialHandle(handle.key)"
+                      [attr.aria-label]="'Toggle ' + handle.label"
+                      [class.social-toggle--active]="handle.enabled">
+                      <mat-icon>{{ handle.enabled ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                    </button>
+                  </div>
+                </div>
+
+                <label class="social-message-field">
+                  <span>Post Message</span>
+                  <textarea
+                    rows="3"
+                    [(ngModel)]="socialPostMessage"
+                    placeholder="Write the message that should go live with this poster across all handles..."></textarea>
+                  <small>{{ socialPostCharacterCount }} chars</small>
+                </label>
+
+                <div class="social-health-strip" [class.social-health-strip--warning]="socialGlobalHealth === 'warning'"
+                  [class.social-health-strip--over]="socialGlobalHealth === 'over'">
+                  <mat-icon>
+                    {{ socialGlobalHealth === 'over' ? 'error' : socialGlobalHealth === 'warning' ? 'warning' : 'check_circle' }}
+                  </mat-icon>
+                  <span>
+                    {{ socialGlobalHealth === 'over' ? 'Message exceeds limit for selected handles.' : socialGlobalHealth === 'warning' ? 'Message is close to one or more limits.' : 'Message length is healthy for selected handles.' }}
+                  </span>
+                </div>
+
+                <div class="social-ai-assistant" *ngIf="needsSocialAutoTrimSuggestion">
+                  <div class="social-ai-head">
+                    <div class="social-ai-title">
+                      <mat-icon>auto_awesome</mat-icon>
+                      <span>AI Trim Assistant</span>
+                    </div>
+                    <small>Targeting {{ strictestEnabledSocialLimit }} char limit</small>
+                  </div>
+                  <p>{{ socialAutoTrimSuggestion }}</p>
+                  <button class="ghost-action social-ai-apply" (click)="applySocialAutoTrimSuggestion()">
+                    <mat-icon>magic_button</mat-icon>
+                    <span>Use Suggested Version</span>
+                  </button>
+                </div>
+
+                <div class="social-preview-grid" *ngIf="enabledSocialHandles.length">
+                  <div class="social-preview-card" *ngFor="let handle of enabledSocialHandles"
+                    [class.social-preview-card--warning]="getSocialHandleHealth(handle) === 'warning'"
+                    [class.social-preview-card--over]="getSocialHandleHealth(handle) === 'over'">
+                    <div class="social-preview-head">
+                      <div class="social-preview-title">
+                        <mat-icon>{{ handle.icon }}</mat-icon>
+                        <span>{{ handle.label }}</span>
+                      </div>
+                      <strong>{{ getSocialHandleStatusText(handle) }}</strong>
+                    </div>
+                    <div class="social-preview-body">
+                      <p>{{ socialPostMessage || 'Your post message preview appears here.' }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="social-panel-actions">
+                  <button class="primary-action" (click)="simulateOneClickSocialPost()">
+                    <mat-icon>rocket_launch</mat-icon>
+                    <span>One-Click Post</span>
+                  </button>
+                  <button class="ghost-action" (click)="toggleSocialComposer()">
+                    <mat-icon>close</mat-icon>
+                    <span>Close</span>
+                  </button>
+                </div>
+
+                <p class="social-status" *ngIf="socialPostStatus">{{ socialPostStatus }}</p>
+              </div>
+            </div>
+
             <div class="meta-actions">
               <button class="primary-action" (click)="downloadGeneratedImage()">
                 <mat-icon>download</mat-icon>

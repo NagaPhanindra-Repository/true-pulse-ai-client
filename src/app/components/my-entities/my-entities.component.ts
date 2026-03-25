@@ -58,6 +58,14 @@ interface OverlayAnchorBounds extends OverlayRect {
   text: string;
 }
 
+interface SocialHandleConfig {
+  key: string;
+  label: string;
+  icon: string;
+  limit: number;
+  enabled: boolean;
+}
+
 @Component({
   selector: 'app-my-entities',
   standalone: true,
@@ -125,6 +133,16 @@ export class MyEntitiesComponent implements OnInit {
   selectedAnchorKey: string | null = null;
   showAddOverlayForm = false;
   newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium' };
+  showSocialComposer = false;
+  socialPostMessage = '';
+  socialPostStatus = '';
+  socialHandles: SocialHandleConfig[] = [
+    { key: 'instagram', label: 'Instagram', icon: 'photo_camera', limit: 2200, enabled: true },
+    { key: 'facebook', label: 'Facebook', icon: 'thumb_up', limit: 63206, enabled: true },
+    { key: 'x', label: 'X / Twitter', icon: 'tag', limit: 280, enabled: true },
+    { key: 'linkedin', label: 'LinkedIn', icon: 'business_center', limit: 3000, enabled: true },
+    { key: 'youtube', label: 'YouTube', icon: 'smart_display', limit: 5000, enabled: true }
+  ];
   isPosterDragging = false;
   posterCanvasCursor: 'default' | 'grab' | 'grabbing' = 'default';
   private dragState: { key: string; startX: number; startY: number; originX: number; originY: number; hasDragged: boolean } | null = null;
@@ -415,6 +433,9 @@ export class MyEntitiesComponent implements OnInit {
     this.customAddedOverlays = [];
     this.selectedAnchorKey = null;
     this.showAddOverlayForm = false;
+    this.showSocialComposer = false;
+    this.socialPostMessage = '';
+    this.socialPostStatus = '';
     this.posterCanvasCursor = 'default';
     this.dragState = null;
     this.isPosterDragging = false;
@@ -514,6 +535,50 @@ export class MyEntitiesComponent implements OnInit {
     return !!this.selectedEntity && !!this.imagePrompt.trim() && !this.isGeneratingImage;
   }
 
+  get socialPostCharacterCount(): number {
+    return (this.socialPostMessage || '').trim().length;
+  }
+
+  get enabledSocialHandles(): SocialHandleConfig[] {
+    return this.socialHandles.filter(handle => handle.enabled);
+  }
+
+  get socialGlobalHealth(): 'healthy' | 'warning' | 'over' {
+    if (!this.enabledSocialHandles.length) {
+      return 'warning';
+    }
+
+    if (this.enabledSocialHandles.some(handle => this.socialPostCharacterCount > handle.limit)) {
+      return 'over';
+    }
+
+    if (this.enabledSocialHandles.some(handle => this.socialPostCharacterCount / handle.limit >= 0.85)) {
+      return 'warning';
+    }
+
+    return 'healthy';
+  }
+
+  get strictestEnabledSocialLimit(): number {
+    if (!this.enabledSocialHandles.length) {
+      return 0;
+    }
+
+    return Math.min(...this.enabledSocialHandles.map(handle => handle.limit));
+  }
+
+  get needsSocialAutoTrimSuggestion(): boolean {
+    return this.strictestEnabledSocialLimit > 0 && this.socialPostCharacterCount > this.strictestEnabledSocialLimit;
+  }
+
+  get socialAutoTrimSuggestion(): string {
+    if (!this.needsSocialAutoTrimSuggestion) {
+      return '';
+    }
+
+    return this.buildSocialTrimSuggestion(this.socialPostMessage, this.strictestEnabledSocialLimit);
+  }
+
   get isCustomOverlayPalette(): boolean {
     return this.selectedOverlayColorStyle === 'custom';
   }
@@ -588,6 +653,99 @@ export class MyEntitiesComponent implements OnInit {
 
   isCustomOverlay(overlay: OverlaySpec): boolean {
     return overlay.slot >= 1000;
+  }
+
+  toggleSocialComposer(): void {
+    this.showSocialComposer = !this.showSocialComposer;
+    this.socialPostStatus = '';
+    if (this.showSocialComposer && !this.socialPostMessage.trim()) {
+      const display = this.generatedImage?.displayName || this.selectedEntity?.displayName || 'our brand';
+      this.socialPostMessage = `Fresh poster drop for ${display}. Built with True Pulse AI.`;
+    }
+  }
+
+  toggleSocialHandle(handleKey: string): void {
+    this.socialHandles = this.socialHandles.map(handle =>
+      handle.key === handleKey
+        ? { ...handle, enabled: !handle.enabled }
+        : handle
+    );
+    this.socialPostStatus = '';
+  }
+
+  getSocialHandleHealth(handle: SocialHandleConfig): 'healthy' | 'warning' | 'over' {
+    if (this.socialPostCharacterCount > handle.limit) {
+      return 'over';
+    }
+
+    if (this.socialPostCharacterCount / handle.limit >= 0.85) {
+      return 'warning';
+    }
+
+    return 'healthy';
+  }
+
+  getSocialHandleStatusText(handle: SocialHandleConfig): string {
+    const remaining = handle.limit - this.socialPostCharacterCount;
+    if (remaining < 0) {
+      return `${Math.abs(remaining)} over`;
+    }
+    return `${remaining} left`;
+  }
+
+  applySocialAutoTrimSuggestion(): void {
+    const suggestion = this.socialAutoTrimSuggestion;
+    if (!suggestion) {
+      return;
+    }
+
+    this.socialPostMessage = suggestion;
+    this.socialPostStatus = `Applied AI-assisted trim for the strictest selected limit (${this.strictestEnabledSocialLimit} chars).`;
+  }
+
+  simulateOneClickSocialPost(): void {
+    const trimmed = this.socialPostMessage.trim();
+    if (!trimmed) {
+      this.socialPostStatus = 'Add a message before you publish this campaign draft.';
+      return;
+    }
+
+    if (!this.enabledSocialHandles.length) {
+      this.socialPostStatus = 'Enable at least one social handle to continue.';
+      return;
+    }
+
+    if (this.enabledSocialHandles.some(handle => this.socialPostCharacterCount > handle.limit)) {
+      this.socialPostStatus = 'Message is over the limit for one or more selected handles. Trim it to continue.';
+      return;
+    }
+
+    this.socialPostStatus = `Prototype mode: ready to post across ${this.enabledSocialHandles.length} handle(s). Social API integration can be plugged in later for true one-click posting.`;
+  }
+
+  private buildSocialTrimSuggestion(message: string, maxLength: number): string {
+    const normalized = (message || '').replace(/\s+/g, ' ').trim();
+    if (!normalized || normalized.length <= maxLength) {
+      return normalized;
+    }
+
+    const sentences = normalized.split(/(?<=[.!?])\s+/).filter(Boolean);
+    let candidate = '';
+
+    for (const sentence of sentences) {
+      const next = candidate ? `${candidate} ${sentence}` : sentence;
+      if (next.length > maxLength) {
+        break;
+      }
+      candidate = next;
+    }
+
+    if (candidate.length >= Math.min(maxLength * 0.55, maxLength - 16)) {
+      return candidate;
+    }
+
+    const hardLimit = Math.max(12, maxLength - 1);
+    return `${normalized.slice(0, hardLimit).trimEnd()}...`;
   }
 
   onCanvasKeyDown(event: KeyboardEvent): void {
@@ -701,6 +859,9 @@ export class MyEntitiesComponent implements OnInit {
     this.removedOverlayKeys = new Set();
     this.selectedAnchorKey = null;
     this.showAddOverlayForm = false;
+    this.showSocialComposer = false;
+    this.socialPostMessage = '';
+    this.socialPostStatus = '';
     this.newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium' };
     this.posterCanvasCursor = 'default';
     this.dragState = null;
