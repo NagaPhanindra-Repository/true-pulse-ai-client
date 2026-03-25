@@ -568,6 +568,14 @@
   box-shadow: 0 16px 30px rgba(2, 6, 23, 0.45);
 }
 
+.poster-canvas {
+  width: min(100%, 460px);
+  border-radius: 12px;
+  border: 1px solid rgba(94, 234, 212, 0.35);
+  box-shadow: 0 16px 30px rgba(2, 6, 23, 0.45);
+  background: rgba(15, 23, 42, 0.9);
+}
+
 .generated-image-meta {
   padding: 14px;
   display: flex;
@@ -605,6 +613,81 @@
   line-height: 1.45;
   max-height: 4.2em;
   overflow: hidden;
+}
+
+.overlay-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(120, 53, 15, 0.18);
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  color: #fde68a;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.overlay-warning mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+
+.overlay-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.overlay-summary-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #cbd5e1;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.overlay-pill-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.overlay-pill {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.overlay-pill-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.overlay-pill-top strong {
+  color: #f8fafc;
+  text-transform: capitalize;
+  font-size: 0.88rem;
+}
+
+.overlay-pill-top span {
+  color: #93c5fd;
+  font-size: 0.76rem;
+}
+
+.overlay-pill p {
+  margin: 0;
+  color: #e2e8f0;
+  font-size: 0.88rem;
+  line-height: 1.4;
 }
 
 .meta-actions {

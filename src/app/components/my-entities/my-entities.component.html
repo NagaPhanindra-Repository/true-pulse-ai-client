@@ -285,9 +285,19 @@
           <button class="ghost-action" (click)="retryImageGeneration()" [disabled]="isGeneratingImage">Retry</button>
         </div>
 
+        <div class="studio-banner success" *ngIf="isPosterRendering">
+          <mat-icon>draw</mat-icon>
+          <span>Composing poster overlays for a clean, downloadable final export...</span>
+        </div>
+
+        <div class="studio-banner error" *ngIf="posterRenderError">
+          <mat-icon>warning</mat-icon>
+          <span>{{ posterRenderError }}</span>
+        </div>
+
         <div class="generated-image-card" *ngIf="generatedImageUrl">
           <div class="generated-image-frame">
-            <img [src]="generatedImageUrl" [alt]="'AI generated artwork for ' + selectedEntity.displayName" />
+            <canvas #posterCanvas class="poster-canvas" aria-label="Generated poster preview"></canvas>
           </div>
 
           <div class="generated-image-meta">
@@ -300,10 +310,31 @@
               {{ generatedImage?.revisedPrompt || 'No revised prompt returned by the model.' }}
             </p>
 
+            <div class="overlay-warning" *ngIf="overlayConstraintNotice">
+              <mat-icon>info</mat-icon>
+              <span>{{ overlayConstraintNotice }}</span>
+            </div>
+
+            <div class="overlay-summary" *ngIf="generatedOverlays.length">
+              <div class="overlay-summary-header">
+                <span>Applied text overlays</span>
+                <span>{{ generatedOverlays.length }} layers</span>
+              </div>
+              <div class="overlay-pill-list">
+                <div class="overlay-pill" *ngFor="let overlay of generatedOverlays">
+                  <div class="overlay-pill-top">
+                    <strong>{{ overlay.role }}</strong>
+                    <span>{{ overlay.zone }}</span>
+                  </div>
+                  <p>{{ overlay.text }}</p>
+                </div>
+              </div>
+            </div>
+
             <div class="meta-actions">
               <button class="primary-action" (click)="downloadGeneratedImage()">
                 <mat-icon>download</mat-icon>
-                <span>Download Image</span>
+                <span>Download Poster</span>
               </button>
               <button class="ghost-action" (click)="retryImageGeneration()" [disabled]="isGeneratingImage">
                 <mat-icon>refresh</mat-icon>

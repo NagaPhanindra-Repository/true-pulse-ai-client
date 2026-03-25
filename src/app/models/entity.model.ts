@@ -113,6 +113,16 @@ export interface GenerateBusinessImageRequest {
   prompt: string;
   entityId: number;
   displayName: string;
+  businessId?: string;
+  size: string;
+  renderingMode : 'TEXT_OVERLAYS';
+}
+
+export interface OverlaySpec {
+  slot: number;
+  role: string;
+  text: string;
+  zone: string;
   size: string;
 }
 
@@ -125,4 +135,5 @@ export interface GenerateBusinessImageResponse {
   entityId: number | null;
   displayName: string | null;
   error: string | null;
+  overlays?: OverlaySpec[];
 }
