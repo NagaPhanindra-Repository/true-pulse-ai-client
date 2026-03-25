@@ -490,7 +490,8 @@
 }
 
 .studio-field textarea,
-.studio-field select {
+.studio-field select,
+.studio-field input {
   width: 100%;
   border-radius: 10px;
   border: 1px solid rgba(148, 163, 184, 0.4);
@@ -502,9 +503,15 @@
 }
 
 .studio-field textarea:focus,
-.studio-field select:focus {
+.studio-field select:focus,
+.studio-field input:focus {
   border-color: rgba(45, 212, 191, 0.7);
   box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);
+}
+
+.studio-field input::placeholder,
+.studio-field textarea::placeholder {
+  color: rgba(148, 163, 184, 0.85);
 }
 
 .studio-action-wrap {

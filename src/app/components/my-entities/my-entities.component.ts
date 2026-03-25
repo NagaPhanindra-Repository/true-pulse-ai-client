@@ -121,6 +121,7 @@ export class MyEntitiesComponent implements OnInit {
   overlayTextEdits: Record<string, string> = {};
   overlayFontSizeScale: Record<string, number> = {};
   customAddedOverlays: OverlaySpec[] = [];
+  removedOverlayKeys: Set<string> = new Set();
   selectedAnchorKey: string | null = null;
   showAddOverlayForm = false;
   newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium' };
@@ -417,6 +418,7 @@ export class MyEntitiesComponent implements OnInit {
     this.posterCanvasCursor = 'default';
     this.dragState = null;
     this.isPosterDragging = false;
+    this.removedOverlayKeys = new Set();
 
     this.entityService.generateBusinessImage(request).subscribe({
       next: response => {
@@ -488,7 +490,7 @@ export class MyEntitiesComponent implements OnInit {
         const edited = this.overlayTextEdits[key];
         return edited !== undefined ? { ...processed, text: edited } : processed;
       })
-      .filter(overlay => !!overlay.text)
+      .filter(overlay => !!overlay.text && !this.removedOverlayKeys.has(this.getOverlayKey(overlay)))
       .sort((left, right) => left.slot - right.slot);
 
     const fromCustom = this.customAddedOverlays.map(overlay => {
@@ -572,11 +574,16 @@ export class MyEntitiesComponent implements OnInit {
   }
 
   removeOverlay(overlay: OverlaySpec): void {
-    const idx = this.customAddedOverlays.findIndex(o => o.slot === overlay.slot && o.role === overlay.role && o.text === overlay.text);
-    if (idx !== -1) {
-      this.customAddedOverlays = this.customAddedOverlays.filter((_, i) => i !== idx);
-      this.schedulePosterRender();
+    if (this.isCustomOverlay(overlay)) {
+      const idx = this.customAddedOverlays.findIndex(o => o.slot === overlay.slot);
+      if (idx !== -1) {
+        this.customAddedOverlays = this.customAddedOverlays.filter((_, i) => i !== idx);
+      }
+    } else {
+      const key = this.getOverlayKey(overlay);
+      this.removedOverlayKeys = new Set([...this.removedOverlayKeys, key]);
     }
+    this.schedulePosterRender();
   }
 
   isCustomOverlay(overlay: OverlaySpec): boolean {
@@ -691,6 +698,7 @@ export class MyEntitiesComponent implements OnInit {
     this.overlayTextEdits = {};
     this.overlayFontSizeScale = {};
     this.customAddedOverlays = [];
+    this.removedOverlayKeys = new Set();
     this.selectedAnchorKey = null;
     this.showAddOverlayForm = false;
     this.newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium' };
