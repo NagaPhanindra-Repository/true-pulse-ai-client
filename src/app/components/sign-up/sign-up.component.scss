@@ -404,6 +404,27 @@
   }
 }
 
+// Inline field validation
+.field-error {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: #f87171;
+  margin-top: 2px;
+  animation: slideInDown 0.2s ease;
+
+  &::before {
+    content: '⚠ ';
+    font-size: 9px;
+  }
+}
+
+.form-row input.input-invalid,
+.form-row select.input-invalid {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15), 0 1px 4px rgba(239, 68, 68, 0.2) !important;
+}
+
 // Animations
 @keyframes slideInDown {
   from {

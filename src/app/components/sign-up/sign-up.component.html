@@ -4,8 +4,8 @@
     <p class="signup-subtitle">Join our secure platform in 2 steps</p>
   </div>
   
-  <!-- Step 1: Signup Form -->
-  <div class="signup-form-section" [class.hidden]="isIDVerified">
+  <!-- Step 1: Signup Form (also shown when signup fails so the user can fix form errors) -->
+  <div class="signup-form-section" [class.hidden]="isIDVerified && !error">
     <div class="step-header">
       <span class="step-badge">1</span>
       <div class="step-info">
@@ -21,15 +21,30 @@
         <div class="form-grid">
           <div class="form-row">
             <label for="userName">Username *</label>
-            <input id="userName" name="userName" type="text" required [(ngModel)]="user.userName" autofocus placeholder="Choose your username" />
+            <input id="userName" name="userName" type="text" required [(ngModel)]="user.userName"
+                   (ngModelChange)="clearFieldError('userName')"
+                   (blur)="validateField('userName')"
+                   [class.input-invalid]="fieldErrors['userName']"
+                   autofocus placeholder="Choose your username" />
+            <span class="field-error" *ngIf="fieldErrors['userName']">{{ fieldErrors['userName'] }}</span>
           </div>
           <div class="form-row">
             <label for="email">Email *</label>
-            <input id="email" name="email" type="email" required [(ngModel)]="user.email" placeholder="your@email.com" />
+            <input id="email" name="email" type="email" required [(ngModel)]="user.email"
+                   (ngModelChange)="clearFieldError('email')"
+                   (blur)="validateField('email')"
+                   [class.input-invalid]="fieldErrors['email']"
+                   placeholder="your@email.com" />
+            <span class="field-error" *ngIf="fieldErrors['email']">{{ fieldErrors['email'] }}</span>
           </div>
           <div class="form-row">
             <label for="password">Password *</label>
-            <input id="password" name="password" type="password" required [(ngModel)]="user.password" placeholder="Min 8 characters" />
+            <input id="password" name="password" type="password" required [(ngModel)]="user.password"
+                   (ngModelChange)="clearFieldError('password')"
+                   (blur)="validateField('password')"
+                   [class.input-invalid]="fieldErrors['password']"
+                   placeholder="Min 8 characters" />
+            <span class="field-error" *ngIf="fieldErrors['password']">{{ fieldErrors['password'] }}</span>
           </div>
         </div>
       </div>
@@ -40,11 +55,21 @@
         <div class="form-grid">
           <div class="form-row">
             <label for="firstName">First Name *</label>
-            <input id="firstName" name="firstName" type="text" required [(ngModel)]="user.firstName" placeholder="John" />
+            <input id="firstName" name="firstName" type="text" required [(ngModel)]="user.firstName"
+                   (ngModelChange)="clearFieldError('firstName')"
+                   (blur)="validateField('firstName')"
+                   [class.input-invalid]="fieldErrors['firstName']"
+                   placeholder="John" />
+            <span class="field-error" *ngIf="fieldErrors['firstName']">{{ fieldErrors['firstName'] }}</span>
           </div>
           <div class="form-row">
             <label for="lastName">Last Name *</label>
-            <input id="lastName" name="lastName" type="text" required [(ngModel)]="user.lastName" placeholder="Doe" />
+            <input id="lastName" name="lastName" type="text" required [(ngModel)]="user.lastName"
+                   (ngModelChange)="clearFieldError('lastName')"
+                   (blur)="validateField('lastName')"
+                   [class.input-invalid]="fieldErrors['lastName']"
+                   placeholder="Doe" />
+            <span class="field-error" *ngIf="fieldErrors['lastName']">{{ fieldErrors['lastName'] }}</span>
           </div>
           <div class="form-row">
             <label for="gender">Gender</label>
@@ -78,7 +103,12 @@
           </div>
           <div class="form-row">
             <label for="mobileNumber">Mobile Number</label>
-            <input id="mobileNumber" name="mobileNumber" type="tel" [(ngModel)]="user.mobileNumber" placeholder="Without country code" />
+            <input id="mobileNumber" name="mobileNumber" type="tel" [(ngModel)]="user.mobileNumber"
+                   (ngModelChange)="clearFieldError('mobileNumber')"
+                   (blur)="validateField('mobileNumber')"
+                   [class.input-invalid]="fieldErrors['mobileNumber']"
+                   placeholder="Without country code (10 digits)" />
+            <span class="field-error" *ngIf="fieldErrors['mobileNumber']">{{ fieldErrors['mobileNumber'] }}</span>
           </div>
         </div>
       </div>
@@ -98,7 +128,8 @@
       <div *ngIf="success" class="success-message">{{ success }}</div>
       
       <button class="signup-btn primary" type="button" (click)="verifyAndCreate(signupForm)" [disabled]="loading || isIDVerifying">
-        <span *ngIf="!isIDVerifying && !loading">Continue to Verification</span>
+        <span *ngIf="!isIDVerifying && !loading && !isIDVerified">Continue to Verification</span>
+        <span *ngIf="!isIDVerifying && !loading && isIDVerified">Create Account</span>
         <span *ngIf="isIDVerifying">Opening Verification...</span>
         <span *ngIf="loading && !isIDVerifying">Creating Account...</span>
       </button>
@@ -109,8 +140,8 @@
     </form>
   </div>
 
-  <!-- Step 2: ID Verification -->
-  <div class="verification-section" [class.hidden]="!isIDVerified && currentStep !== 'verification'" [class.completed]="isIDVerified">
+  <!-- Step 2: ID Verification (hidden when there is a signup error so step 1 shows instead) -->
+  <div class="verification-section" [class.hidden]="(!isIDVerified && currentStep !== 'verification') || !!error" [class.completed]="isIDVerified">
     <div class="step-header">
       <span class="step-badge" [class.done]="isIDVerified">
         <span *ngIf="!isIDVerified">2</span>

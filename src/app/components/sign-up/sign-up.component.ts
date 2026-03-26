@@ -33,6 +33,7 @@ export class SignUpComponent {
   
   // Step tracking
   currentStep: 'signup' | 'verification' | 'confirmed' = 'signup';
+  fieldErrors: Record<string, string> = {};
 
   countryOptions = [
     { key: 'IN:+91', code: '+91', name: 'India', flag: '🇮🇳' },
@@ -200,6 +201,7 @@ export class SignUpComponent {
     this.verificationError = null;
     this.currentStep = 'signup';
     this.pendingSignupForm = null;
+    this.fieldErrors = {};
     if (this.verificationWindow && !this.verificationWindow.closed) {
       this.verificationWindow.close();
     }
@@ -207,15 +209,13 @@ export class SignUpComponent {
   }
 
   verifyAndCreate(form: any) {
-    if (this.isIDVerified) {
-      this.onSubmit(form);
+    this.error = null;
+    if (!this.validateForm()) {
       return;
     }
 
-    // Validate required fields
-    const missingFields = this.validateRequiredFields();
-    if (missingFields.length > 0) {
-      this.error = `Please fill in required field: ${missingFields[0]}`;
+    if (this.isIDVerified) {
+      this.onSubmit(form);
       return;
     }
 
@@ -223,23 +223,121 @@ export class SignUpComponent {
     this.openVerification();
   }
 
-  validateRequiredFields(): string[] {
-    const missing: string[] = [];
-    
-    if (!this.user.userName?.trim()) missing.push('Username');
-    if (!this.user.password?.trim()) missing.push('Password');
-    if (!this.user.email?.trim()) missing.push('Email');
-    if (!this.user.firstName?.trim()) missing.push('First Name');
-    if (!this.user.lastName?.trim()) missing.push('Last Name');
-    
-    return missing;
+  validateForm(): boolean {
+    this.fieldErrors = {};
+
+    // Username: required, 3–30 chars, letters/numbers/underscores only
+    const userName = (this.user.userName || '').trim();
+    if (!userName) {
+      this.fieldErrors['userName'] = 'Username is required.';
+    } else if (!/^[a-zA-Z0-9_]{3,30}$/.test(userName)) {
+      this.fieldErrors['userName'] = 'Username must be 3–30 characters (letters, numbers, underscores only).';
+    }
+
+    // Email: required, must have @ and domain
+    const email = (this.user.email || '').trim();
+    if (!email) {
+      this.fieldErrors['email'] = 'Email address is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      this.fieldErrors['email'] = 'Enter a valid email address (e.g. name@domain.com).';
+    }
+
+    // Password: required, min 8 characters
+    const password = (this.user.password || '').trim();
+    if (!password) {
+      this.fieldErrors['password'] = 'Password is required.';
+    } else if (password.length < 8) {
+      this.fieldErrors['password'] = 'Password must be at least 8 characters.';
+    }
+
+    // First Name: required, no digits
+    const firstName = (this.user.firstName || '').trim();
+    if (!firstName) {
+      this.fieldErrors['firstName'] = 'First name is required.';
+    } else if (/\d/.test(firstName)) {
+      this.fieldErrors['firstName'] = 'First name cannot contain numbers.';
+    } else if (!/^[a-zA-Z\s\-''.]+$/.test(firstName)) {
+      this.fieldErrors['firstName'] = 'First name can only contain letters.';
+    }
+
+    // Last Name: required, no digits
+    const lastName = (this.user.lastName || '').trim();
+    if (!lastName) {
+      this.fieldErrors['lastName'] = 'Last name is required.';
+    } else if (/\d/.test(lastName)) {
+      this.fieldErrors['lastName'] = 'Last name cannot contain numbers.';
+    } else if (!/^[a-zA-Z\s\-''.]+$/.test(lastName)) {
+      this.fieldErrors['lastName'] = 'Last name can only contain letters.';
+    }
+
+    // Mobile Number: optional, but if provided must be exactly 10 digits
+    const mobile = (this.user.mobileNumber || '').trim();
+    if (mobile && !/^\d{10}$/.test(mobile)) {
+      this.fieldErrors['mobileNumber'] = 'Mobile number must be exactly 10 digits.';
+    }
+
+    return Object.keys(this.fieldErrors).length === 0;
+  }
+
+  clearFieldError(field: string): void {
+    if (this.fieldErrors[field]) {
+      delete this.fieldErrors[field];
+    }
+    if (this.error) {
+      this.error = null;
+    }
+  }
+
+  validateField(field: string): void {
+    switch (field) {
+      case 'userName': {
+        const v = (this.user.userName || '').trim();
+        if (!v) this.fieldErrors['userName'] = 'Username is required.';
+        else if (!/^[a-zA-Z0-9_]{3,30}$/.test(v)) this.fieldErrors['userName'] = 'Username must be 3\u201330 characters (letters, numbers, underscores only).';
+        else delete this.fieldErrors['userName'];
+        break;
+      }
+      case 'email': {
+        const v = (this.user.email || '').trim();
+        if (!v) this.fieldErrors['email'] = 'Email address is required.';
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) this.fieldErrors['email'] = 'Enter a valid email address (e.g. name@domain.com).';
+        else delete this.fieldErrors['email'];
+        break;
+      }
+      case 'password': {
+        const v = (this.user.password || '').trim();
+        if (!v) this.fieldErrors['password'] = 'Password is required.';
+        else if (v.length < 8) this.fieldErrors['password'] = 'Password must be at least 8 characters.';
+        else delete this.fieldErrors['password'];
+        break;
+      }
+      case 'firstName': {
+        const v = (this.user.firstName || '').trim();
+        if (!v) this.fieldErrors['firstName'] = 'First name is required.';
+        else if (/\d/.test(v)) this.fieldErrors['firstName'] = 'First name cannot contain numbers.';
+        else if (!/^[a-zA-Z\s\-''.]+$/.test(v)) this.fieldErrors['firstName'] = 'First name can only contain letters.';
+        else delete this.fieldErrors['firstName'];
+        break;
+      }
+      case 'lastName': {
+        const v = (this.user.lastName || '').trim();
+        if (!v) this.fieldErrors['lastName'] = 'Last name is required.';
+        else if (/\d/.test(v)) this.fieldErrors['lastName'] = 'Last name cannot contain numbers.';
+        else if (!/^[a-zA-Z\s\-''.]+$/.test(v)) this.fieldErrors['lastName'] = 'Last name can only contain letters.';
+        else delete this.fieldErrors['lastName'];
+        break;
+      }
+      case 'mobileNumber': {
+        const v = (this.user.mobileNumber || '').trim();
+        if (v && !/^\d{10}$/.test(v)) this.fieldErrors['mobileNumber'] = 'Mobile number must be exactly 10 digits.';
+        else delete this.fieldErrors['mobileNumber'];
+        break;
+      }
+    }
   }
 
   onSubmit(form: any) {
-    // Validate required fields
-    const missingFields = this.validateRequiredFields();
-    if (missingFields.length > 0) {
-      this.error = `Please fill in required field: ${missingFields[0]}`;
+    if (!this.validateForm()) {
       return;
     }
     
