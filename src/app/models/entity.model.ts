@@ -118,12 +118,18 @@ export interface GenerateBusinessImageRequest {
   renderingMode : 'TEXT_OVERLAYS';
 }
 
+export type OverlayOrientation = 'horizontal' | 'vertical';
+
 export interface OverlaySpec {
   slot: number;
   role: string;
   text: string;
   zone: string;
   size: string;
+  fontFamily?: string;
+  fontColor?: string;
+  fontStyle?: string;
+  orientation?: OverlayOrientation;
 }
 
 export interface GenerateBusinessImageResponse {

@@ -1,0 +1,472 @@
+<section class="image-studio" *ngIf="entity">
+        <div class="image-studio-header">
+          <div>
+            <p class="image-studio-kicker">AI Creative Studio</p>
+            <h3>Generate a premium business image</h3>
+            <p>
+              Craft a prompt, keep your selected entity context, and generate a campaign-ready visual.
+            </p>
+          </div>
+          <span class="studio-entity-pill">{{ entity.displayName }}</span>
+        </div>
+
+        <div class="image-studio-form">
+          <label class="studio-field full">
+            <span>Prompt</span>
+            <textarea
+              rows="4"
+              [(ngModel)]="imagePrompt"
+              placeholder="Example: Design a luxury launch hero image for our new AI product line with cinematic lighting."></textarea>
+          </label>
+
+          <label class="studio-field">
+            <span>Output Size</span>
+            <select [(ngModel)]="selectedImageSize">
+              <option *ngFor="let size of imageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+          </label>
+
+          <div class="studio-action-wrap">
+            <button class="primary-action studio-generate" (click)="generateBusinessImage()" [disabled]="!canGenerateImage">
+              <mat-icon>{{ isGeneratingImage ? 'hourglass_top' : 'auto_awesome' }}</mat-icon>
+              <span>{{ isGeneratingImage ? 'Generating...' : 'Generate Image' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="studio-banner success" *ngIf="imageGenerationStatus">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ imageGenerationStatus }}</span>
+        </div>
+
+        <div class="studio-banner error" *ngIf="imageGenerationError">
+          <mat-icon>error</mat-icon>
+          <span>{{ imageGenerationError }}</span>
+          <button class="ghost-action" (click)="retryImageGeneration()" [disabled]="isGeneratingImage">Retry</button>
+        </div>
+
+        <div class="studio-banner success" *ngIf="isPosterRendering">
+          <mat-icon>draw</mat-icon>
+          <span>Composing poster overlays for a clean, downloadable final export...</span>
+        </div>
+
+        <div class="studio-banner error" *ngIf="posterRenderError">
+          <mat-icon>warning</mat-icon>
+          <span>{{ posterRenderError }}</span>
+        </div>
+
+        <div class="studio-flex-row" *ngIf="generatedImageUrl">
+                  <div class="generated-image-card">
+                    <div class="generated-image-frame">
+                      <canvas
+                        #posterCanvas
+                        class="poster-canvas"
+                        aria-label="Generated poster preview"
+                        tabindex="0"
+                        [style.cursor]="posterCanvasCursor"
+                        (mousedown)="onPosterPointerDown($event)"
+                        (mousemove)="onPosterPointerMove($event)"
+                        (mouseup)="onPosterPointerUp()"
+                        (mouseleave)="onPosterPointerUp()"
+                        (touchstart)="onPosterPointerDown($event)"
+                        (touchmove)="onPosterPointerMove($event)"
+                        (touchend)="onPosterPointerUp()"
+                        (keydown)="onCanvasKeyDown($event)"></canvas>
+                    </div>
+                    <div class="logo-upload-section">
+                      <div
+                        class="logo-upload-dropzone"
+                        [class.drag-active]="logoDragActive"
+                        (dragover)="logoDragActive = true; $event.preventDefault()"
+                        (dragleave)="logoDragActive = false"
+                        (drop)="onLogoDrop($event)"
+                        tabindex="0"
+                        aria-label="Upload logo or barcode"
+                      >
+                        <div class="logo-upload-icon">
+                          <mat-icon>add_photo_alternate</mat-icon>
+                        </div>
+                        <div class="logo-upload-text">
+                          <strong>Upload Logo or Barcode</strong>
+                          <span>PNG, JPG, SVG • Drag & drop or click to browse</span>
+                        </div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          (change)="onLogoFileSelected($event)"
+                          class="logo-upload-input"
+                          aria-label="Upload logo or barcode"
+                          multiple
+                        />
+                        <div class="logo-preview-list" *ngIf="logoOverlays.length > 0">
+                          <div class="logo-preview-card" *ngFor="let overlay of logoOverlays">
+                            <img [src]="overlay.url" alt="Logo/Barcode Preview" />
+                            <button class="remove-logo-btn" (click)="removeLogoOverlay(overlay.id)" aria-label="Remove logo">
+                              <mat-icon>close</mat-icon>
+                            </button>
+                          </div>
+                          <div class="logo-preview-hint">Drag and resize on poster</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+          <div class="generated-image-meta">
+            <div class="meta-top">
+              <h4>Generated for {{ generatedImage?.displayName || entity.displayName }}</h4>
+              <span>{{ generatedImage?.mimeType || 'image/png' }}</span>
+            </div>
+
+            <p class="revised-prompt" [attr.title]="generatedImage?.revisedPrompt || ''">
+              {{ generatedImage?.revisedPrompt || 'No revised prompt returned by the model.' }}
+            </p>
+
+            <div class="overlay-warning" *ngIf="overlayConstraintNotice">
+              <mat-icon>info</mat-icon>
+              <span>{{ overlayConstraintNotice }}</span>
+            </div>
+
+            <div class="overlay-style-controls" *ngIf="generatedImageUrl">
+              <h5>Overlay Typography Controls</h5>
+              <div class="overlay-style-header">
+                <span>Click text on poster to select, then drag or use arrow keys to nudge.</span>
+                <button class="ghost-action" (click)="resetOverlayTextPositions()">Reset Positions</button>
+              </div>
+              <div class="overlay-style-grid">
+                <label class="studio-field compact">
+                  <span>Font Style</span>
+                  <select [(ngModel)]="selectedOverlayFontStyle" (change)="onOverlayStyleControlChange()">
+                    <option *ngFor="let option of overlayFontStyleOptions" [value]="option.value">{{ option.label }}</option>
+                  </select>
+                </label>
+
+                <label class="studio-field compact">
+                  <span>Color Style</span>
+                  <select [(ngModel)]="selectedOverlayColorStyle" (change)="onOverlayStyleControlChange()">
+                    <option *ngFor="let option of overlayColorStyleOptions" [value]="option.value">{{ option.label }}</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="overlay-font-custom" *ngIf="isCustomOverlayFontStyle">
+                <label class="studio-field compact full">
+                  <span>Custom Font Family</span>
+                  <input
+                    type="text"
+                    [(ngModel)]="customOverlayFontFamily"
+                    (input)="onOverlayStyleControlChange()"
+                    list="overlayFontSuggestions"
+                    placeholder="Example: Montserrat, 'Segoe UI', sans-serif" />
+                </label>
+                <datalist id="overlayFontSuggestions">
+                  <option value="Montserrat, 'Avenir Next', 'Segoe UI', Arial, sans-serif"></option>
+                  <option value="'Baskerville', 'Palatino Linotype', Georgia, serif"></option>
+                  <option value="'Arial Black', 'Franklin Gothic Heavy', 'Trebuchet MS', sans-serif"></option>
+                  <option value="'Arial Narrow', 'Franklin Gothic Medium', 'Trebuchet MS', sans-serif"></option>
+                  <option value="'Gill Sans', 'Trebuchet MS', 'Segoe UI', Arial, sans-serif"></option>
+                </datalist>
+              </div>
+
+              <div class="overlay-custom-colors" *ngIf="isCustomOverlayPalette">
+                <label class="color-control">
+                  <span>Primary</span>
+                  <input type="color" [(ngModel)]="customOverlayPrimaryColor" (input)="onOverlayStyleControlChange()" />
+                </label>
+                <label class="color-control">
+                  <span>Highlight</span>
+                  <input type="color" [(ngModel)]="customOverlayHighlightColor" (input)="onOverlayStyleControlChange()" />
+                </label>
+                <label class="color-control">
+                  <span>Stroke</span>
+                  <input type="color" [(ngModel)]="customOverlayStrokeColor" (input)="onOverlayStyleControlChange()" />
+                </label>
+              </div>
+            </div>
+
+            <div class="overlay-summary" *ngIf="generatedOverlays.length || generatedImageUrl">
+              <div class="overlay-summary-header">
+                <span>Text Layers</span>
+                <span>{{ generatedOverlays.length }} layer{{ generatedOverlays.length !== 1 ? 's' : '' }}</span>
+              </div>
+
+              <div class="overlay-pill-list">
+                <div class="overlay-pill"
+                  *ngFor="let overlay of generatedOverlays"
+                  [class.overlay-pill--selected]="selectedAnchorKey === getOverlayKey(overlay)"
+                  (click)="selectedAnchorKey = getOverlayKey(overlay)"
+                  tabindex="0"
+                  [attr.aria-label]="'Select overlay ' + overlay.role"
+                  [style.outline]="selectedAnchorKey === getOverlayKey(overlay) ? '2px solid #ff9800' : ''">
+
+                  <div class="overlay-pill-top">
+                    <strong>{{ overlay.role }}</strong>
+                    <span class="overlay-pill-zone">{{ overlay.zone }}</span>
+                    <button class="overlay-remove-btn"
+                      title="Remove this layer" (click)="removeOverlay(overlay); $event.stopPropagation();">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+
+                  <div class="overlay-edit-row">
+                    <label class="overlay-edit-label">Text</label>
+                    <input
+                      class="overlay-text-input"
+                      type="text"
+                      [value]="overlay.text"
+                      (input)="setOverlayText(overlay, $any($event.target).value)"
+                      placeholder="Enter overlay text..."
+                      (click)="$event.stopPropagation()" />
+                  </div>
+                  <label class="studio-field compact">
+                    <span>Font Style</span>
+                    <select [(ngModel)]="overlay.fontStyle" (change)="setOverlayFontStyle(overlay, $any($event.target).value)" (click)="$event.stopPropagation()">
+                      <option value="classic">Classic Serif</option>
+                      <option value="modern">Modern Sans</option>
+                      <option value="poster">Poster Bold</option>
+                      <option value="elegant">Elegant Editorial</option>
+                      <option value="condensed">Condensed Ad</option>
+                    </select>
+                  </label>
+                  <label class="studio-field compact">
+                    <span>Color</span>
+                    <input type="color"
+                      [(ngModel)]="overlay.fontColor"
+                      (input)="setOverlayFontColor(overlay, $any($event.target).value)"
+                      (click)="$event.stopPropagation()" />
+                  </label>
+                  <div class="overlay-size-row">
+                    <label class="overlay-edit-label">Size <span class="size-value">{{ (getOverlayFontSizeScale(overlay) * 100) | number:'1.0-0' }}%</span></label>
+                    <input
+                      class="overlay-size-slider"
+                      type="range"
+                      min="0.4"
+                      max="2.0"
+                      step="0.05"
+                      [value]="getOverlayFontSizeScale(overlay)"
+                      (input)="setOverlayFontSizeScale(overlay, $any($event.target).value)"
+                      (change)="setOverlayFontSizeScale(overlay, $any($event.target).value)"
+                      (click)="$event.stopPropagation()" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="add-overlay-section">
+                <button *ngIf="!showAddOverlayForm" class="ghost-action add-layer-btn"
+                  (click)="showAddOverlayForm = true">
+                  <mat-icon>add</mat-icon>
+                  <span>Add Text Layer</span>
+                </button>
+
+                <div *ngIf="showAddOverlayForm" class="add-overlay-form">
+                  <div class="add-overlay-form-title">New Text Layer</div>
+
+                  <label class="studio-field compact full">
+                    <span>Text Content</span>
+                    <input type="text" [(ngModel)]="newOverlayDraft.text" placeholder="Enter your text..." />
+                  </label>
+
+                  <div class="add-overlay-form-grid">
+                    <label class="studio-field compact">
+                      <span>Zone</span>
+                      <select [(ngModel)]="newOverlayDraft.zone">
+                        <option value="upper-middle">Upper Middle</option>
+                        <option value="top-banner">Top Banner</option>
+                        <option value="top-center">Top Center</option>
+                        <option value="bottom-bar">Bottom Bar</option>
+                        <option value="bottom-right">Bottom Right</option>
+                      </select>
+                    </label>
+                    <label class="studio-field compact">
+                      <span>Role</span>
+                      <select [(ngModel)]="newOverlayDraft.role">
+                        <option value="custom">Custom</option>
+                        <option value="title">Title</option>
+                        <option value="headline">Headline</option>
+                        <option value="brand">Brand</option>
+                        <option value="offer">Offer</option>
+                        <option value="price">Price</option>
+                        <option value="cta">CTA</option>
+                      </select>
+                    </label>
+                    <label class="studio-field compact">
+                      <span>Size</span>
+                      <select [(ngModel)]="newOverlayDraft.size">
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                      </select>
+                    </label>
+                    <label class="studio-field compact">
+                      <span>Font</span>
+                      <select [(ngModel)]="newOverlayDraft.fontStyle">
+                        <option value="classic">Classic Serif</option>
+                        <option value="modern">Modern Sans</option>
+                        <option value="poster">Poster Bold</option>
+                        <option value="elegant">Elegant Editorial</option>
+                        <option value="condensed">Condensed Ad</option>
+                      </select>
+                    </label>
+                    <label class="studio-field compact">
+                      <span>Color</span>
+                      <input type="color" [(ngModel)]="newOverlayDraft.fontColor" (change)="schedulePosterRender()" />
+                    </label>
+                  </div>
+
+                  <div class="add-overlay-form-actions">
+                    <button class="primary-action small-action" (click)="addCustomOverlay()"
+                      [disabled]="!newOverlayDraft.text.trim()">
+                      <mat-icon>check</mat-icon>
+                      <span>Add</span>
+                    </button>
+                    <button class="ghost-action small-action" (click)="showAddOverlayForm = false; newOverlayDraft.text = ''">
+                      <mat-icon>close</mat-icon>
+                      <span>Cancel</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="meta-actions">
+              <button class="primary-action" (click)="downloadGeneratedImage()">
+                <mat-icon>download</mat-icon>
+                <span>Download Poster</span>
+              </button>
+              <button class="ghost-action" (click)="retryImageGeneration()" [disabled]="isGeneratingImage">
+                <mat-icon>refresh</mat-icon>
+                <span>Regenerate</span>
+              </button>
+              <button
+                class="social-launch-btn"
+                [class.social-launch-btn--active]="showSocialComposer"
+                (click)="toggleSocialComposer()"
+                [title]="showSocialComposer ? 'Hide Social Broadcast' : 'One-Click Broadcast to All Handles'">
+                <span class="social-icon-cluster">
+                  <span class="sic sic--ig" title="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                  </span>
+                  <span class="sic sic--fb" title="Facebook">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                  </span>
+                  <span class="sic sic--x" title="X / Twitter">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.26 5.632L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+                  </span>
+                  <span class="sic sic--li" title="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  </span>
+                  <span class="sic sic--yt" title="YouTube">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                  </span>
+                </span>
+                <mat-icon class="broadcast-fire">rocket_launch</mat-icon>
+              </button>
+            </div>
+
+            <div class="social-broadcast-panel" *ngIf="showSocialComposer">
+              <div class="social-panel-header">
+                <div>
+                  <h5>Social Broadcast Studio</h5>
+                  <p>One click can publish this poster to all connected handles once integration is enabled.</p>
+                </div>
+                <span class="coming-soon-pill">Coming Soon</span>
+              </div>
+
+              <div class="social-handle-list" aria-label="Connected social handles">
+                <div class="social-handle-pill" *ngFor="let handle of socialHandles" [attr.data-platform]="handle.key">
+                  <span class="sic-sm" [ngClass]="'sic-sm--' + handle.key">
+                    <ng-container [ngSwitch]="handle.key">
+                      <svg *ngSwitchCase="'instagram'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                      <svg *ngSwitchCase="'facebook'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                      <svg *ngSwitchCase="'x'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.26 5.632L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+                      <svg *ngSwitchCase="'linkedin'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                      <svg *ngSwitchCase="'youtube'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    </ng-container>
+                  </span>
+                  <span>{{ handle.label }}</span>
+                  <strong>{{ handle.enabled ? 'On' : 'Off' }}</strong>
+                  <button
+                    class="social-toggle"
+                    type="button"
+                    (click)="toggleSocialHandle(handle.key)"
+                    [attr.aria-label]="'Toggle ' + handle.label"
+                    [class.social-toggle--active]="handle.enabled">
+                    <mat-icon>{{ handle.enabled ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              <label class="social-message-field">
+                <span>Post Message</span>
+                <textarea
+                  rows="3"
+                  [(ngModel)]="socialPostMessage"
+                  placeholder="Write the message that should go live with this poster across all handles..."></textarea>
+                <small>{{ socialPostCharacterCount() }} chars</small>
+              </label>
+
+              <div class="social-health-strip" [class.social-health-strip--warning]="socialGlobalHealth() === 'warning'"
+                              [class.social-health-strip--over]="socialGlobalHealth() === 'over'">
+                              <mat-icon>
+                                {{ socialGlobalHealth() === 'over' ? 'error' : socialGlobalHealth() === 'warning' ? 'warning' : 'check_circle' }}
+                              </mat-icon>
+                              <span>
+                                {{ socialGlobalHealth() === 'over' ? 'Message exceeds limit for selected handles.' : socialGlobalHealth() === 'warning' ? 'Message is close to one or more limits.' : 'Message length is healthy for selected handles.' }}
+                              </span>
+                            </div>
+
+              <div class="social-ai-assistant" *ngIf="needsSocialAutoTrimSuggestion">
+                <div class="social-ai-head">
+                  <div class="social-ai-title">
+                    <mat-icon>auto_awesome</mat-icon>
+                    <span>AI Trim Assistant</span>
+                  </div>
+                  <small>Targeting {{ strictestEnabledSocialLimit() }} char limit</small>
+                </div>
+                <p>{{ socialAutoTrimSuggestion() }}</p>
+                <button class="ghost-action social-ai-apply" (click)="applySocialAutoTrimSuggestion()">
+                  <mat-icon>magic_button</mat-icon>
+                  <span>Use Suggested Version</span>
+                </button>
+              </div>
+
+              <div class="social-preview-grid" *ngIf="enabledSocialHandles().length">
+                              <div class="social-preview-card" *ngFor="let handle of enabledSocialHandles()"
+                  [class.social-preview-card--warning]="getSocialHandleHealth(handle) === 'warning'"
+                  [class.social-preview-card--over]="getSocialHandleHealth(handle) === 'over'">
+                  <div class="social-preview-head">
+                    <div class="social-preview-title">
+                      <span class="sic-sm" [ngClass]="'sic-sm--' + handle.key">
+                        <ng-container [ngSwitch]="handle.key">
+                          <svg *ngSwitchCase="'instagram'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                          <svg *ngSwitchCase="'facebook'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                          <svg *ngSwitchCase="'x'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.26 5.632L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+                          <svg *ngSwitchCase="'linkedin'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                          <svg *ngSwitchCase="'youtube'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </ng-container>
+                      </span>
+                      <span>{{ handle.label }}</span>
+                    </div>
+                    <strong>{{ getSocialHandleStatusText(handle) }}</strong>
+                  </div>
+                  <div class="social-preview-body">
+                    <p>{{ socialPostMessage || 'Your post message preview appears here.' }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="social-panel-actions">
+                <button class="primary-action" (click)="simulateOneClickSocialPost()">
+                  <mat-icon>rocket_launch</mat-icon>
+                  <span>One-Click Post</span>
+                </button>
+                <button class="ghost-action" (click)="toggleSocialComposer()">
+                  <mat-icon>close</mat-icon>
+                  <span>Close</span>
+                </button>
+              </div>
+
+              <p class="social-status" *ngIf="socialPostStatus">{{ socialPostStatus }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+

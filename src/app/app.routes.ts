@@ -39,5 +39,6 @@ export const routes: Routes = [
   { path: 'business', component: BusinessOwnersComponent },
   { path: 'entities/create', component: CreateEntityComponent, canActivate: [AuthGuard] },
   { path: 'entities/my', component: MyEntitiesComponent, canActivate: [AuthGuard] },
+  { path: 'entities/:id/image-studio', loadComponent: () => import('./components/image-studio/image-studio.component').then(m => m.ImageStudioComponent), canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];
