@@ -67,6 +67,30 @@
 													<span class="material-icons">delete</span>
 												</button>
 											</div>
+											<!-- Polling Section -->
+											<div class="feedback-poll-bar">
+												<button
+													class="poll-btn like"
+													[class.voted]="feedback.userVote === 'LIKE'"
+													(click)="voteFeedback(feedback, 'LIKE')"
+													aria-label="Like"
+													title="Like (I agree with this point)">
+													<span class="material-icons">thumb_up</span>
+													<span class="poll-count">{{ feedback.likes || 0 }}</span>
+												</button>
+												<button
+													class="poll-btn dislike"
+													[class.voted]="feedback.userVote === 'DISLIKE'"
+													(click)="voteFeedback(feedback, 'DISLIKE')"
+													aria-label="Dislike"
+													title="Dislike (I disagree with this point)">
+													<span class="material-icons">thumb_down</span>
+													<span class="poll-count">{{ feedback.dislikes || 0 }}</span>
+												</button>
+												<span class="user-vote-indicator" *ngIf="feedback.userVote">
+													You voted <span [ngClass]="feedback.userVote">{{ feedback.userVote === 'LIKE' ? '👍' : '👎' }}</span>
+												</span>
+											</div>
 										</ng-container>
 										<ng-container *ngIf="feedbackEdit[feedback.id!]">
 											<input class="feedback-edit-input" type="text" [(ngModel)]="feedbackEditValue[feedback.id!]" (keyup.enter)="saveEditFeedback(feedback)" placeholder="Edit feedback..." />
@@ -138,6 +162,30 @@
 												<button class="icon-btn delete-btn" (click)="deleteFeedback(feedback)" title="Delete" style="flex: 0 0 auto; color: #e53935;">
 													<span class="material-icons">delete</span>
 												</button>
+											</div>
+											<!-- Polling Section -->
+											<div class="feedback-poll-bar">
+												<button
+													class="poll-btn like"
+													[class.voted]="feedback.userVote === 'LIKE'"
+													(click)="voteFeedback(feedback, 'LIKE')"
+													aria-label="Like"
+													title="Like (I agree with this point)">
+													<span class="material-icons">thumb_up</span>
+													<span class="poll-count">{{ feedback.likes || 0 }}</span>
+												</button>
+												<button
+													class="poll-btn dislike"
+													[class.voted]="feedback.userVote === 'DISLIKE'"
+													(click)="voteFeedback(feedback, 'DISLIKE')"
+													aria-label="Dislike"
+													title="Dislike (I disagree with this point)">
+													<span class="material-icons">thumb_down</span>
+													<span class="poll-count">{{ feedback.dislikes || 0 }}</span>
+												</button>
+												<span class="user-vote-indicator" *ngIf="feedback.userVote">
+													You voted <span [ngClass]="feedback.userVote">{{ feedback.userVote === 'LIKE' ? '👍' : '👎' }}</span>
+												</span>
 											</div>
 										</ng-container>
 										<ng-container *ngIf="feedbackEdit[feedback.id!]">
@@ -211,6 +259,30 @@
 													<span class="material-icons">delete</span>
 												</button>
 											</div>
+											<!-- Polling Section -->
+											<div class="feedback-poll-bar">
+												<button
+													class="poll-btn like"
+													[class.voted]="feedback.userVote === 'LIKE'"
+													(click)="voteFeedback(feedback, 'LIKE')"
+													aria-label="Like"
+													title="Like (I agree with this point)">
+													<span class="material-icons">thumb_up</span>
+													<span class="poll-count">{{ feedback.likes || 0 }}</span>
+												</button>
+												<button
+													class="poll-btn dislike"
+													[class.voted]="feedback.userVote === 'DISLIKE'"
+													(click)="voteFeedback(feedback, 'DISLIKE')"
+													aria-label="Dislike"
+													title="Dislike (I disagree with this point)">
+													<span class="material-icons">thumb_down</span>
+													<span class="poll-count">{{ feedback.dislikes || 0 }}</span>
+												</button>
+												<span class="user-vote-indicator" *ngIf="feedback.userVote">
+													You voted <span [ngClass]="feedback.userVote">{{ feedback.userVote === 'LIKE' ? '👍' : '👎' }}</span>
+												</span>
+											</div>
 										</ng-container>
 										<ng-container *ngIf="feedbackEdit[feedback.id!]">
 											<input class="feedback-edit-input" type="text" [(ngModel)]="feedbackEditValue[feedback.id!]" (keyup.enter)="saveEditFeedback(feedback)" placeholder="Edit feedback..." />
@@ -282,6 +354,30 @@
 												<button class="icon-btn delete-btn" (click)="deleteFeedback(feedback)" title="Delete" style="flex: 0 0 auto; color: #e53935;">
 													<span class="material-icons">delete</span>
 												</button>
+											</div>
+											<!-- Polling Section -->
+											<div class="feedback-poll-bar">
+												<button
+													class="poll-btn like"
+													[class.voted]="feedback.userVote === 'LIKE'"
+													(click)="voteFeedback(feedback, 'LIKE')"
+													aria-label="Like"
+													title="Like (I agree with this point)">
+													<span class="material-icons">thumb_up</span>
+													<span class="poll-count">{{ feedback.likes || 0 }}</span>
+												</button>
+												<button
+													class="poll-btn dislike"
+													[class.voted]="feedback.userVote === 'DISLIKE'"
+													(click)="voteFeedback(feedback, 'DISLIKE')"
+													aria-label="Dislike"
+													title="Dislike (I disagree with this point)">
+													<span class="material-icons">thumb_down</span>
+													<span class="poll-count">{{ feedback.dislikes || 0 }}</span>
+												</button>
+												<span class="user-vote-indicator" *ngIf="feedback.userVote">
+													You voted <span [ngClass]="feedback.userVote">{{ feedback.userVote === 'LIKE' ? '👍' : '👎' }}</span>
+												</span>
 											</div>
 										</ng-container>
 										<ng-container *ngIf="feedbackEdit[feedback.id!]">

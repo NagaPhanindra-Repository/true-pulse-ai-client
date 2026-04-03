@@ -973,4 +973,36 @@ export class RetroDashboardComponent implements OnInit {
   private sanitizeFilename(filename: string): string {
     return filename.replace(/[^a-z0-9]/gi, '_').toLowerCase();
   }
+  // Polling (Like/Dislike) logic using new voting API
+  voteFeedback(feedback: FeedbackPoint, vote_type: 'LIKE' | 'DISLIKE') {
+    if (!this.auth.isAuthenticated()) {
+      alert('You must be logged in to vote.');
+      return;
+    }
+    this.feedbackService.voteFeedback(feedback.id!, vote_type).subscribe({
+      next: (result) => {
+        feedback.likes = result.likes;
+        feedback.dislikes = result.dislikes;
+        feedback.userVote = result.userVote;
+      },
+      error: () => {
+        alert('Failed to register your vote. Please try again.');
+      }
+    });
+  }
+
+  // Load vote counts and user vote for all feedback points
+  loadFeedbackVotes() {
+    this.feedbackPoints.forEach(fp => {
+      if (fp.id) {
+        this.feedbackService.getFeedbackVotes(fp.id).subscribe({
+          next: (result) => {
+            fp.likes = result.likes;
+            fp.dislikes = result.dislikes;
+            fp.userVote = result.userVote;
+          }
+        });
+      }
+    });
+  }
 }

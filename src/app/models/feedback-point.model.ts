@@ -5,4 +5,8 @@ export interface FeedbackPoint {
   retroId: number;
   createdAt?: string;
   updatedAt?: string;
+  // Polling fields
+  likes?: number;
+  dislikes?: number;
+  userVote?: 'LIKE' | 'DISLIKE' | null;
 }

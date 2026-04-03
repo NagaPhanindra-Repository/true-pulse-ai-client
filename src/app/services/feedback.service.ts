@@ -54,4 +54,28 @@ export class FeedbackService {
   deleteDiscussion(id: number): Observable<any> {
     return this.http.delete(`${this.discussionUrl}/${id}`);
   }
+  // Polling (Like/Dislike) - Voting API (contract: voteType, userVote: 'LIKE' | 'DISLIKE' | null)
+  voteFeedback(feedbackId: number, voteType: 'LIKE' | 'DISLIKE') {
+    // POST /api/feedback-points/:id/vote
+    return this.http.post<{ likes: number, dislikes: number, userVote: 'LIKE' | 'DISLIKE' | null }>(
+      `${environment.apiUrl}/api/feedback-points/${feedbackId}/vote`,
+      { voteType }
+    );
+  }
+
+  // Remove current user's vote
+  removeVote(feedbackId: number) {
+    // DELETE /api/feedback-points/:id/vote
+    return this.http.delete<{ likes: number, dislikes: number, userVote: null }>(
+      `${environment.apiUrl}/api/feedback-points/${feedbackId}/vote`
+    );
+  }
+
+  // Get vote counts and user vote for a feedback point
+  getFeedbackVotes(feedbackId: number) {
+    // GET /api/feedback-points/:id/votes
+    return this.http.get<{ likes: number, dislikes: number, userVote: 'LIKE' | 'DISLIKE' | null }>(
+      `${environment.apiUrl}/api/feedback-points/${feedbackId}/votes`
+    );
+  }
 }

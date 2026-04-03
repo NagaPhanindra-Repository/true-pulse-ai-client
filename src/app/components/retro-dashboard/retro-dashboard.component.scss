@@ -1,3 +1,36 @@
+// Polling bar for feedback points
+.feedback-poll-bar {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	margin: 0.5rem 0 0.5rem 0;
+	.poll-btn {
+		display: flex;
+		align-items: center;
+		background: none;
+		border: none;
+		font-size: 1.2rem;
+		cursor: pointer;
+		color: #64748b;
+		transition: color 0.2s, transform 0.1s;
+		.material-icons { font-size: 1.5rem; }
+		.poll-count { margin-left: 0.3rem; font-weight: bold; }
+		&:hover, &.voted {
+			color: #10b981; // green for like
+			&.dislike { color: #e53935; } // red for dislike
+			transform: scale(1.1);
+		}
+		&.dislike { color: #64748b; }
+	}
+	.user-vote-indicator {
+		margin-left: 1rem;
+		font-size: 0.95rem;
+		color: #3b82f6;
+		font-weight: 500;
+		span.like { color: #10b981; }
+		span.dislike { color: #e53935; }
+	}
+}
 // Inline label for due date in Action Items entry row
 .date-inline-label {
 	font-size: 1.05rem;

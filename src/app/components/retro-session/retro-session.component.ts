@@ -349,4 +349,21 @@ export class RetroSessionComponent implements OnInit {
       }
     }, 18);
   }
+    // Polling (Like/Dislike) logic for session feedback
+  voteFeedback(feedback: FeedbackPoint, voteType: 'LIKE' | 'DISLIKE') {
+    if (!this.auth.isAuthenticated()) {
+      alert('You must be logged in to vote.');
+      return;
+    }
+    this.feedbackService.voteFeedback(feedback.id!, voteType).subscribe({
+      next: (result) => {
+        feedback.likes = result.likes;
+        feedback.dislikes = result.dislikes;
+        feedback.userVote = result.userVote;
+      },
+      error: () => {
+        alert('Failed to register your vote. Please try again.');
+      }
+    });
+  }
 }
