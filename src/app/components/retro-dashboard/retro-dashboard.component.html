@@ -106,7 +106,7 @@
 													</ng-container>
 												</div>
 											</ng-container>
-											<ng-container *ngIf="getDiscussionsFor(feedback.id).length === 0">
+											<ng-container *ngIf="getDiscussionsFor(feedback.id).length <= 10">
 												<div class="discussion-entry">
 													<input class="discussion-add-input" type="text" placeholder="Add a discussion..." [(ngModel)]="discussionEntry[feedback.id!]" (keyup.enter)="addDiscussion(feedback)" />
 													<button class="icon-btn add-btn" (click)="addDiscussion(feedback)" title="Add">
@@ -178,7 +178,7 @@
 													</ng-container>
 												</div>
 											</ng-container>
-											<ng-container *ngIf="getDiscussionsFor(feedback.id).length === 0">
+											<ng-container *ngIf="getDiscussionsFor(feedback.id).length <= 10">
 												<div class="discussion-entry">
 													<input class="discussion-add-input" type="text" placeholder="Add a discussion..." [(ngModel)]="discussionEntry[feedback.id!]" (keyup.enter)="addDiscussion(feedback)" />
 													<button class="icon-btn add-btn" (click)="addDiscussion(feedback)" title="Add">
@@ -250,7 +250,7 @@
 													</ng-container>
 												</div>
 											</ng-container>
-											<ng-container *ngIf="getDiscussionsFor(feedback.id).length === 0">
+											<ng-container *ngIf="getDiscussionsFor(feedback.id).length <= 10">
 												<div class="discussion-entry">
 													<input class="discussion-add-input" type="text" placeholder="Add a discussion..." [(ngModel)]="discussionEntry[feedback.id!]" (keyup.enter)="addDiscussion(feedback)" />
 													<button class="icon-btn add-btn" (click)="addDiscussion(feedback)" title="Add">
@@ -322,7 +322,7 @@
 													</ng-container>
 												</div>
 											</ng-container>
-											<ng-container *ngIf="getDiscussionsFor(feedback.id).length === 0">
+											<ng-container *ngIf="getDiscussionsFor(feedback.id).length <= 10">
 												<div class="discussion-entry">
 													<input class="discussion-add-input" type="text" placeholder="Add a discussion..." [(ngModel)]="discussionEntry[feedback.id!]" (keyup.enter)="addDiscussion(feedback)" />
 													<button class="icon-btn add-btn" (click)="addDiscussion(feedback)" title="Add">
