@@ -116,6 +116,7 @@ export interface GenerateBusinessImageRequest {
   businessId?: string;
   size: string;
   renderingMode : 'TEXT_OVERLAYS';
+  imageOnly?: boolean;
 }
 
 export type OverlayOrientation = 'horizontal' | 'vertical';

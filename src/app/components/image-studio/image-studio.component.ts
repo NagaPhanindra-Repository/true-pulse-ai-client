@@ -883,6 +883,7 @@ export class ImageStudioComponent implements OnInit {
   selectedAnchorKey: string | null = null;
   showAddOverlayForm = false;
   newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium', fontStyle: 'modern', fontColor: '#000000' };
+  isPosterMode = true;
   isPosterRendering = false;
   posterRenderError = '';
   composedPosterUrl = '';
@@ -929,7 +930,8 @@ export class ImageStudioComponent implements OnInit {
       prompt: this.prompt,
       displayName: this.entity.displayName,
       size: this.outputSize,
-      renderingMode: 'TEXT_OVERLAYS'
+      renderingMode: 'TEXT_OVERLAYS',
+      imageOnly: !this.isPosterMode
     };
     this.entityService.generateBusinessImage(payload).subscribe({
       next: (res: GenerateBusinessImageResponse) => {

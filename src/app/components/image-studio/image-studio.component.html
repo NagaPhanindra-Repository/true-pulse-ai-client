@@ -7,8 +7,41 @@
               Craft a prompt, keep your selected entity context, and generate a campaign-ready visual.
             </p>
           </div>
-          <span class="studio-entity-pill">{{ entity.displayName }}</span>
+          <div class="header-right">
+            <span class="studio-entity-pill">{{ entity.displayName }}</span>
+            <div class="mode-toggle-track" role="group" aria-label="Generation mode">
+              <button
+                class="mode-toggle-btn"
+                [class.mode-toggle-btn--active]="isPosterMode"
+                (click)="isPosterMode = true"
+                [attr.aria-pressed]="isPosterMode"
+                type="button"
+                matTooltip="Poster Design: text overlays & branding layers"
+              >
+                <span class="mode-toggle-icon"><mat-icon>layers</mat-icon></span>
+                <span class="mode-toggle-label"><strong>Poster</strong></span>
+              </button>
+              <button
+                class="mode-toggle-btn"
+                [class.mode-toggle-btn--active]="!isPosterMode"
+                (click)="isPosterMode = false"
+                [attr.aria-pressed]="!isPosterMode"
+                type="button"
+                matTooltip="Image Design: clean flat creative image"
+              >
+                <span class="mode-toggle-icon"><mat-icon>image</mat-icon></span>
+                <span class="mode-toggle-label"><strong>Image</strong></span>
+              </button>
+            </div>
+          </div>
         </div>
+
+        <p class="mode-toggle-desc">
+          <mat-icon>{{ isPosterMode ? 'layers' : 'image' }}</mat-icon>
+          {{ isPosterMode
+            ? 'Poster mode — Composes text layers, headlines &amp; branding on top of the generated image.'
+            : 'Image mode — Generates a clean, flat creative image with no text overlay layers.' }}
+        </p>
 
         <div class="image-studio-form">
           <label class="studio-field full">
