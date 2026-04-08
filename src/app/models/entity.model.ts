@@ -130,6 +130,7 @@ export interface OverlaySpec {
   fontFamily?: string;
   fontColor?: string;
   fontStyle?: string;
+  colorPreset?: string;
   orientation?: OverlayOrientation;
 }
 
