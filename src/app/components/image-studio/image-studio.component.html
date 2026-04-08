@@ -256,6 +256,13 @@
                     </select>
                   </label>
                   <label class="studio-field compact">
+                    <span>Color Preset</span>
+                    <select [(ngModel)]="overlay.colorPreset" (change)="setOverlayColorPreset(overlay, $any($event.target).value)" (click)="$event.stopPropagation()">
+                      <option value="">&#8212; Color Picker &#8212;</option>
+                      <option *ngFor="let opt of overlayLayerColorStyleOptions" [value]="opt.value">{{ opt.label }}</option>
+                    </select>
+                  </label>
+                  <label class="studio-field compact">
                     <span>Color</span>
                     <input type="color"
                       [(ngModel)]="overlay.fontColor"
@@ -328,6 +335,13 @@
                       <span>Font</span>
                       <select [(ngModel)]="newOverlayDraft.fontStyle">
                         <option *ngFor="let opt of overlayLayerFontStyleOptions" [value]="opt.value">{{ opt.label }}</option>
+                      </select>
+                    </label>
+                    <label class="studio-field compact">
+                      <span>Color Preset</span>
+                      <select [(ngModel)]="newOverlayDraft.colorPreset" (change)="applyNewOverlayColorPreset($any($event.target).value)">
+                        <option value="">&#8212; Color Picker &#8212;</option>
+                        <option *ngFor="let opt of overlayLayerColorStyleOptions" [value]="opt.value">{{ opt.label }}</option>
                       </select>
                     </label>
                     <label class="studio-field compact">

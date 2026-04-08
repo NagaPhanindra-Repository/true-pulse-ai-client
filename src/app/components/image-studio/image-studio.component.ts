@@ -639,6 +639,69 @@ export class ImageStudioComponent implements OnInit {
     return gradient;
   }
 
+  /** Returns fixed primary / highlight / stroke hex colours for a named colour preset. */
+  colorPaletteForStyle(style: string): { primary: string; highlight: string; stroke: string } {
+    switch (style) {
+      // ── Warm Tones ──────────────────────────────────────────────────
+      case 'warm':            return { primary: '#FFE066', highlight: '#FFF4B0', stroke: '#5C1A1A' };
+      case 'golden':          return { primary: '#FFD700', highlight: '#FFF0A0', stroke: '#4A3000' };
+      case 'amber':           return { primary: '#FFBF00', highlight: '#FFE680', stroke: '#3D2800' };
+      case 'coral':           return { primary: '#FF6B6B', highlight: '#FFB3B3', stroke: '#5C0000' };
+      case 'rose-gold':       return { primary: '#E8A0A0', highlight: '#F5C8C8', stroke: '#4A1A1A' };
+      case 'fire':            return { primary: '#FF4500', highlight: '#FF8C50', stroke: '#2A0900' };
+      case 'ruby':            return { primary: '#E8003D', highlight: '#FF6090', stroke: '#1A000F' };
+      case 'crimson':         return { primary: '#DC143C', highlight: '#FF6B8A', stroke: '#1A0010' };
+      case 'terracotta':      return { primary: '#E2725B', highlight: '#F0A898', stroke: '#3A1A12' };
+      case 'copper':          return { primary: '#B87333', highlight: '#D4A455', stroke: '#2A1A08' };
+      // ── Cool Tones ──────────────────────────────────────────────────
+      case 'cool':            return { primary: '#80CFFF', highlight: '#C0E8FF', stroke: '#002A4A' };
+      case 'ocean':           return { primary: '#006994', highlight: '#40A8C8', stroke: '#001A30' };
+      case 'sky':             return { primary: '#87CEEB', highlight: '#C0E8F8', stroke: '#003355' };
+      case 'navy':            return { primary: '#6080C8', highlight: '#A0B8F0', stroke: '#000F30' };
+      case 'royal-blue':      return { primary: '#4169E1', highlight: '#80A4F8', stroke: '#000B30' };
+      case 'teal':            return { primary: '#20B2AA', highlight: '#70D8D2', stroke: '#003030' };
+      case 'mint':            return { primary: '#98FF98', highlight: '#C8FFC8', stroke: '#003A00' };
+      case 'emerald':         return { primary: '#50C878', highlight: '#90E0A8', stroke: '#003A18' };
+      case 'lavender':        return { primary: '#B897D8', highlight: '#D8C0F0', stroke: '#280A40' };
+      case 'violet':          return { primary: '#8B00FF', highlight: '#C060FF', stroke: '#1A0030' };
+      case 'indigo':          return { primary: '#6050C8', highlight: '#9080E0', stroke: '#100020' };
+      case 'electric':        return { primary: '#7DF9FF', highlight: '#C0FCFF', stroke: '#005060' };
+      // ── Neutral & Mono ──────────────────────────────────────────────
+      case 'mono':            return { primary: '#E0E0E0', highlight: '#FFFFFF', stroke: '#1A1A1A' };
+      case 'platinum':        return { primary: '#E5E4E2', highlight: '#F5F4F2', stroke: '#303030' };
+      case 'charcoal':        return { primary: '#808080', highlight: '#B0B0B0', stroke: '#1A1A1A' };
+      case 'ivory':           return { primary: '#FFFFF0', highlight: '#FFFFFF', stroke: '#404020' };
+      case 'sand':            return { primary: '#C8B090', highlight: '#E0CCA8', stroke: '#403020' };
+      case 'slate':           return { primary: '#A0B0C0', highlight: '#C8D8E8', stroke: '#20303A' };
+      case 'onyx':            return { primary: '#B0B0B0', highlight: '#D0D0D0', stroke: '#050505' };
+      // ── Luxury & Premium ────────────────────────────────────────────
+      case 'luxury-gold':     return { primary: '#C9A227', highlight: '#F0C840', stroke: '#1A0C00' };
+      case 'champagne':       return { primary: '#F7E7CE', highlight: '#FFF5E8', stroke: '#3A2808' };
+      case 'black-gold':      return { primary: '#FFD700', highlight: '#FFF0A0', stroke: '#050505' };
+      case 'velvet':          return { primary: '#C060A0', highlight: '#E098C8', stroke: '#1A0018' };
+      case 'bronze':          return { primary: '#CD7F32', highlight: '#E0A850', stroke: '#2A1400' };
+      case 'silver-screen':   return { primary: '#C0C0C0', highlight: '#E8E8E8', stroke: '#0A0A0A' };
+      // ── Neon & Vibrant ──────────────────────────────────────────────
+      case 'neon-green':      return { primary: '#39FF14', highlight: '#90FF70', stroke: '#004000' };
+      case 'neon-pink':       return { primary: '#FF6EC7', highlight: '#FFB0E0', stroke: '#400020' };
+      case 'neon-blue':       return { primary: '#00FFFF', highlight: '#80FFFF', stroke: '#003060' };
+      case 'neon-yellow':     return { primary: '#FFFF00', highlight: '#FFFF90', stroke: '#303000' };
+      case 'electric-purple': return { primary: '#BF00FF', highlight: '#E080FF', stroke: '#200030' };
+      case 'hot-magenta':     return { primary: '#FF00C8', highlight: '#FF80E0', stroke: '#300020' };
+      case 'lime':            return { primary: '#CCFF00', highlight: '#E8FF80', stroke: '#203000' };
+      // ── Themed ──────────────────────────────────────────────────────
+      case 'pop-art':         return { primary: '#FF2D55', highlight: '#FFB800', stroke: '#0A0A0A' };
+      case 'pastel':          return { primary: '#FFB3C1', highlight: '#FFE0E8', stroke: '#403040' };
+      case 'vintage-sepia':   return { primary: '#C8A878', highlight: '#E0C898', stroke: '#2A1808' };
+      case 'sunset':          return { primary: '#FF7043', highlight: '#FFA07A', stroke: '#1A0800' };
+      case 'aurora':          return { primary: '#00FA9A', highlight: '#7FFFD4', stroke: '#001A10' };
+      case 'galaxy':          return { primary: '#9B59B6', highlight: '#C39BD3', stroke: '#0A0015' };
+      case 'candy':           return { primary: '#FF69B4', highlight: '#FF9FD0', stroke: '#300018' };
+      case 'earth':           return { primary: '#8B6914', highlight: '#C49A28', stroke: '#1A0A00' };
+      default:                return { primary: '#FFFFFF', highlight: '#FFFFFF', stroke: '#222222' };
+    }
+  }
+
   getAdaptiveOverlayTextStyle(base: any, palette: any, role: string) {
     // If overlay.fontColor is set, always use it for fillStyle and fillStyleSecondary
     if (base && base.fillStyle && /^#([A-Fa-f0-9]{6})$/.test(base.fillStyle)) {
@@ -651,9 +714,17 @@ export class ImageStudioComponent implements OnInit {
       const customStroke = this.hexToRgb(this.customOverlayStrokeColor) || { r: 42, g: 20, b: 34 };
       return { ...base, fillStyle: this.rgba(customFill.r, customFill.g, customFill.b, 0.98), fillStyleSecondary: this.rgba(customHighlight.r, customHighlight.g, customHighlight.b, 0.99), strokeStyle: this.rgba(customStroke.r, customStroke.g, customStroke.b, 0.86), shadowColor: this.rgba(customStroke.r, customStroke.g, customStroke.b, 0.34), shadowBlur: Math.max(6, base.shadowBlur) };
     }
+    const mode = this.selectedOverlayColorStyle || 'auto';
+    // Named fixed-palette presets — anything that is not the four hue-adaptive modes
+    if (mode !== 'auto' && mode !== 'warm' && mode !== 'cool' && mode !== 'mono') {
+      const preset = this.colorPaletteForStyle(mode);
+      const fill = this.hexToRgb(preset.primary) || { r: 255, g: 250, b: 180 };
+      const hl = this.hexToRgb(preset.highlight) || { r: 255, g: 255, b: 220 };
+      const strk = this.hexToRgb(preset.stroke) || { r: 30, g: 10, b: 10 };
+      return { ...base, fillStyle: this.rgba(fill.r, fill.g, fill.b, 0.98), fillStyleSecondary: this.rgba(hl.r, hl.g, hl.b, 0.99), strokeStyle: this.rgba(strk.r, strk.g, strk.b, 0.86), shadowColor: this.rgba(strk.r, strk.g, strk.b, 0.34), shadowBlur: Math.max(6, base.shadowBlur) };
+    }
     const roleHueShift = lowerRole.includes('brand') ? 28 : lowerRole.includes('offer') || lowerRole.includes('price') ? 196 : 154;
     const hueShiftMap: Record<string, number> = { auto: roleHueShift, warm: 26, cool: 210, mono: 0 };
-    const mode = this.selectedOverlayColorStyle || 'auto';
     const mappedHueShift = hueShiftMap[mode] ?? roleHueShift;
     const roleHue = (palette.hue + mappedHueShift) % 360;
     const warmHue = (palette.hue + (mode === 'cool' ? 188 : 18)) % 360;
@@ -868,6 +939,20 @@ export class ImageStudioComponent implements OnInit {
     }
     this.schedulePosterRender();
   }
+  setOverlayColorPreset(overlay: OverlaySpec, preset: string) {
+    overlay.colorPreset = preset;
+    if (preset && preset !== 'custom') {
+      const pal = this.colorPaletteForStyle(preset);
+      this.setOverlayFontColor(overlay, pal.primary);
+    }
+  }
+  applyNewOverlayColorPreset(preset: string) {
+    this.newOverlayDraft.colorPreset = preset;
+    if (preset && preset !== 'custom') {
+      const pal = this.colorPaletteForStyle(preset);
+      this.newOverlayDraft.fontColor = pal.primary;
+    }
+  }
   getOverlayFontSizeScale(overlay: OverlaySpec): number {
     const key = this.getOverlayKey(overlay);
     return this.overlayFontSizeScale[key] ?? 1.0;
@@ -893,7 +978,7 @@ export class ImageStudioComponent implements OnInit {
     this.selectedAnchorKey = this.getOverlayKey(newOverlay);
     // Close the add form and reset draft so user can add more layers easily
     this.showAddOverlayForm = false;
-    this.newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium', fontStyle: 'modern', fontColor: '#000000' };
+    this.newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium', fontStyle: 'modern', fontColor: '#000000', colorPreset: '' };
     this.schedulePosterRender();
   }
   downloadGeneratedImage() {
@@ -1023,11 +1108,65 @@ export class ImageStudioComponent implements OnInit {
     { value: 'gothic',        label: '🦇 Gothic Blackletter' },
   ];
   overlayColorStyleOptions = [
-    { value: 'auto', label: 'Auto (Image Inspired)' },
-    { value: 'warm', label: 'Warm Festival' },
-    { value: 'cool', label: 'Cool Vibrant' },
-    { value: 'mono', label: 'Neutral Monotone' },
-    { value: 'custom', label: 'Custom Colors' }
+    // ── Auto & Custom ────────────────────────────────────────────────
+    { value: 'auto',            label: '✨ Auto (Image Inspired)' },
+    { value: 'custom',          label: '🔧 Custom Colors (3-picker)' },
+    // ── Warm Tones ───────────────────────────────────────────────────
+    { value: 'warm',            label: '🌅 Warm Festival' },
+    { value: 'golden',          label: '🌟 Golden Luxury' },
+    { value: 'amber',           label: '🍯 Amber Glow' },
+    { value: 'coral',           label: '🌸 Coral Sunset' },
+    { value: 'rose-gold',       label: '🌷 Rose Gold' },
+    { value: 'fire',            label: '🔥 Fire & Ember' },
+    { value: 'ruby',            label: '❤️ Ruby Red' },
+    { value: 'crimson',         label: '🩸 Crimson Bold' },
+    { value: 'terracotta',      label: '🏺 Terracotta Earth' },
+    { value: 'copper',          label: '🪙 Copper Warm' },
+    // ── Cool Tones ───────────────────────────────────────────────────
+    { value: 'cool',            label: '💙 Cool Vibrant' },
+    { value: 'ocean',           label: '🌊 Ocean Deep' },
+    { value: 'sky',             label: '☁️ Sky Blue' },
+    { value: 'navy',            label: '🎩 Navy Prestige' },
+    { value: 'royal-blue',      label: '👑 Royal Blue' },
+    { value: 'teal',            label: '🌿 Teal Fresh' },
+    { value: 'mint',            label: '🍃 Mint Cool' },
+    { value: 'emerald',         label: '💚 Emerald Lush' },
+    { value: 'lavender',        label: '💜 Lavender Dream' },
+    { value: 'violet',          label: '🫐 Violet Bold' },
+    { value: 'indigo',          label: '🌌 Indigo Deep' },
+    { value: 'electric',        label: '⚡ Electric Cyan' },
+    // ── Neutral & Mono ───────────────────────────────────────────────
+    { value: 'mono',            label: '⬜ Neutral Monotone' },
+    { value: 'platinum',        label: '🪨 Platinum Silver' },
+    { value: 'charcoal',        label: '🩶 Charcoal Gray' },
+    { value: 'ivory',           label: '🤍 Ivory Cream' },
+    { value: 'sand',            label: '🏜️ Sand Minimal' },
+    { value: 'slate',           label: '🗿 Slate Cool' },
+    { value: 'onyx',            label: '⚫ Onyx Black' },
+    // ── Luxury & Premium ─────────────────────────────────────────────
+    { value: 'luxury-gold',     label: '👑 Luxury Gold' },
+    { value: 'champagne',       label: '🥂 Champagne' },
+    { value: 'black-gold',      label: '🖤 Black & Gold' },
+    { value: 'velvet',          label: '🍇 Velvet Purple' },
+    { value: 'bronze',          label: '🏅 Antique Bronze' },
+    { value: 'silver-screen',   label: '🎬 Silver Screen' },
+    // ── Neon & Vibrant ───────────────────────────────────────────────
+    { value: 'neon-green',      label: '💚 Neon Green' },
+    { value: 'neon-pink',       label: '💗 Neon Pink' },
+    { value: 'neon-blue',       label: '🩵 Neon Blue' },
+    { value: 'neon-yellow',     label: '💛 Neon Yellow' },
+    { value: 'electric-purple', label: '🟣 Electric Purple' },
+    { value: 'hot-magenta',     label: '🌺 Hot Magenta' },
+    { value: 'lime',            label: '🍋 Lime Zest' },
+    // ── Themed ───────────────────────────────────────────────────────
+    { value: 'pop-art',         label: '🎨 Pop Art' },
+    { value: 'pastel',          label: '🩹 Pastel Soft' },
+    { value: 'vintage-sepia',   label: '📷 Vintage Sepia' },
+    { value: 'sunset',          label: '🌇 Sunset Warm' },
+    { value: 'aurora',          label: '🌈 Aurora Borealis' },
+    { value: 'galaxy',          label: '🌌 Galaxy Dark' },
+    { value: 'candy',           label: '🍭 Candy Sweet' },
+    { value: 'earth',           label: '🌍 Earth Tones' },
   ];
   selectedOverlayFontStyle: string = 'auto';
   selectedOverlayColorStyle: string = 'auto';
@@ -1039,6 +1178,8 @@ export class ImageStudioComponent implements OnInit {
   get isCustomOverlayPalette(): boolean { return this.selectedOverlayColorStyle === 'custom'; }
   /** Font style options for per-layer selects (excludes 'auto' and 'custom' global-only options). */
   get overlayLayerFontStyleOptions() { return this.overlayFontStyleOptions.filter(o => o.value !== 'auto' && o.value !== 'custom'); }
+  /** Colour style options for per-layer selects (excludes 'auto'). */
+  get overlayLayerColorStyleOptions() { return this.overlayColorStyleOptions.filter(o => o.value !== 'auto'); }
   // --- End: Properties for template compatibility ---
 
   // --- Begin: Methods for template compatibility ---
@@ -1063,7 +1204,7 @@ export class ImageStudioComponent implements OnInit {
   removedOverlayKeys: Set<string> = new Set();
   selectedAnchorKey: string | null = null;
   showAddOverlayForm = false;
-  newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium', fontStyle: 'modern', fontColor: '#000000' };
+  newOverlayDraft = { text: '', zone: 'upper-middle', role: 'custom', size: 'medium', fontStyle: 'modern', fontColor: '#000000', colorPreset: '' };
   isPosterMode = true;
   isPosterRendering = false;
   posterRenderError = '';
