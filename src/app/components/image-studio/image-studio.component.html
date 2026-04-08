@@ -252,11 +252,7 @@
                   <label class="studio-field compact">
                     <span>Font Style</span>
                     <select [(ngModel)]="overlay.fontStyle" (change)="setOverlayFontStyle(overlay, $any($event.target).value)" (click)="$event.stopPropagation()">
-                      <option value="classic">Classic Serif</option>
-                      <option value="modern">Modern Sans</option>
-                      <option value="poster">Poster Bold</option>
-                      <option value="elegant">Elegant Editorial</option>
-                      <option value="condensed">Condensed Ad</option>
+                      <option *ngFor="let opt of overlayLayerFontStyleOptions" [value]="opt.value">{{ opt.label }}</option>
                     </select>
                   </label>
                   <label class="studio-field compact">
@@ -331,11 +327,7 @@
                     <label class="studio-field compact">
                       <span>Font</span>
                       <select [(ngModel)]="newOverlayDraft.fontStyle">
-                        <option value="classic">Classic Serif</option>
-                        <option value="modern">Modern Sans</option>
-                        <option value="poster">Poster Bold</option>
-                        <option value="elegant">Elegant Editorial</option>
-                        <option value="condensed">Condensed Ad</option>
+                        <option *ngFor="let opt of overlayLayerFontStyleOptions" [value]="opt.value">{{ opt.label }}</option>
                       </select>
                     </label>
                     <label class="studio-field compact">

@@ -303,15 +303,9 @@ export class ImageStudioComponent implements OnInit {
     const zone = this.normalizeZone(overlay.zone);
     let fontFamily = this.pickFontFamily(role, zone, palette);
     if (overlay.fontStyle) {
-      // Map style keys to font families or use as custom
-      switch (overlay.fontStyle) {
-        case 'classic': fontFamily = `Georgia, 'Palatino Linotype', 'Times New Roman', serif`; break;
-        case 'modern': fontFamily = `'Avenir Next', 'Segoe UI', 'Trebuchet MS', Arial, sans-serif`; break;
-        case 'poster': fontFamily = `'Impact', 'Arial Black', 'Trebuchet MS', sans-serif`; break;
-        case 'elegant': fontFamily = `'Baskerville', 'Palatino Linotype', Georgia, serif`; break;
-        case 'condensed': fontFamily = `'Arial Narrow', 'Franklin Gothic Medium', 'Trebuchet MS', sans-serif`; break;
-        default: fontFamily = overlay.fontStyle;
-      }
+      // Map style keys to font families via shared helper
+      const mapped = this.fontFamilyForStyle(overlay.fontStyle);
+      fontFamily = mapped !== overlay.fontStyle ? mapped : overlay.fontStyle;
     }
     // Always use overlay.fontColor if set, for per-overlay color picker; otherwise, let adaptive logic pick color
     let fillStyle = overlay.fontColor && overlay.fontColor !== '' ? overlay.fontColor : undefined;
@@ -328,16 +322,114 @@ export class ImageStudioComponent implements OnInit {
     return { fontFamily, fontWeight: 700, fillStyle, fillStyleSecondary: fillStyle, strokeStyle: 'rgba(30, 41, 59, 0.92)', strokeWidth: 2, shadowColor: 'rgba(15, 23, 42, 0.22)', shadowBlur: 6, letterSpacing: 0.4, uppercase: false, maxLines: 3 };
   }
 
+  /** Returns the CSS font-family stack for a given style key. */
+  fontFamilyForStyle(style: string): string {
+    switch (style) {
+      // ── Classic Serifs ──────────────────────────────────────────────
+      case 'classic':       return `Georgia, 'Palatino Linotype', 'Times New Roman', serif`;
+      case 'elegant':       return `'Baskerville', 'Baskerville Old Face', 'Palatino Linotype', Georgia, serif`;
+      case 'palatino':      return `'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif`;
+      case 'times':         return `'Times New Roman', Times, Georgia, serif`;
+      case 'garamond':      return `Garamond, 'EB Garamond', 'Cormorant Garamond', Georgia, serif`;
+      case 'bodoni':        return `'Bodoni MT', 'Bodoni 72', 'Bodoni MT Black', 'Book Antiqua', Georgia, serif`;
+      case 'cambria':       return `Cambria, 'Book Antiqua', Georgia, serif`;
+      case 'caslon':        return `'Adobe Caslon Pro', 'Big Caslon', 'Book Antiqua', Palatino, Georgia, serif`;
+      case 'century':       return `'Century Schoolbook', 'Century', 'Book Antiqua', Georgia, serif`;
+      case 'book-antiqua':  return `'Book Antiqua', Palatino, 'Palatino Linotype', Georgia, serif`;
+      case 'didot':         return `'Didot', 'Didot LT Std', 'Hoefler Text', Garamond, 'Times New Roman', serif`;
+      case 'rockwell':      return `'Rockwell', 'Rockwell Extra Bold', 'Courier Bold', Georgia, serif`;
+      case 'copperplate':   return `'Copperplate Gothic Bold', 'Copperplate Gothic Light', 'Copperplate', Georgia, serif`;
+      case 'playfair':      return `'Playfair Display', Garamond, Georgia, serif`;
+      case 'cinzel':        return `Cinzel, 'Trajan Pro', 'Copperplate Gothic Bold', Georgia, serif`;
+      case 'trajan':        return `'Trajan Pro', 'Copperplate Gothic Bold', Georgia, serif`;
+      // ── Modern Sans-Serif ───────────────────────────────────────────
+      case 'modern':        return `'Avenir Next', Avenir, 'Segoe UI', 'Trebuchet MS', Arial, sans-serif`;
+      case 'minimalist':    return `Helvetica, 'Helvetica Neue', Arial, 'Segoe UI', sans-serif`;
+      case 'geometric':     return `'Century Gothic', 'Avant Garde', Futura, Arial, sans-serif`;
+      case 'humanist':      return `'Gill Sans', 'Gill Sans MT', Calibri, 'Segoe UI', Arial, sans-serif`;
+      case 'grotesque':     return `'Franklin Gothic Medium', 'Franklin Gothic', 'Arial Bold', Arial, sans-serif`;
+      case 'futura':        return `Futura, 'Century Gothic', 'Avant Garde', Arial, sans-serif`;
+      case 'optima':        return `Optima, 'Segoe UI', 'Gill Sans MT', Calibri, Arial, sans-serif`;
+      case 'calibri':       return `Calibri, 'Segoe UI', Arial, sans-serif`;
+      case 'verdana':       return `Verdana, Geneva, sans-serif`;
+      case 'tahoma':        return `Tahoma, 'Segoe UI', Arial, sans-serif`;
+      case 'myriad':        return `'Myriad Pro', Myriad, 'Segoe UI', Arial, sans-serif`;
+      case 'helvetica':     return `'Helvetica Neue', Helvetica, Arial, sans-serif`;
+      case 'open-sans':     return `'Open Sans', 'Segoe UI', Arial, sans-serif`;
+      case 'lato':          return `Lato, 'Segoe UI', Arial, sans-serif`;
+      case 'roboto':        return `Roboto, 'Segoe UI', Arial, sans-serif`;
+      case 'inter':         return `Inter, 'Segoe UI', Arial, sans-serif`;
+      case 'poppins':       return `Poppins, 'Segoe UI', Arial, sans-serif`;
+      case 'nunito':        return `'Nunito', 'Century Gothic', Arial, sans-serif`;
+      case 'raleway':       return `Raleway, 'Segoe UI', Arial, sans-serif`;
+      case 'montserrat':    return `Montserrat, 'Segoe UI', Arial, sans-serif`;
+      // ── Display & Poster ────────────────────────────────────────────
+      case 'poster':        return `Impact, 'Arial Black', 'Trebuchet MS', sans-serif`;
+      case 'condensed':     return `'Arial Narrow', 'Franklin Gothic Medium', 'Trebuchet MS', sans-serif`;
+      case 'black':         return `'Arial Black', 'Franklin Gothic Heavy', Impact, sans-serif`;
+      case 'athletic':      return `'Franklin Gothic Heavy', 'Arial Black', Impact, sans-serif`;
+      case 'stencil':       return `Stencil, Impact, 'Arial Black', sans-serif`;
+      case 'broadway':      return `Broadway, Playbill, Impact, serif`;
+      case 'bebas':         return `'Bebas Neue', Impact, 'Arial Narrow', sans-serif`;
+      case 'oswald':        return `Oswald, 'Franklin Gothic Medium', 'Arial Narrow', sans-serif`;
+      case 'anton':         return `Anton, Impact, 'Arial Black', sans-serif`;
+      case 'ultra':         return `'Arial Black', 'Franklin Gothic Heavy', Impact, sans-serif`;
+      case 'haettenschweiler': return `Haettenschweiler, Impact, 'Arial Narrow', sans-serif`;
+      case 'wide-latin':    return `'Wide Latin', Arial, serif`;
+      case 'art-deco':      return `Broadway, Playbill, 'Copperplate Gothic Bold', serif`;
+      case 'bauhaus':       return `'Century Gothic', Futura, 'Avant Garde', Arial, sans-serif`;
+      // ── Script & Handwriting ────────────────────────────────────────
+      case 'script':        return `'Brush Script MT', 'Segoe Script', 'Lucida Calligraphy', cursive`;
+      case 'handwritten':   return `'Segoe Script', 'Comic Sans MS', 'Lucida Handwriting', cursive`;
+      case 'cursive-flow':  return `'Lucida Calligraphy', 'Segoe Script', 'Brush Script MT', cursive`;
+      case 'brush':         return `'Brush Script MT', 'Segoe Script', cursive`;
+      case 'comic':         return `'Comic Sans MS', 'Comic Sans', cursive`;
+      case 'pacifico':      return `Pacifico, 'Brush Script MT', cursive`;
+      case 'dancing':       return `'Dancing Script', 'Segoe Script', cursive`;
+      case 'great-vibes':   return `'Great Vibes', 'Brush Script MT', cursive`;
+      case 'satisfy':       return `Satisfy, 'Brush Script MT', cursive`;
+      case 'lobster':       return `Lobster, 'Brush Script MT', cursive`;
+      case 'caveat':        return `Caveat, 'Segoe Script', cursive`;
+      case 'kalam':         return `Kalam, 'Segoe Script', cursive`;
+      // ── Monospace & Tech ────────────────────────────────────────────
+      case 'monospace':     return `'Courier New', Courier, monospace`;
+      case 'typewriter':    return `'Courier New', 'American Typewriter', Courier, monospace`;
+      case 'code':          return `'Lucida Console', Consolas, 'Courier New', monospace`;
+      case 'consolas':      return `Consolas, 'Lucida Console', 'Courier New', monospace`;
+      case 'ocr':           return `'OCR A Extended', 'OCR A', Consolas, monospace`;
+      case 'source-code':   return `'Source Code Pro', Consolas, 'Courier New', monospace`;
+      // ── Specialty & Themed ──────────────────────────────────────────
+      case 'newspaper':     return `'Times New Roman', 'Palatino Linotype', Georgia, serif`;
+      case 'luxury':        return `Didot, 'Bodoni MT', 'Playfair Display', 'Palatino Linotype', Georgia, serif`;
+      case 'vintage':       return `Rockwell, 'Courier New', Georgia, serif`;
+      case 'cinema':        return `'Copperplate Gothic Bold', Copperplate, Georgia, serif`;
+      case 'grunge':        return `Haettenschweiler, Impact, 'Arial Narrow', sans-serif`;
+      case 'neon':          return `'Trebuchet MS', 'Segoe UI', Arial, sans-serif`;
+      case 'rounded':       return `'Varela Round', Nunito, 'Century Gothic', Arial, sans-serif`;
+      case 'narrow':        return `'Arial Narrow', 'Helvetica Condensed', 'Franklin Gothic Demi Cond', sans-serif`;
+      case 'slab':          return `Rockwell, 'Courier New', 'Lucida Fax', Georgia, serif`;
+      case 'military':      return `'Franklin Gothic Heavy', 'Arial Black', Impact, sans-serif`;
+      case 'retro':         return `'Trebuchet MS', 'Franklin Gothic Medium', Verdana, sans-serif`;
+      case 'tech':          return `'Segoe UI', Calibri, Arial, sans-serif`;
+      case 'fashion':       return `Didot, 'Bodoni MT', Garamond, Georgia, serif`;
+      case 'sports':        return `Impact, 'Arial Black', 'Franklin Gothic Heavy', sans-serif`;
+      case 'corporate':     return `'Gill Sans MT', Calibri, 'Segoe UI', Arial, sans-serif`;
+      case 'academic':      return `'Times New Roman', Garamond, Georgia, serif`;
+      case 'gothic':        return `'Old English Text MT', 'Blackletter', Georgia, serif`;
+      default:              return style; // pass through any raw CSS font-family string
+    }
+  }
+
   pickFontFamily(role: string, zone: string, palette: any): string {
     if (this.selectedOverlayFontStyle === 'custom') return this.customOverlayFontFamily.trim() || `'Avenir Next', 'Segoe UI', Arial, sans-serif`;
-    if (this.selectedOverlayFontStyle === 'classic') return `Georgia, 'Palatino Linotype', 'Times New Roman', serif`;
-    if (this.selectedOverlayFontStyle === 'modern') return `'Avenir Next', 'Segoe UI', 'Trebuchet MS', Arial, sans-serif`;
-    if (this.selectedOverlayFontStyle === 'poster') {
-      if (role.includes('offer') || role.includes('price') || role.includes('cta')) return `'Arial Black', 'Franklin Gothic Heavy', 'Trebuchet MS', sans-serif`;
-      return `'Impact', 'Arial Black', 'Trebuchet MS', sans-serif`;
+    if (this.selectedOverlayFontStyle !== 'auto') {
+      // poster gets a role-aware split
+      if (this.selectedOverlayFontStyle === 'poster' && (role.includes('offer') || role.includes('price') || role.includes('cta'))) {
+        return `'Arial Black', 'Franklin Gothic Heavy', 'Trebuchet MS', sans-serif`;
+      }
+      return this.fontFamilyForStyle(this.selectedOverlayFontStyle);
     }
-    if (this.selectedOverlayFontStyle === 'elegant') return `'Baskerville', 'Palatino Linotype', Georgia, serif`;
-    if (this.selectedOverlayFontStyle === 'condensed') return `'Arial Narrow', 'Franklin Gothic Medium', 'Trebuchet MS', sans-serif`;
+    // Auto / image-inspired logic
     if (role.includes('offer') || role.includes('price') || role.includes('cta')) return `'Arial Black', 'Franklin Gothic Heavy', 'Trebuchet MS', 'Segoe UI', sans-serif`;
     if (role.includes('brand') || zone === 'top-banner' || zone === 'top-center') {
       if (palette.saturation > 0.52) return `'Avenir Next', 'Segoe UI', 'Trebuchet MS', Arial, sans-serif`;
@@ -835,13 +927,100 @@ export class ImageStudioComponent implements OnInit {
   get overlayConstraintNotice(): string { return (!this.generatedImageUrl || this.isPosterRendering || this.generatedOverlays.length) ? '' : 'This response only included a flat image. The browser can redraw clean text only when the backend also returns structured overlay layers.'; }
   get canGenerateImage(): boolean { return !!this.entity && !!this.prompt.trim() && !this.loading; }
   overlayFontStyleOptions = [
-    { value: 'auto', label: 'Auto (Image Inspired)' },
-    { value: 'classic', label: 'Classic Serif' },
-    { value: 'modern', label: 'Modern Sans' },
-    { value: 'poster', label: 'Poster Bold' },
-    { value: 'elegant', label: 'Elegant Editorial' },
-    { value: 'condensed', label: 'Condensed Ad' },
-    { value: 'custom', label: 'Custom Font Family' }
+    // ── Auto & Custom ────────────────────────────────────────────────
+    { value: 'auto',          label: '✨ Auto (Image Inspired)' },
+    { value: 'custom',        label: '🔧 Custom Font Family' },
+    // ── Classic Serifs ──────────────────────────────────────────────
+    { value: 'classic',       label: '📜 Classic Serif (Georgia)' },
+    { value: 'elegant',       label: '🎭 Elegant Editorial (Baskerville)' },
+    { value: 'times',         label: '📰 Times New Roman' },
+    { value: 'garamond',      label: '📖 Garamond Literary' },
+    { value: 'palatino',      label: '🏛️ Palatino Italic' },
+    { value: 'bodoni',        label: '👗 Bodoni Fashion' },
+    { value: 'didot',         label: '💎 Didot Luxury' },
+    { value: 'cambria',       label: '🎓 Cambria Academic' },
+    { value: 'caslon',        label: '📚 Caslon Book' },
+    { value: 'century',       label: '🏫 Century Schoolbook' },
+    { value: 'book-antiqua',  label: '🗿 Book Antiqua' },
+    { value: 'rockwell',      label: '🪨 Rockwell Slab' },
+    { value: 'copperplate',   label: '🏆 Copperplate Gothic' },
+    { value: 'playfair',      label: '🌹 Playfair Display' },
+    { value: 'cinzel',        label: '⚡ Cinzel Roman' },
+    { value: 'trajan',        label: '🏛️ Trajan Pro' },
+    // ── Modern Sans-Serif ───────────────────────────────────────────
+    { value: 'modern',        label: '🔵 Modern Sans (Avenir)' },
+    { value: 'minimalist',    label: '⬜ Minimalist (Helvetica)' },
+    { value: 'helvetica',     label: '🟦 Helvetica Neue' },
+    { value: 'geometric',     label: '🔷 Geometric (Century Gothic)' },
+    { value: 'humanist',      label: '🤝 Humanist (Gill Sans)' },
+    { value: 'grotesque',     label: '🗞️ Grotesque (Franklin Gothic)' },
+    { value: 'futura',        label: '🚀 Futura Geometric' },
+    { value: 'optima',        label: '🌿 Optima Luxury' },
+    { value: 'calibri',       label: '✏️ Calibri Clean' },
+    { value: 'verdana',       label: '👁️ Verdana Readable' },
+    { value: 'tahoma',        label: '💼 Tahoma Corporate' },
+    { value: 'myriad',        label: '🍎 Myriad Pro (Apple)' },
+    { value: 'montserrat',    label: '🏙️ Montserrat Urban' },
+    { value: 'raleway',       label: '🌊 Raleway Elegant' },
+    { value: 'poppins',       label: '🎨 Poppins Friendly' },
+    { value: 'open-sans',     label: '📱 Open Sans Clean' },
+    { value: 'lato',          label: '☀️ Lato Bright' },
+    { value: 'roboto',        label: '🤖 Roboto Google' },
+    { value: 'inter',         label: '📡 Inter Interface' },
+    { value: 'nunito',        label: '🍬 Nunito Rounded' },
+    // ── Display & Poster ────────────────────────────────────────────
+    { value: 'poster',        label: '🎪 Poster Bold (Impact)' },
+    { value: 'condensed',     label: '📢 Condensed Ad (Arial Narrow)' },
+    { value: 'black',         label: '⚫ Ultra Black Heavy' },
+    { value: 'athletic',      label: '🏆 Athletic Sports Bold' },
+    { value: 'stencil',       label: '🎖️ Stencil Military' },
+    { value: 'broadway',      label: '🎬 Broadway Art Deco' },
+    { value: 'bebas',         label: '💥 Bebas Neue Display' },
+    { value: 'oswald',        label: '📌 Oswald Condensed' },
+    { value: 'anton',         label: '🔔 Anton Display' },
+    { value: 'ultra',         label: '🔥 Ultra Heavy Display' },
+    { value: 'haettenschweiler', label: '🗜️ Haettenschweiler Compressed' },
+    { value: 'wide-latin',    label: '⬛ Wide Latin Expanded' },
+    { value: 'art-deco',      label: '🌟 Art Deco (Broadway)' },
+    { value: 'bauhaus',       label: '🟡 Bauhaus Geometric' },
+    // ── Script & Handwriting ────────────────────────────────────────
+    { value: 'script',        label: '✍️ Script Calligraphy' },
+    { value: 'handwritten',   label: '📝 Handwritten Casual' },
+    { value: 'cursive-flow',  label: '🌀 Cursive Flowing' },
+    { value: 'brush',         label: '🖌️ Brush Stroke' },
+    { value: 'comic',         label: '💬 Comic Fun' },
+    { value: 'pacifico',      label: '🌴 Pacifico Retro' },
+    { value: 'dancing',       label: '💃 Dancing Script' },
+    { value: 'great-vibes',   label: '🌺 Great Vibes Elegant' },
+    { value: 'satisfy',       label: '😌 Satisfy Smooth' },
+    { value: 'lobster',       label: '🦞 Lobster Bold Script' },
+    { value: 'caveat',        label: '🖊️ Caveat Handwriting' },
+    { value: 'kalam',         label: '🪴 Kalam Informal' },
+    // ── Monospace & Tech ────────────────────────────────────────────
+    { value: 'monospace',     label: '⌨️ Monospace (Courier New)' },
+    { value: 'typewriter',    label: '🖨️ Typewriter Vintage' },
+    { value: 'code',          label: '💻 Code Terminal' },
+    { value: 'consolas',      label: '🖥️ Consolas Digital' },
+    { value: 'ocr',           label: '🔬 OCR Machine Read' },
+    { value: 'source-code',   label: '📟 Source Code Pro' },
+    // ── Specialty & Themed ──────────────────────────────────────────
+    { value: 'newspaper',     label: '📰 Newspaper Editorial' },
+    { value: 'luxury',        label: '👑 Luxury Fashion Magazine' },
+    { value: 'vintage',       label: '🕰️ Vintage Retro' },
+    { value: 'cinema',        label: '🎥 Cinema Entertainment' },
+    { value: 'grunge',        label: '🎸 Grunge Street Art' },
+    { value: 'neon',          label: '🌆 Neon Urban Night' },
+    { value: 'rounded',       label: '🟢 Rounded Friendly' },
+    { value: 'narrow',        label: '📏 Ultra Narrow Compressed' },
+    { value: 'slab',          label: '🧱 Slab Serif Bold' },
+    { value: 'military',      label: '🎗️ Military Bold' },
+    { value: 'retro',         label: '📺 Retro 80s' },
+    { value: 'tech',          label: '⚙️ Tech Corporate' },
+    { value: 'fashion',       label: '👠 Fashion High-End' },
+    { value: 'sports',        label: '🏅 Sports Arena' },
+    { value: 'corporate',     label: '🏢 Corporate Professional' },
+    { value: 'academic',      label: '🎓 Academic Research' },
+    { value: 'gothic',        label: '🦇 Gothic Blackletter' },
   ];
   overlayColorStyleOptions = [
     { value: 'auto', label: 'Auto (Image Inspired)' },
@@ -858,6 +1037,8 @@ export class ImageStudioComponent implements OnInit {
   customOverlayStrokeColor: string = '#2a1422';
   get isCustomOverlayFontStyle(): boolean { return this.selectedOverlayFontStyle === 'custom'; }
   get isCustomOverlayPalette(): boolean { return this.selectedOverlayColorStyle === 'custom'; }
+  /** Font style options for per-layer selects (excludes 'auto' and 'custom' global-only options). */
+  get overlayLayerFontStyleOptions() { return this.overlayFontStyleOptions.filter(o => o.value !== 'auto' && o.value !== 'custom'); }
   // --- End: Properties for template compatibility ---
 
   // --- Begin: Methods for template compatibility ---
