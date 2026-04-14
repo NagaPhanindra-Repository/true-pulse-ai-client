@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { ChatWindowComponent } from "./components/chat-window/chat-window.component";
-import { AppContentComponent } from './components/app-content/app-content.component'; 
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
+import { isHostedWebsiteHostname } from './utils/hosted-website.util';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ChatWindowComponent,
-     AppContentComponent,
+  imports: [CommonModule, RouterOutlet, ChatWindowComponent,
       FooterComponent,
        HeaderComponent],
   templateUrl: './app.component.html',
@@ -16,4 +16,9 @@ import { HeaderComponent } from './components/header/header.component';
 })
 export class AppComponent {
   title = 'true-pulse-ai-client';
+
+  get isHostedPublicWebsite(): boolean {
+    if (typeof window === 'undefined') return false;
+    return isHostedWebsiteHostname(window.location.hostname);
+  }
 }

@@ -12,7 +12,11 @@ import {
   GenerateBusinessImageResponse,
   PoliticianProfile
 } from '../models/entity.model';
-import { BusinessWebsiteResponse } from '../models/business-website.model';
+import {
+  BusinessWebsiteResponse,
+  SaveBusinessWebsiteRequest,
+  SaveBusinessWebsiteResponse
+} from '../models/business-website.model';
 
 @Injectable({ providedIn: 'root' })
 export class EntityService {
@@ -89,5 +93,15 @@ export class EntityService {
   }
   generateBusinessWebsite(formData: FormData): Observable<BusinessWebsiteResponse> {
     return this.http.post<BusinessWebsiteResponse>(`${this.baseUrl}/business-website/generate`, formData);
+  }
+
+  saveBusinessWebsite(payload: SaveBusinessWebsiteRequest): Observable<SaveBusinessWebsiteResponse> {
+    return this.http.post<SaveBusinessWebsiteResponse>(`${this.baseUrl}/business-website/save`, payload);
+  }
+
+  renderBusinessWebsiteBySubdomain(subdomain: string): Observable<SaveBusinessWebsiteResponse> {
+    return this.http.get<SaveBusinessWebsiteResponse>(`${this.baseUrl}/public/business-website/render-by-subdomain`, {
+      params: { subdomain }
+    });
   }
 }

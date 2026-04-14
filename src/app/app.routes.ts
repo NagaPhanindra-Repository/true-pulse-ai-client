@@ -1,5 +1,5 @@
 
-import { Routes } from '@angular/router';
+import { CanMatchFn, Routes } from '@angular/router';
 import { AuthGuard } from './services/security/auth.guard';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { BusinessOwnersComponent } from './components/business-owners/business-owners.component';
@@ -19,8 +19,24 @@ import { AboutUsComponent } from './components/about-us/about-us.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './components/terms-of-service/terms-of-service.component';
+import { isHostedWebsiteHostname } from './utils/hosted-website.util';
+
+const hostedWebsiteCanMatch: CanMatchFn = () => {
+  if (typeof window === 'undefined') return false;
+  return isHostedWebsiteHostname(window.location.hostname);
+};
 
 export const routes: Routes = [
+  {
+    path: '',
+    canMatch: [hostedWebsiteCanMatch],
+    loadComponent: () => import('./components/public-website-host/public-website-host.component').then(m => m.PublicWebsiteHostComponent)
+  },
+  {
+    path: '**',
+    canMatch: [hostedWebsiteCanMatch],
+    loadComponent: () => import('./components/public-website-host/public-website-host.component').then(m => m.PublicWebsiteHostComponent)
+  },
   { path: '', component: AppContentComponent },
   { path: 'about', component: AboutFounderComponent },
   { path: 'about-us', component: AboutUsComponent },

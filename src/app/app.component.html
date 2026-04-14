@@ -1,8 +1,10 @@
 <app-chat-window></app-chat-window>
-<div class="app-root-layout">
+<div class="app-root-layout" *ngIf="!isHostedPublicWebsite">
 	<app-header></app-header>
 	<div class="app-main-content">
 		<router-outlet></router-outlet>
 	</div>
 	<app-footer></app-footer>
 </div>
+
+<router-outlet *ngIf="isHostedPublicWebsite"></router-outlet>

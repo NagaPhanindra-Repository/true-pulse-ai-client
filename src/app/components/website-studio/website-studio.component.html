@@ -105,7 +105,7 @@
       <div class="preview-frame-wrap" *ngIf="websiteResponse" [class]="'vp-' + previewMode">
         <div class="browser-chrome">
           <span class="bc-dot"></span><span class="bc-dot"></span><span class="bc-dot"></span>
-          <div class="bc-url">{{ publishSubdomain }}.truepulseai.com</div>
+          <div class="bc-url">{{ publishAddressPreview }}</div>
         </div>
         <iframe
           class="website-iframe"
@@ -245,7 +245,7 @@
           </div>
         </div>
 
-        <div class="section-group" *ngIf="websiteResponse?.metadata">
+        <div class="section-group" *ngIf="websiteResponse && websiteResponse.metadata">
           <div class="sg-title"><mat-icon>info_outline</mat-icon> AI Design Brief</div>
           <div class="meta-brief">
             <div class="mb-row"><span class="mb-k">Page Title</span><span class="mb-v">{{ websiteResponse!.metadata.pageTitle }}</span></div>
@@ -257,7 +257,7 @@
                 <span *ngFor="let c of websiteResponse!.metadata.colorPalette" class="swatch-dot" [style.background]="c" [title]="c"></span>
               </div>
             </div>
-            <div class="mb-row"><span class="mb-k">Fonts</span><span class="mb-v">{{ websiteResponse!.metadata.fonts?.join(", ") }}</span></div>
+            <div class="mb-row"><span class="mb-k">Fonts</span><span class="mb-v">{{ websiteResponse!.metadata.fonts.join(", ") }}</span></div>
           </div>
         </div>
       </div>
@@ -381,10 +381,15 @@
           <div class="section-group">
             <div class="sg-title"><mat-icon>language</mat-icon> Subdomain</div>
             <div class="subdomain-row">
-              <input type="text" class="subdomain-input" [(ngModel)]="publishSubdomain" placeholder="your-brand"/>
-              <span class="subdomain-suffix">.truepulseai.com</span>
+              <input
+                type="text"
+                class="subdomain-input"
+                [(ngModel)]="publishSubdomain"
+                (ngModelChange)="onPublishSubdomainChange($event)"
+                placeholder="your-brand"/>
+              <span class="subdomain-suffix">{{ publishSubdomainSuffix }}</span>
             </div>
-            <p class="subdomain-preview">{{ publishSubdomain }}.truepulseai.com</p>
+            <p class="subdomain-preview">{{ publishAddressPreview }}</p>
           </div>
 
           <div class="section-group">

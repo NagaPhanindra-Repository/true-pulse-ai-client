@@ -1,0 +1,46 @@
+<div class="host-root" [class.state-ready]="state === 'ready'">
+  <div class="host-loading" *ngIf="state === 'loading'">
+    <div class="host-loader"></div>
+    <h2>Loading {{ subdomain }}...</h2>
+    <p>Fetching your published website</p>
+  </div>
+
+  <div class="host-error" *ngIf="state === 'invalid' || state === 'not-found' || state === 'unavailable'">
+    <div class="host-error-hero">Hosted by TruePulse</div>
+    <div class="host-error-card">
+      <h1 *ngIf="state === 'invalid'">Invalid Subdomain</h1>
+      <h1 *ngIf="state === 'not-found'">Website Not Found</h1>
+      <h1 *ngIf="state === 'unavailable'">Temporarily Unavailable</h1>
+
+      <p>{{ errorMessage }}</p>
+
+      <div class="host-lookup-row">
+        <input
+          type="text"
+          [(ngModel)]="lookupSubdomain"
+          placeholder="Try another subdomain"
+          (keyup.enter)="goToHostedSubdomain()"
+          class="host-lookup-input"/>
+        <button class="host-lookup-btn" (click)="goToHostedSubdomain()">Open Site</button>
+      </div>
+
+      <p class="host-lookup-preview">{{ lookupPreviewUrl }}</p>
+
+      <div class="host-error-actions">
+        <button class="host-ghost-btn" (click)="retry()" *ngIf="subdomain">Retry</button>
+        <a [href]="homeUrl" class="host-home-link">Go to TruePulse Home</a>
+        <a [href]="supportMailTo" class="host-support-link">Contact Support</a>
+      </div>
+    </div>
+  </div>
+
+  <iframe
+    *ngIf="state === 'ready'"
+    class="host-iframe"
+    [attr.title]="pageTitle"
+    [srcdoc]="hostedSrcDoc"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+    referrerpolicy="no-referrer"
+    frameborder="0">
+  </iframe>
+</div>

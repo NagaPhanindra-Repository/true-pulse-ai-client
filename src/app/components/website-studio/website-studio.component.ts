@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityService } from '../../services/entity.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { WebsiteChatbotWidgetComponent } from '../website-chatbot-widget/website-chatbot-widget.component';
 import { BusinessWebsiteResponse } from '../../models/business-website.model';
+import { environment } from '../../../environments/environment';
 
 export interface SectionOverride {
   id: string;
@@ -34,7 +34,7 @@ export interface AddBlockOption {
   templateUrl: './website-studio.component.html',
   styleUrls: ['./website-studio.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatFormFieldModule, MatInputModule, MatButtonModule, WebsiteChatbotWidgetComponent]
+  imports: [CommonModule, FormsModule, MatIconModule, MatFormFieldModule, MatInputModule, MatButtonModule]
 })
 export class WebsiteStudioComponent implements OnInit {
 
@@ -256,14 +256,15 @@ export class WebsiteStudioComponent implements OnInit {
   published = false;
   publishLoading = false;
   publishedUrl = '';
+  readonly publishRootDomain = environment.production
+    ? environment.websiteRootDomain
+    : `${environment.websiteRootDomain}:4200`;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private entityService: EntityService,
-    private http: HttpClient,
-    private sanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef
+    private sanitizer: DomSanitizer
   ) {}
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
@@ -322,7 +323,7 @@ export class WebsiteStudioComponent implements OnInit {
         this.editableHtml = resp.html || '';
         this.editableCss = resp.css || '';
         this.editableJs = resp.js || '';
-        this.publishSubdomain = (resp.displayName || 'my-site').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        this.publishSubdomain = this.normalizeSubdomain(resp.displayName || 'my-site');
         this.generating = false;
         this.activeTab = 'theme';
       },
@@ -408,15 +409,84 @@ export class WebsiteStudioComponent implements OnInit {
     if (file) this.selectedFile = file;
   }
 
-  // ── Publish (mock) ────────────────────────────────────────────────────────
+  get publishSubdomainSuffix(): string {
+    return `.${this.publishRootDomain}`;
+  }
+
+  get publishAddressPreview(): string {
+    const safeSubdomain = this.normalizeSubdomain(this.publishSubdomain || 'your-brand');
+    return `${safeSubdomain}.${this.publishRootDomain}`;
+  }
+
+  onPublishSubdomainChange(value: string) {
+    this.publishSubdomain = this.normalizeSubdomain(value);
+  }
+
+  // ── Publish (API) ─────────────────────────────────────────────────────────
   publishWebsite() {
-    if (!this.publishSubdomain) return;
+    if (!this.websiteResponse) {
+      this.error = 'Generate a website before publishing.';
+      return;
+    }
+
+    const entityId = Number(this.entityDetails?.id ?? this.websiteResponse.entityId);
+    const displayName = String(this.entityDetails?.displayName || this.websiteResponse.displayName || '').trim();
+    const subdomain = this.normalizeSubdomain(this.publishSubdomain);
+
+    if (!Number.isFinite(entityId) || entityId <= 0) {
+      this.error = 'Missing valid entity id. Please refresh entity details and try again.';
+      return;
+    }
+    if (!displayName) {
+      this.error = 'Display name is required before publishing.';
+      return;
+    }
+    if (!subdomain) {
+      this.error = 'Please choose a valid subdomain.';
+      return;
+    }
+
+    this.publishSubdomain = subdomain;
+    if (this.codeEdited) this.applyCodeEdit();
+
+    const metadata = {
+      generated: this.websiteResponse.metadata,
+      studio: {
+        theme: this.theme,
+        sectionOverrides: this.sectionOverrides,
+        addedBlocks: this.addedBlocks,
+        previewMode: this.previewMode,
+      }
+    };
+
+    const payload = {
+      entityId,
+      displayName,
+      prompt: this.prompt || undefined,
+      html: this.getPreviewSrcDoc(),
+      css: this.websiteResponse.css || '',
+      js: this.websiteResponse.js || '',
+      metadata: JSON.stringify(metadata),
+      subdomain,
+      published: true,
+    };
+
     this.publishLoading = true;
-    setTimeout(() => {
-      this.publishedUrl = `https://${this.publishSubdomain}.truepulseai.com`;
-      this.published = true;
-      this.publishLoading = false;
-    }, 2000);
+    this.error = '';
+
+    this.entityService.saveBusinessWebsite(payload).subscribe({
+      next: (resp) => {
+        const savedSubdomain = this.normalizeSubdomain(resp.subdomain || subdomain);
+        this.publishSubdomain = savedSubdomain;
+        this.publishedUrl = this.buildWebsiteUrl(savedSubdomain);
+        this.published = true;
+        this.publishLoading = false;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.error = this.getPublishErrorMessage(err);
+        this.publishLoading = false;
+      }
+    });
   }
 
   copyPublishedUrl() {
@@ -572,5 +642,31 @@ ${sectionCss}
     if (!families.size) return '';
     const familyParams = Array.from(families).map(f => `family=${f}:wght@300;400;600;700;800`).join('&');
     return `https://fonts.googleapis.com/css2?${familyParams}&display=swap`;
+  }
+
+  private normalizeSubdomain(value: string): string {
+    return (value || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/(^-|-$)/g, '')
+      .slice(0, 63);
+  }
+
+  private buildWebsiteUrl(subdomain: string): string {
+    const protocol = environment.production ? 'https' : 'http';
+    return `${protocol}://${subdomain}.${this.publishRootDomain}`;
+  }
+
+  private getPublishErrorMessage(err: HttpErrorResponse): string {
+    const backendMessage = (err?.error?.message as string | undefined)?.trim();
+
+    if (backendMessage) return backendMessage;
+
+    if (err.status === 400) return 'Save failed: please verify required fields (entity, display name, and HTML).';
+    if (err.status === 404) return 'Save failed: entity not found.';
+    if (err.status === 409) return 'Save failed: website or subdomain already exists. Choose another subdomain or use update API.';
+
+    return 'Failed to save website. Please try again.';
   }
 }
