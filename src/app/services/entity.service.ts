@@ -12,6 +12,7 @@ import {
   GenerateBusinessImageResponse,
   PoliticianProfile
 } from '../models/entity.model';
+import { BusinessWebsiteResponse } from '../models/business-website.model';
 
 @Injectable({ providedIn: 'root' })
 export class EntityService {
@@ -85,5 +86,8 @@ export class EntityService {
 
   generateBusinessImage(payload: GenerateBusinessImageRequest): Observable<GenerateBusinessImageResponse> {
     return this.http.post<GenerateBusinessImageResponse>(`${this.baseUrl}/business-images/generate`, payload);
+  }
+  generateBusinessWebsite(formData: FormData): Observable<BusinessWebsiteResponse> {
+    return this.http.post<BusinessWebsiteResponse>(`${this.baseUrl}/business-website/generate`, formData);
   }
 }

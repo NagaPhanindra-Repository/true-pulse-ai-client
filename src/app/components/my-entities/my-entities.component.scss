@@ -1,3 +1,137 @@
+// AI Website Studio Promo Section Styles
+
+.website-studio-promo {
+  margin-top: 2.5rem;
+  background: linear-gradient(120deg, rgba(30,40,80,0.98) 0%, rgba(20,30,60,0.98) 100%);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 32px 0 rgba(80, 120, 255, 0.18), 0 1.5px 8px 0 rgba(0,0,0,0.10);
+  border: 2px solid rgba(80, 200, 255, 0.18);
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    width: 180%;
+    height: 180%;
+    background: radial-gradient(circle at 30% 30%, rgba(80,200,255,0.10) 0%, rgba(0,0,0,0) 70%);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .website-studio-header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2.5rem;
+    position: relative;
+    z-index: 1;
+    @media (max-width: 900px) {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+  }
+  .ai-studio-intro {
+    flex: 2;
+    .ai-badge.website {
+      background: linear-gradient(90deg, #4f8cff 0%, #00e0d3 100%);
+      color: #fff;
+      border-radius: 2rem;
+      padding: 0.4rem 1.2rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 12px 0 rgba(80, 120, 255, 0.10);
+      mat-icon {
+        font-size: 1.3rem;
+      }
+    }
+    .ai-gradient-text {
+      background: linear-gradient(90deg, #4f8cff 0%, #00e0d3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.7rem;
+      letter-spacing: 0.01em;
+    }
+    .ai-desc {
+      color: #eaf6ff;
+      font-size: 1.13rem;
+      margin-bottom: 1.1rem;
+      line-height: 1.6;
+      strong, .ai-highlight {
+        color: #7fffd4;
+        font-weight: 700;
+      }
+    }
+    .ai-feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      li {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 1.08rem;
+        margin-bottom: 0.4rem;
+        color: #b3e6ff;
+        mat-icon {
+          color: #4f8cff;
+          font-size: 1.1rem;
+        }
+      }
+    }
+  }
+  .ai-studio-action {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1.1rem;
+    .ai-studio-btn.website {
+      background: linear-gradient(90deg, #4f8cff 0%, #00e0d3 100%);
+      color: #fff;
+      border: none;
+      border-radius: 2rem;
+      padding: 0.8rem 2.2rem;
+      font-size: 1.13rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      cursor: pointer;
+      box-shadow: 0 2px 12px 0 rgba(80, 120, 255, 0.10);
+      transition: background 0.2s, box-shadow 0.2s;
+      &:hover {
+        background: linear-gradient(90deg, #00e0d3 0%, #4f8cff 100%);
+        box-shadow: 0 4px 24px 0 rgba(80, 120, 255, 0.18);
+      }
+      mat-icon {
+        font-size: 1.3rem;
+      }
+    }
+    .studio-entity-pill {
+      background: #1a2a4a;
+      color: #7fffd4;
+      border-radius: 1.2rem;
+      padding: 0.3rem 1.1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 0.7rem;
+      display: inline-block;
+      border: 1px solid #4f8cff;
+    }
+  }
+}
 .my-entities-root {
   position: relative;
   min-height: 100vh;

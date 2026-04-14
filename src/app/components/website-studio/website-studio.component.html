@@ -1,0 +1,422 @@
+﻿<div class="studio-root">
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       TOP BAR
+  ════════════════════════════════════════════════════════════════════════ -->
+  <div class="studio-topbar">
+    <div class="topbar-left">
+      <mat-icon class="topbar-logo-icon">auto_awesome</mat-icon>
+      <span class="topbar-title">AI Website Studio</span>
+      <div class="entity-badge" *ngIf="entityDetails">
+        <mat-icon>{{ entityDetails.icon || "business" }}</mat-icon>
+        {{ entityDetails.displayName }}
+      </div>
+    </div>
+    <div class="topbar-right" *ngIf="websiteResponse">
+      <button class="topbar-btn" (click)="downloadHtml()" title="Download HTML">
+        <mat-icon>download</mat-icon> Download
+      </button>
+      <button class="topbar-btn topbar-btn--publish" (click)="activeTab = 'publish'">
+        <mat-icon>rocket_launch</mat-icon> Publish
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       MAIN WORKSPACE
+  ════════════════════════════════════════════════════════════════════════ -->
+  <div class="studio-workspace">
+
+    <!-- LEFT: Generate Panel -->
+    <div class="studio-left">
+      <div class="left-panel">
+        <div class="panel-header">
+          <mat-icon>edit_note</mat-icon>
+          <span>Describe Your Website</span>
+        </div>
+        <div class="panel-body">
+          <p class="panel-hint">Tell the AI what to build, or upload a PDF with your business info.</p>
+          <mat-form-field appearance="fill" class="prompt-field">
+            <textarea matInput rows="6"
+              placeholder="e.g. Modern Indian restaurant in St. Louis with menu, gallery, reservations. Use warm terracotta tones."
+              [(ngModel)]="prompt"
+              [disabled]="generating">
+            </textarea>
+          </mat-form-field>
+
+          <div class="or-row">
+            <span class="or-line"></span><span class="or-text">or upload PDF</span><span class="or-line"></span>
+          </div>
+          <label class="upload-label">
+            <mat-icon>upload_file</mat-icon>
+            <span>{{ selectedFile ? selectedFile.name : "Upload PDF / Doc" }}</span>
+            <input type="file" accept=".pdf,.doc,.docx" style="display:none" (change)="onFileSelected($event)" [disabled]="generating"/>
+          </label>
+
+          <button class="btn-generate" (click)="generateWebsite()" [disabled]="generating || !prompt">
+            <mat-icon>{{ generating ? "hourglass_top" : "auto_awesome" }}</mat-icon>
+            {{ generating ? "Generating..." : "Generate Website" }}
+          </button>
+          <div class="error-msg" *ngIf="error">{{ error }}</div>
+        </div>
+      </div>
+
+      <div class="generating-shimmer" *ngIf="generating">
+        <div class="shimmer-bar"></div>
+        <div class="shimmer-bar short"></div>
+        <div class="shimmer-bar"></div>
+        <div class="shimmer-label"><mat-icon>auto_awesome</mat-icon> AI is designing your website...</div>
+      </div>
+    </div>
+
+    <!-- CENTER: Live Preview -->
+    <div class="studio-center">
+
+      <div class="preview-toolbar" *ngIf="websiteResponse">
+        <div class="viewport-btns">
+          <button class="vp-btn" [class.active]="previewMode==='desktop'" (click)="previewMode='desktop'">
+            <mat-icon>desktop_windows</mat-icon> Desktop
+          </button>
+          <button class="vp-btn" [class.active]="previewMode==='tablet'" (click)="previewMode='tablet'">
+            <mat-icon>tablet</mat-icon> Tablet
+          </button>
+          <button class="vp-btn" [class.active]="previewMode==='mobile'" (click)="previewMode='mobile'">
+            <mat-icon>smartphone</mat-icon> Mobile
+          </button>
+        </div>
+        <div class="preview-meta-inline" *ngIf="websiteResponse.metadata">
+          <span class="pi-chip" *ngFor="let section of websiteResponse.metadata.sections">{{ section }}</span>
+        </div>
+      </div>
+
+      <div class="preview-empty" *ngIf="!websiteResponse && !generating">
+        <div class="empty-icon-wrap"><mat-icon>web</mat-icon></div>
+        <h2>Your website preview will appear here</h2>
+        <p>Describe your vision on the left and click <strong>Generate Website</strong></p>
+        <div class="empty-features">
+          <div class="ef"><mat-icon>palette</mat-icon> Full Theme Control</div>
+          <div class="ef"><mat-icon>view_list</mat-icon> Section Manager</div>
+          <div class="ef"><mat-icon>extension</mat-icon> Add Blocks</div>
+          <div class="ef"><mat-icon>code</mat-icon> Code Editor</div>
+          <div class="ef"><mat-icon>rocket_launch</mat-icon> One-click Publish</div>
+        </div>
+      </div>
+
+      <div class="preview-frame-wrap" *ngIf="websiteResponse" [class]="'vp-' + previewMode">
+        <div class="browser-chrome">
+          <span class="bc-dot"></span><span class="bc-dot"></span><span class="bc-dot"></span>
+          <div class="bc-url">{{ publishSubdomain }}.truepulseai.com</div>
+        </div>
+        <iframe
+          class="website-iframe"
+          [srcdoc]="getSafePreviewSrcDoc()"
+          sandbox="allow-scripts allow-same-origin"
+          frameborder="0"
+          title="Website Preview">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- RIGHT: Editor Panel -->
+    <div class="studio-right" *ngIf="websiteResponse">
+
+      <div class="editor-tabs">
+        <button class="etab" [class.active]="activeTab==='theme'"    (click)="activeTab='theme'">    <mat-icon>palette</mat-icon>      <span>Theme</span></button>
+        <button class="etab" [class.active]="activeTab==='sections'" (click)="activeTab='sections'"> <mat-icon>view_list</mat-icon>    <span>Sections</span></button>
+        <button class="etab" [class.active]="activeTab==='blocks'"   (click)="activeTab='blocks'">   <mat-icon>extension</mat-icon>   <span>Blocks</span></button>
+        <button class="etab" [class.active]="activeTab==='code'"     (click)="activeTab='code'">     <mat-icon>code</mat-icon>         <span>Code</span></button>
+        <button class="etab" [class.active]="activeTab==='publish'"  (click)="activeTab='publish'">  <mat-icon>rocket_launch</mat-icon><span>Publish</span></button>
+      </div>
+
+      <!-- TAB: THEME -->
+      <div class="tab-panel" *ngIf="activeTab==='theme'">
+
+        <div class="section-group">
+          <div class="sg-title"><mat-icon>auto_awesome</mat-icon> Color Presets</div>
+          <div class="color-preset-grid">
+            <button *ngFor="let preset of colorPresets" class="color-preset-pill" (click)="applyColorPreset(preset)" [title]="preset.label">
+              <span class="cpp-swatch" [style.background]="preset.primary"></span>
+              <span class="cpp-swatch" [style.background]="preset.secondary"></span>
+              <span class="cpp-swatch" [style.background]="preset.accent"></span>
+              <span class="cpp-label">{{ preset.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="section-group">
+          <div class="sg-title"><mat-icon>color_lens</mat-icon> Custom Colors</div>
+          <div class="color-row">
+            <label class="color-ctrl">
+              <span>Primary</span>
+              <input type="color" [(ngModel)]="theme.primaryColor" class="color-picker"/>
+              <span class="color-hex">{{ theme.primaryColor }}</span>
+            </label>
+            <label class="color-ctrl">
+              <span>Secondary</span>
+              <input type="color" [(ngModel)]="theme.secondaryColor" class="color-picker"/>
+              <span class="color-hex">{{ theme.secondaryColor }}</span>
+            </label>
+            <label class="color-ctrl">
+              <span>Accent</span>
+              <input type="color" [(ngModel)]="theme.accentColor" class="color-picker"/>
+              <span class="color-hex">{{ theme.accentColor }}</span>
+            </label>
+            <label class="color-ctrl">
+              <span>Background</span>
+              <input type="color" [(ngModel)]="theme.bgColor" class="color-picker"/>
+              <span class="color-hex">{{ theme.bgColor }}</span>
+            </label>
+            <label class="color-ctrl">
+              <span>Text</span>
+              <input type="color" [(ngModel)]="theme.textColor" class="color-picker"/>
+              <span class="color-hex">{{ theme.textColor }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="section-group">
+          <div class="sg-title"><mat-icon>text_fields</mat-icon> Font Pairs</div>
+          <div class="font-pair-list">
+            <button *ngFor="let pair of fontPairs" class="font-pair-btn" [class.active]="theme.headingFont === pair.heading" (click)="applyFontPair(pair)">
+              <span class="fp-heading" [style.font-family]="pair.heading">Aa</span>
+              <div class="fp-info">
+                <span class="fp-name">{{ pair.label }}</span>
+                <span class="fp-sub">{{ pair.heading | slice:1:20 }} / {{ pair.body | slice:1:16 }}</span>
+              </div>
+              <mat-icon *ngIf="theme.headingFont === pair.heading" class="fp-check">check_circle</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="section-group">
+          <div class="sg-title"><mat-icon>tune</mat-icon> Style Controls</div>
+
+          <div class="ctrl-row">
+            <label class="ctrl-label">Border Radius</label>
+            <input type="range" min="0" max="24" [(ngModel)]="theme.borderRadius" class="slider"/>
+            <span class="ctrl-val">{{ theme.borderRadius }}px</span>
+          </div>
+
+          <div class="ctrl-row">
+            <label class="ctrl-label">Button Style</label>
+            <div class="seg-btns">
+              <button class="seg" [class.active]="theme.buttonStyle==='square'"  (click)="theme.buttonStyle='square'">Square</button>
+              <button class="seg" [class.active]="theme.buttonStyle==='rounded'" (click)="theme.buttonStyle='rounded'">Rounded</button>
+              <button class="seg" [class.active]="theme.buttonStyle==='pill'"    (click)="theme.buttonStyle='pill'">Pill</button>
+            </div>
+          </div>
+
+          <div class="ctrl-row">
+            <label class="ctrl-label">Shadows</label>
+            <div class="seg-btns">
+              <button class="seg" [class.active]="theme.shadowLevel==='none'"   (click)="theme.shadowLevel='none'">None</button>
+              <button class="seg" [class.active]="theme.shadowLevel==='light'"  (click)="theme.shadowLevel='light'">Light</button>
+              <button class="seg" [class.active]="theme.shadowLevel==='medium'" (click)="theme.shadowLevel='medium'">Medium</button>
+              <button class="seg" [class.active]="theme.shadowLevel==='strong'" (click)="theme.shadowLevel='strong'">Strong</button>
+            </div>
+          </div>
+
+          <div class="ctrl-row">
+            <label class="ctrl-label">Animations</label>
+            <div class="seg-btns">
+              <button class="seg" [class.active]="theme.animationSpeed==='none'"   (click)="theme.animationSpeed='none'">Off</button>
+              <button class="seg" [class.active]="theme.animationSpeed==='slow'"   (click)="theme.animationSpeed='slow'">Slow</button>
+              <button class="seg" [class.active]="theme.animationSpeed==='normal'" (click)="theme.animationSpeed='normal'">Normal</button>
+              <button class="seg" [class.active]="theme.animationSpeed==='fast'"   (click)="theme.animationSpeed='fast'">Fast</button>
+            </div>
+          </div>
+
+          <div class="ctrl-row">
+            <label class="ctrl-label">Nav Style</label>
+            <div class="seg-btns">
+              <button class="seg" [class.active]="theme.navStyle==='static'" (click)="theme.navStyle='static'">Static</button>
+              <button class="seg" [class.active]="theme.navStyle==='sticky'" (click)="theme.navStyle='sticky'">Sticky</button>
+              <button class="seg" [class.active]="theme.navStyle==='fixed'"  (click)="theme.navStyle='fixed'">Fixed</button>
+            </div>
+          </div>
+
+          <div class="ctrl-row">
+            <label class="ctrl-label">Section Spacing</label>
+            <div class="seg-btns">
+              <button class="seg" [class.active]="theme.sectionSpacing==='compact'"     (click)="theme.sectionSpacing='compact'">Compact</button>
+              <button class="seg" [class.active]="theme.sectionSpacing==='comfortable'" (click)="theme.sectionSpacing='comfortable'">Normal</button>
+              <button class="seg" [class.active]="theme.sectionSpacing==='spacious'"    (click)="theme.sectionSpacing='spacious'">Spacious</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-group" *ngIf="websiteResponse?.metadata">
+          <div class="sg-title"><mat-icon>info_outline</mat-icon> AI Design Brief</div>
+          <div class="meta-brief">
+            <div class="mb-row"><span class="mb-k">Page Title</span><span class="mb-v">{{ websiteResponse!.metadata.pageTitle }}</span></div>
+            <div class="mb-row"><span class="mb-k">Style</span><span class="mb-v">{{ websiteResponse!.metadata.designStyle }}</span></div>
+            <div class="mb-row"><span class="mb-k">Audience</span><span class="mb-v">{{ websiteResponse!.metadata.targetAudience }}</span></div>
+            <div class="mb-row">
+              <span class="mb-k">Palette</span>
+              <div class="mb-swatches">
+                <span *ngFor="let c of websiteResponse!.metadata.colorPalette" class="swatch-dot" [style.background]="c" [title]="c"></span>
+              </div>
+            </div>
+            <div class="mb-row"><span class="mb-k">Fonts</span><span class="mb-v">{{ websiteResponse!.metadata.fonts?.join(", ") }}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: SECTIONS -->
+      <div class="tab-panel" *ngIf="activeTab==='sections'">
+        <div class="sg-hint">Toggle visibility or customize each section independently.</div>
+
+        <div *ngFor="let section of sectionOverrides" class="section-item">
+          <div class="si-header" (click)="toggleExpandSection(section.id)">
+            <div class="si-left">
+              <button class="toggle-btn" (click)="$event.stopPropagation(); toggleSection(section)" [class.off]="!section.visible">
+                <mat-icon>{{ section.visible ? "visibility" : "visibility_off" }}</mat-icon>
+              </button>
+              <span class="si-label" [class.dimmed]="!section.visible">{{ section.label }}</span>
+            </div>
+            <mat-icon class="expand-icon" [class.rotated]="expandedSection === section.id">expand_more</mat-icon>
+          </div>
+
+          <div class="si-body" *ngIf="expandedSection === section.id && section.visible">
+            <div class="si-ctrl-row">
+              <label>Background</label>
+              <input type="color" [(ngModel)]="section.bgColor" class="mini-color"/>
+              <span class="mini-hex">{{ section.bgColor || "default" }}</span>
+              <button class="clear-btn" (click)="section.bgColor=''" *ngIf="section.bgColor">x</button>
+            </div>
+            <div class="si-ctrl-row">
+              <label>Text Color</label>
+              <input type="color" [(ngModel)]="section.textColor" class="mini-color"/>
+              <span class="mini-hex">{{ section.textColor || "default" }}</span>
+              <button class="clear-btn" (click)="section.textColor=''" *ngIf="section.textColor">x</button>
+            </div>
+            <div class="si-ctrl-row">
+              <label>Font Size</label>
+              <select [(ngModel)]="section.fontSize" class="mini-select">
+                <option value="0.85rem">Small</option>
+                <option value="1rem">Normal</option>
+                <option value="1.1rem">Medium</option>
+                <option value="1.2rem">Large</option>
+                <option value="1.4rem">X-Large</option>
+              </select>
+            </div>
+            <div class="si-ctrl-row">
+              <label>Font Family</label>
+              <select [(ngModel)]="section.fontFamily" class="mini-select">
+                <option value="">Inherit</option>
+                <option value="'Playfair Display', serif">Playfair Display</option>
+                <option value="'Montserrat', sans-serif">Montserrat</option>
+                <option value="'Merriweather', serif">Merriweather</option>
+                <option value="'Oswald', sans-serif">Oswald</option>
+                <option value="'Lato', sans-serif">Lato</option>
+                <option value="'Roboto', sans-serif">Roboto</option>
+                <option value="'Poppins', sans-serif">Poppins</option>
+                <option value="'Open Sans', sans-serif">Open Sans</option>
+                <option value="'Raleway', sans-serif">Raleway</option>
+                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: BLOCKS -->
+      <div class="tab-panel" *ngIf="activeTab==='blocks'">
+        <div class="sg-hint">Add powerful blocks to your generated website.</div>
+        <div class="block-grid">
+          <div *ngFor="let block of addableBlocks" class="block-card" [class.added]="isBlockAdded(block.type)">
+            <mat-icon class="bc-icon">{{ block.icon }}</mat-icon>
+            <span class="bc-label">{{ block.label }}</span>
+            <button *ngIf="!isBlockAdded(block.type)" class="bc-add" (click)="addBlock(block)">
+              <mat-icon>add</mat-icon> Add
+            </button>
+            <button *ngIf="isBlockAdded(block.type)" class="bc-remove" (click)="removeBlock(block.type)">
+              <mat-icon>check</mat-icon> Added
+            </button>
+          </div>
+        </div>
+
+        <div class="added-blocks-list" *ngIf="addedBlocks.length">
+          <div class="sg-title" style="margin-top:1.5rem"><mat-icon>layers</mat-icon> Active Blocks</div>
+          <div *ngFor="let b of addedBlocks" class="ab-row">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ b.type }}</span>
+            <button class="ab-remove" (click)="removeBlock(b.type)"><mat-icon>close</mat-icon></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: CODE -->
+      <div class="tab-panel code-tab" *ngIf="activeTab==='code'">
+        <div class="code-mode-tabs">
+          <button class="cm-tab" [class.active]="codeEditMode==='html'" (click)="codeEditMode='html'">HTML</button>
+          <button class="cm-tab" [class.active]="codeEditMode==='css'"  (click)="codeEditMode='css'">CSS</button>
+          <button class="cm-tab" [class.active]="codeEditMode==='js'"   (click)="codeEditMode='js'">JS</button>
+        </div>
+        <div class="code-edit-hint" *ngIf="codeEdited">
+          <mat-icon>edit</mat-icon> Unsaved changes —
+          <button class="inline-btn" (click)="applyCodeEdit()">Apply</button>
+          <button class="inline-btn discard" (click)="discardCodeEdit()">Discard</button>
+        </div>
+        <textarea *ngIf="codeEditMode==='html'" class="code-editor" [(ngModel)]="editableHtml" (ngModelChange)="onCodeChange()" spellcheck="false" rows="28"></textarea>
+        <textarea *ngIf="codeEditMode==='css'"  class="code-editor" [(ngModel)]="editableCss"  (ngModelChange)="onCodeChange()" spellcheck="false" rows="28"></textarea>
+        <textarea *ngIf="codeEditMode==='js'"   class="code-editor" [(ngModel)]="editableJs"   (ngModelChange)="onCodeChange()" spellcheck="false" rows="28"></textarea>
+        <div class="code-actions">
+          <button class="btn-apply" (click)="applyCodeEdit()" [disabled]="!codeEdited">Apply Changes</button>
+          <button class="btn-discard" (click)="discardCodeEdit()" [disabled]="!codeEdited">Discard</button>
+        </div>
+      </div>
+
+      <!-- TAB: PUBLISH -->
+      <div class="tab-panel" *ngIf="activeTab==='publish'">
+        <div class="publish-success" *ngIf="published">
+          <mat-icon class="ps-icon">check_circle</mat-icon>
+          <h3>Website Published!</h3>
+          <a [href]="publishedUrl" target="_blank" class="pub-url">{{ publishedUrl }}</a>
+          <button class="btn-copy" (click)="copyPublishedUrl()"><mat-icon>content_copy</mat-icon> Copy Link</button>
+          <button class="btn-republish" (click)="published=false">Re-publish</button>
+        </div>
+
+        <div *ngIf="!published">
+          <div class="section-group">
+            <div class="sg-title"><mat-icon>language</mat-icon> Subdomain</div>
+            <div class="subdomain-row">
+              <input type="text" class="subdomain-input" [(ngModel)]="publishSubdomain" placeholder="your-brand"/>
+              <span class="subdomain-suffix">.truepulseai.com</span>
+            </div>
+            <p class="subdomain-preview">{{ publishSubdomain }}.truepulseai.com</p>
+          </div>
+
+          <div class="section-group">
+            <div class="sg-title"><mat-icon>checklist</mat-icon> Pre-publish Checklist</div>
+            <div class="checklist">
+              <div class="check-item"><mat-icon class="ok">check_circle</mat-icon> HTML generated</div>
+              <div class="check-item"><mat-icon class="ok">check_circle</mat-icon> CSS styles applied</div>
+              <div class="check-item">
+                <mat-icon [class]="addedBlocks.length ? 'ok' : 'na'">{{ addedBlocks.length ? "check_circle" : "radio_button_unchecked" }}</mat-icon>
+                Extra blocks ({{ addedBlocks.length }} added)
+              </div>
+              <div class="check-item">
+                <mat-icon [class]="publishSubdomain ? 'ok' : 'warn'">{{ publishSubdomain ? "check_circle" : "warning" }}</mat-icon>
+                Subdomain set
+              </div>
+            </div>
+          </div>
+
+          <div class="section-group">
+            <div class="sg-title"><mat-icon>download</mat-icon> Export</div>
+            <button class="btn-export" (click)="downloadHtml()">
+              <mat-icon>download</mat-icon> Download as HTML
+            </button>
+          </div>
+
+          <button class="btn-publish" (click)="publishWebsite()" [disabled]="publishLoading || !publishSubdomain">
+            <mat-icon>{{ publishLoading ? "hourglass_top" : "rocket_launch" }}</mat-icon>
+            {{ publishLoading ? "Publishing..." : "Publish Website" }}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

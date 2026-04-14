@@ -1,3 +1,4 @@
+
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -60,6 +61,13 @@ export class MyEntitiesComponent implements OnInit {
     this.router.navigate(['/entities', entity.id, 'image-studio']);
   }
 
+  openWebsiteStudio(entity: any): void {
+    if (!entity) return;
+    // Navigate to the Website Studio route, passing the entity id (and optionally state)
+    this.router.navigate(['/entities', entity.id, 'website-studio'], {
+      state: { entity }
+    });
+  }
   ngOnInit(): void {
     this.loadEntities();
   }

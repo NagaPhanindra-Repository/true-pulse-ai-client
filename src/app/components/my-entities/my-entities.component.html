@@ -267,6 +267,38 @@
         </div>
       </section>
 
+        <!-- AI Website Studio Promo Section -->
+        <section class="website-studio-promo ai-glow-card" *ngIf="selectedEntity">
+          <div class="website-studio-header">
+            <div class="ai-studio-intro">
+              <div class="ai-badge website">
+                <mat-icon>language</mat-icon>
+                <span>AI Website Studio</span>
+              </div>
+              <h2 class="ai-gradient-text">Create Your Own Website Instantly with AI</h2>
+              <p class="ai-desc">
+                Effortlessly generate a <span class="ai-highlight">professional website</span> for your business, brand, or personal profile.<br>
+                <span class="ai-highlight">Just describe your vision in a prompt</span> or <span class="ai-highlight">upload a PDF</span>—our advanced AI will understand your context and build a stunning, editable website for you.<br>
+                <span class="ai-highlight">No technical skills required.</span> Edit, customize, and host your site forever with a single click.
+              </p>
+              <ul class="ai-feature-list">
+                <li><mat-icon>rocket_launch</mat-icon> Instant website generation from prompt or document</li>
+                <li><mat-icon>upload_file</mat-icon> Upload a PDF to inspire your site</li>
+                <li><mat-icon>edit</mat-icon> Fully editable, drag-and-drop design</li>
+                <li><mat-icon>public</mat-icon> One-click hosting—live forever, no hassle</li>
+                <li><mat-icon>psychology</mat-icon> AI understands your business, leader, politician, creator, or celebrity needs</li>
+              </ul>
+            </div>
+            <div class="ai-studio-action">
+              <button class="ai-studio-btn website" (click)="openWebsiteStudio(selectedEntity)">
+                <mat-icon>language</mat-icon>
+                <span>Open Website Studio</span>
+              </button>
+              <span class="studio-entity-pill">{{ selectedEntity.displayName }}</span>
+            </div>
+          </div>
+        </section>
+
       <div class="status-row" *ngIf="deleteStatus">
         {{ deleteStatus }}
       </div>
