@@ -405,6 +405,16 @@
 
           <div class="section-group">
             <div class="sg-title"><mat-icon>language</mat-icon> Subdomain</div>
+            <div class="domain-row" *ngIf="publishDomainOptions.length > 1">
+              <label for="publish-domain-select" class="domain-label">Domain</label>
+              <select
+                id="publish-domain-select"
+                class="domain-select"
+                [ngModel]="selectedPublishDomain"
+                (ngModelChange)="onPublishDomainChange($event)">
+                <option *ngFor="let d of publishDomainOptions" [ngValue]="d">{{ d }}</option>
+              </select>
+            </div>
             <div class="subdomain-row">
               <input
                 type="text"

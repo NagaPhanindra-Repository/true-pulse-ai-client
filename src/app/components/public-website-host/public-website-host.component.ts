@@ -4,7 +4,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { EntityService } from '../../services/entity.service';
-import { extractHostedSubdomainFromHostname, normalizeHostedSubdomain } from '../../utils/hosted-website.util';
+import {
+  extractHostedSubdomainFromHostname,
+  getPreferredHostedRootDomain,
+  normalizeHostedSubdomain
+} from '../../utils/hosted-website.util';
 import { environment } from '../../../environments/environment';
 
 type HostPageState = 'loading' | 'ready' | 'invalid' | 'not-found' | 'unavailable';
@@ -23,6 +27,7 @@ export class PublicWebsiteHostComponent implements OnInit {
   lookupSubdomain = '';
   errorMessage = '';
   hostedSrcDoc: SafeHtml = '';
+  resolvedRootDomain = getPreferredHostedRootDomain();
 
   constructor(
     private entityService: EntityService,
@@ -35,6 +40,8 @@ export class PublicWebsiteHostComponent implements OnInit {
       this.errorMessage = 'This page requires a browser context.';
       return;
     }
+
+    this.resolvedRootDomain = getPreferredHostedRootDomain(window.location.hostname);
 
     const detected = extractHostedSubdomainFromHostname(window.location.hostname);
     if (!detected) {
@@ -53,7 +60,7 @@ export class PublicWebsiteHostComponent implements OnInit {
   }
 
   get rootDomainLabel(): string {
-    return environment.production ? environment.websiteRootDomain : `${environment.websiteRootDomain}:4200`;
+    return environment.production ? this.resolvedRootDomain : `${this.resolvedRootDomain}:4200`;
   }
 
   get lookupPreviewUrl(): string {

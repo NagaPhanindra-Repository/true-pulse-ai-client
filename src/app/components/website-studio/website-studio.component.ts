@@ -17,6 +17,7 @@ import {
 import { environment } from '../../../environments/environment';
 import { Subject, Subscription, of } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/operators';
+import { getHostedRootDomains } from '../../utils/hosted-website.util';
 
 export interface SectionOverride {
   id: string;
@@ -276,9 +277,8 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
   private subdomainCheckSub?: Subscription;
 
   readonly availabilityDebounceMs = 400;
-  readonly publishRootDomain = environment.production
-    ? environment.websiteRootDomain
-    : `${environment.websiteRootDomain}:4200`;
+  readonly publishDomainOptions = this.resolvePublishDomainOptions();
+  selectedPublishDomain = this.resolvePublishDomainOptions()[0] || (environment.production ? 'ezit.ai' : 'localhost:4200');
 
   constructor(
     private route: ActivatedRoute,
@@ -653,12 +653,20 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
   }
 
   get publishSubdomainSuffix(): string {
-    return `.${this.publishRootDomain}`;
+    return `.${this.selectedPublishDomain}`;
   }
 
   get publishAddressPreview(): string {
     const safeSubdomain = this.normalizeSubdomain(this.publishSubdomain || 'your-brand');
-    return `${safeSubdomain}.${this.publishRootDomain}`;
+    return `${safeSubdomain}.${this.selectedPublishDomain}`;
+  }
+
+  onPublishDomainChange(domain: string) {
+    if (!domain) return;
+    this.selectedPublishDomain = domain;
+    if (this.publishSubdomain) {
+      this.publishedUrl = this.buildWebsiteUrl(this.publishSubdomain);
+    }
   }
 
   get publishActionLabel(): string {
@@ -1013,7 +1021,16 @@ ${sectionCss}
 
   private buildWebsiteUrl(subdomain: string): string {
     const protocol = environment.production ? 'https' : 'http';
-    return `${protocol}://${subdomain}.${this.publishRootDomain}`;
+    return `${protocol}://${subdomain}.${this.selectedPublishDomain}`;
+  }
+
+  private resolvePublishDomainOptions(): string[] {
+    if (!environment.production) return ['localhost:4200'];
+
+    const allDomains = getHostedRootDomains();
+    const preferred = 'ezit.ai';
+    if (allDomains.includes(preferred)) return [preferred];
+    return [environment.websiteRootDomain || preferred];
   }
 
   private getPublishErrorMessage(err: HttpErrorResponse): string {

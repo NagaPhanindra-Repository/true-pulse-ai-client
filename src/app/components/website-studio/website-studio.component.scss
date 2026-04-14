@@ -1140,6 +1140,31 @@ $transition:    0.18s ease;
   gap: 0;
 }
 
+.domain-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.5rem;
+}
+
+.domain-label {
+  font-size: 0.76rem;
+  color: $text-3;
+  min-width: 52px;
+}
+
+.domain-select {
+  flex: 1;
+  background: $bg-elevated;
+  border: 1px solid $border;
+  border-radius: 7px;
+  color: $text-1;
+  font-size: 0.82rem;
+  padding: 0.45rem 0.65rem;
+  outline: none;
+  &:focus { border-color: $teal; }
+}
+
 .subdomain-input {
   flex: 1;
   background: $bg-elevated;
