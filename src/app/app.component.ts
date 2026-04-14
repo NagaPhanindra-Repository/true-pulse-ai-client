@@ -19,6 +19,8 @@ export class AppComponent {
 
   get isHostedPublicWebsite(): boolean {
     if (typeof window === 'undefined') return false;
-    return isHostedWebsiteHostname(window.location.hostname);
+    const isHostedBySubdomain = isHostedWebsiteHostname(window.location.hostname);
+    const isHostedByAliasRoute = /^\/h\/[^/]+/i.test(window.location.pathname || '');
+    return isHostedBySubdomain || isHostedByAliasRoute;
   }
 }

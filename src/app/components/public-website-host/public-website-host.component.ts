@@ -3,9 +3,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { EntityService } from '../../services/entity.service';
 import {
   extractHostedSubdomainFromHostname,
+  getHostedRootDomains,
   getPreferredHostedRootDomain,
   normalizeHostedSubdomain
 } from '../../utils/hosted-website.util';
@@ -28,8 +30,11 @@ export class PublicWebsiteHostComponent implements OnInit {
   errorMessage = '';
   hostedSrcDoc: SafeHtml = '';
   resolvedRootDomain = getPreferredHostedRootDomain();
+  private navigationMode: 'subdomain-host' | 'path-alias' = 'subdomain-host';
+  private readonly onrenderBaseDomain = this.resolveOnrenderBaseDomain();
 
   constructor(
+    private route: ActivatedRoute,
     private entityService: EntityService,
     private sanitizer: DomSanitizer
   ) {}
@@ -42,6 +47,20 @@ export class PublicWebsiteHostComponent implements OnInit {
     }
 
     this.resolvedRootDomain = getPreferredHostedRootDomain(window.location.hostname);
+
+    const routeSubdomain = normalizeHostedSubdomain(
+      this.route.snapshot.paramMap.get('subdomain') ||
+      this.route.snapshot.queryParamMap.get('subdomain') ||
+      ''
+    );
+
+    if (routeSubdomain) {
+      this.navigationMode = 'path-alias';
+      this.subdomain = routeSubdomain;
+      this.lookupSubdomain = routeSubdomain;
+      this.fetchHostedWebsite(routeSubdomain);
+      return;
+    }
 
     const detected = extractHostedSubdomainFromHostname(window.location.hostname);
     if (!detected) {
@@ -60,13 +79,14 @@ export class PublicWebsiteHostComponent implements OnInit {
   }
 
   get rootDomainLabel(): string {
-    return environment.production ? this.resolvedRootDomain : `${this.resolvedRootDomain}:4200`;
+    if (!environment.production) return `${this.resolvedRootDomain}:4200`;
+    if (this.navigationMode === 'path-alias' && this.onrenderBaseDomain) return this.onrenderBaseDomain;
+    return this.resolvedRootDomain;
   }
 
   get lookupPreviewUrl(): string {
     const safeLookup = normalizeHostedSubdomain(this.lookupSubdomain || 'your-brand');
-    const protocol = environment.production ? 'https' : 'http';
-    return `${protocol}://${safeLookup}.${this.rootDomainLabel}`;
+    return this.buildHostedUrl(safeLookup);
   }
 
   get homeUrl(): string {
@@ -122,7 +142,15 @@ export class PublicWebsiteHostComponent implements OnInit {
 
   private buildHostedUrl(subdomain: string): string {
     const protocol = environment.production ? 'https' : 'http';
+    if (environment.production && this.navigationMode === 'path-alias' && this.onrenderBaseDomain) {
+      return `${protocol}://${this.onrenderBaseDomain}/h/${subdomain}`;
+    }
     return `${protocol}://${subdomain}.${this.rootDomainLabel}`;
+  }
+
+  private resolveOnrenderBaseDomain(): string {
+    const domains = getHostedRootDomains();
+    return domains.find((d) => d.endsWith('.onrender.com')) || 'truepulse-ai.onrender.com';
   }
 
   private buildSrcDoc(html: string, css: string, js: string): string {

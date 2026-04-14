@@ -28,6 +28,10 @@ const hostedWebsiteCanMatch: CanMatchFn = () => {
 
 export const routes: Routes = [
   {
+    path: 'h/:subdomain',
+    loadComponent: () => import('./components/public-website-host/public-website-host.component').then(m => m.PublicWebsiteHostComponent)
+  },
+  {
     path: '',
     canMatch: [hostedWebsiteCanMatch],
     loadComponent: () => import('./components/public-website-host/public-website-host.component').then(m => m.PublicWebsiteHostComponent)

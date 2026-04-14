@@ -674,6 +674,13 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
     return this.hasExistingWebsite ? 'Update Website' : 'Publish Website';
   }
 
+  get onrenderAliasUrl(): string {
+    if (!environment.production || !this.publishSubdomain) return '';
+    const onrenderDomain = getHostedRootDomains().find((d) => d.endsWith('.onrender.com'));
+    if (!onrenderDomain) return '';
+    return `https://${onrenderDomain}/h/${this.publishSubdomain}`;
+  }
+
   get hasExistingWebsite(): boolean {
     return this.existingWebsiteId !== null;
   }

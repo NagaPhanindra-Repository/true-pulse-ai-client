@@ -386,6 +386,9 @@
           <mat-icon class="ps-icon">check_circle</mat-icon>
           <h3>Website Published!</h3>
           <a [href]="publishedUrl" target="_blank" class="pub-url">{{ publishedUrl }}</a>
+          <a *ngIf="onrenderAliasUrl" [href]="onrenderAliasUrl" target="_blank" class="pub-url" style="font-size:0.8rem;opacity:0.85">
+            Fallback access (if ezit.ai is blocked): {{ onrenderAliasUrl }}
+          </a>
           <button class="btn-copy" (click)="copyPublishedUrl()"><mat-icon>content_copy</mat-icon> Copy Link</button>
           <button class="btn-republish" (click)="published=false">Re-publish</button>
         </div>
