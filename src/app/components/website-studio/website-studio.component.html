@@ -36,11 +36,15 @@
         </div>
         <div class="panel-body">
           <p class="panel-hint">Tell the AI what to build, or upload a PDF with your business info.</p>
+          <div class="panel-hint" *ngIf="loadingExistingWebsite">
+            <mat-icon style="font-size:0.95rem;vertical-align:middle">hourglass_top</mat-icon>
+            Checking for existing website...
+          </div>
           <mat-form-field appearance="fill" class="prompt-field">
             <textarea matInput rows="6"
               placeholder="e.g. Modern Indian restaurant in St. Louis with menu, gallery, reservations. Use warm terracotta tones."
               [(ngModel)]="prompt"
-              [disabled]="generating">
+              [disabled]="generating || regenerating || loadingExistingWebsite">
             </textarea>
           </mat-form-field>
 
@@ -50,22 +54,31 @@
           <label class="upload-label">
             <mat-icon>upload_file</mat-icon>
             <span>{{ selectedFile ? selectedFile.name : "Upload PDF / Doc" }}</span>
-            <input type="file" accept=".pdf,.doc,.docx" style="display:none" (change)="onFileSelected($event)" [disabled]="generating"/>
+            <input type="file" accept=".pdf,.doc,.docx" style="display:none" (change)="onFileSelected($event)" [disabled]="generating || regenerating || loadingExistingWebsite"/>
           </label>
 
-          <button class="btn-generate" (click)="generateWebsite()" [disabled]="generating || !prompt">
-            <mat-icon>{{ generating ? "hourglass_top" : "auto_awesome" }}</mat-icon>
-            {{ generating ? "Generating..." : "Generate Website" }}
+          <button class="btn-generate" (click)="onGenerateOrRegenerate()" [disabled]="generating || regenerating || loadingExistingWebsite || !prompt">
+            <mat-icon>{{ (generating || regenerating) ? "hourglass_top" : "auto_awesome" }}</mat-icon>
+            {{ generating ? "Generating..." : (regenerating ? "Regenerating..." : (websiteResponse ? "Regenerate Website" : "Generate Website")) }}
           </button>
+
+          <button class="btn-restore-regenerate" *ngIf="hasRegenerateBackup && !generating && !regenerating" (click)="restoreBeforeRegenerate()">
+            <mat-icon>history</mat-icon>
+            Restore Previous Version
+          </button>
+
+          <div class="panel-hint" *ngIf="regeneratePrompt && websiteResponse">
+            Last regeneration prompt: "{{ regeneratePrompt }}"
+          </div>
           <div class="error-msg" *ngIf="error">{{ error }}</div>
         </div>
       </div>
 
-      <div class="generating-shimmer" *ngIf="generating">
+      <div class="generating-shimmer" *ngIf="generating || regenerating">
         <div class="shimmer-bar"></div>
         <div class="shimmer-bar short"></div>
         <div class="shimmer-bar"></div>
-        <div class="shimmer-label"><mat-icon>auto_awesome</mat-icon> AI is designing your website...</div>
+        <div class="shimmer-label"><mat-icon>auto_awesome</mat-icon> {{ generating ? 'AI is designing your website...' : 'AI is regenerating your website with your latest changes...' }}</div>
       </div>
     </div>
 
@@ -378,6 +391,18 @@
         </div>
 
         <div *ngIf="!published">
+          <div class="section-group" *ngIf="websiteVersion !== null">
+            <div class="sg-title"><mat-icon>history</mat-icon> Studio Version</div>
+            <div class="check-item">
+              <mat-icon class="ok">published_with_changes</mat-icon>
+              Website mode: {{ hasExistingWebsite ? 'Update Existing' : 'Create New' }}
+            </div>
+            <div class="check-item">
+              <mat-icon class="ok">tag</mat-icon>
+              Current version: v{{ websiteVersion }}
+            </div>
+          </div>
+
           <div class="section-group">
             <div class="sg-title"><mat-icon>language</mat-icon> Subdomain</div>
             <div class="subdomain-row">
@@ -390,6 +415,12 @@
               <span class="subdomain-suffix">{{ publishSubdomainSuffix }}</span>
             </div>
             <p class="subdomain-preview">{{ publishAddressPreview }}</p>
+            <div class="subdomain-status" [ngClass]="subdomainStatus">
+              <mat-icon *ngIf="subdomainStatus === 'checking'">hourglass_top</mat-icon>
+              <mat-icon *ngIf="subdomainStatus === 'available'">check_circle</mat-icon>
+              <mat-icon *ngIf="subdomainStatus === 'taken' || subdomainStatus === 'invalid' || subdomainStatus === 'error'">error</mat-icon>
+              <span>{{ subdomainStatusMessage || 'Type a subdomain to check availability.' }}</span>
+            </div>
           </div>
 
           <div class="section-group">
@@ -405,6 +436,12 @@
                 <mat-icon [class]="publishSubdomain ? 'ok' : 'warn'">{{ publishSubdomain ? "check_circle" : "warning" }}</mat-icon>
                 Subdomain set
               </div>
+              <div class="check-item">
+                <mat-icon [class]="subdomainStatus === 'available' ? 'ok' : (subdomainStatus === 'checking' ? 'warn' : 'na')">
+                  {{ subdomainStatus === 'available' ? "check_circle" : (subdomainStatus === 'checking' ? "hourglass_top" : "radio_button_unchecked") }}
+                </mat-icon>
+                Subdomain availability verified
+              </div>
             </div>
           </div>
 
@@ -415,9 +452,9 @@
             </button>
           </div>
 
-          <button class="btn-publish" (click)="publishWebsite()" [disabled]="publishLoading || !publishSubdomain">
+          <button class="btn-publish" (click)="publishWebsite()" [disabled]="!canPublish">
             <mat-icon>{{ publishLoading ? "hourglass_top" : "rocket_launch" }}</mat-icon>
-            {{ publishLoading ? "Publishing..." : "Publish Website" }}
+            {{ publishActionLabel }}
           </button>
         </div>
       </div>

@@ -229,6 +229,25 @@ $transition:    0.18s ease;
   &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 }
 
+.btn-restore-regenerate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.58rem;
+  border: 1px solid $border-bright;
+  border-radius: 9px;
+  background: transparent;
+  color: $text-2;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all $transition;
+  mat-icon { font-size: 1rem; height: 1rem; width: 1rem; }
+  &:hover { border-color: $teal; color: $teal; background: rgba(127,255,212,0.05); }
+}
+
 .error-msg {
   font-size: 0.83rem;
   color: $error;
@@ -1149,6 +1168,35 @@ $transition:    0.18s ease;
   color: $blue;
   margin: 0.3rem 0 0;
   font-family: monospace;
+}
+
+.subdomain-status {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.45rem;
+  font-size: 0.76rem;
+  color: $text-3;
+
+  mat-icon {
+    font-size: 0.95rem;
+    height: 0.95rem;
+    width: 0.95rem;
+  }
+
+  &.checking {
+    color: #f7c59f;
+  }
+
+  &.available {
+    color: $teal;
+  }
+
+  &.taken,
+  &.invalid,
+  &.error {
+    color: $error;
+  }
 }
 
 .checklist {

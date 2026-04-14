@@ -14,8 +14,10 @@ import {
 } from '../models/entity.model';
 import {
   BusinessWebsiteResponse,
+  SubdomainAvailabilityResponse,
   SaveBusinessWebsiteRequest,
-  SaveBusinessWebsiteResponse
+  SaveBusinessWebsiteResponse,
+  UpdateBusinessWebsiteRequest
 } from '../models/business-website.model';
 
 @Injectable({ providedIn: 'root' })
@@ -95,8 +97,28 @@ export class EntityService {
     return this.http.post<BusinessWebsiteResponse>(`${this.baseUrl}/business-website/generate`, formData);
   }
 
+  regenerateBusinessWebsite(formData: FormData): Observable<BusinessWebsiteResponse> {
+    return this.http.post<BusinessWebsiteResponse>(`${this.baseUrl}/business-website/regenerate`, formData);
+  }
+
   saveBusinessWebsite(payload: SaveBusinessWebsiteRequest): Observable<SaveBusinessWebsiteResponse> {
     return this.http.post<SaveBusinessWebsiteResponse>(`${this.baseUrl}/business-website/save`, payload);
+  }
+
+  updateBusinessWebsite(payload: UpdateBusinessWebsiteRequest): Observable<SaveBusinessWebsiteResponse> {
+    return this.http.put<SaveBusinessWebsiteResponse>(`${this.baseUrl}/business-website/update`, payload);
+  }
+
+  renderBusinessWebsiteByEntity(entityId: number, displayName: string): Observable<SaveBusinessWebsiteResponse> {
+    return this.http.get<SaveBusinessWebsiteResponse>(`${this.baseUrl}/public/business-website/render`, {
+      params: { entityId, displayName }
+    });
+  }
+
+  checkSubdomainAvailability(value: string): Observable<SubdomainAvailabilityResponse> {
+    return this.http.get<SubdomainAvailabilityResponse>(`${this.baseUrl}/business-website/subdomain/availability`, {
+      params: { value }
+    });
   }
 
   renderBusinessWebsiteBySubdomain(subdomain: string): Observable<SaveBusinessWebsiteResponse> {

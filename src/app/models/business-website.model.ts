@@ -55,3 +55,22 @@ export interface SaveBusinessWebsiteResponse {
   updatedAt: string;
   entityDetails: BusinessWebsiteEntityDetails;
 }
+
+export interface UpdateBusinessWebsiteRequest {
+  entityId: number;
+  displayName: string;
+  html: string;
+  css?: string;
+  js?: string;
+  metadata?: string;
+  subdomain?: string;
+  published?: boolean;
+}
+
+export interface SubdomainAvailabilityResponse {
+  requestedSubdomain: string;
+  normalizedSubdomain: string;
+  valid: boolean;
+  available: boolean;
+  message: string;
+}

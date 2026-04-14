@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityService } from '../../services/entity.service';
@@ -9,8 +9,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { BusinessWebsiteResponse } from '../../models/business-website.model';
+import {
+  BusinessWebsiteResponse,
+  SaveBusinessWebsiteResponse,
+  SubdomainAvailabilityResponse
+} from '../../models/business-website.model';
 import { environment } from '../../../environments/environment';
+import { Subject, Subscription, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/operators';
 
 export interface SectionOverride {
   id: string;
@@ -36,7 +42,7 @@ export interface AddBlockOption {
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule, MatFormFieldModule, MatInputModule, MatButtonModule]
 })
-export class WebsiteStudioComponent implements OnInit {
+export class WebsiteStudioComponent implements OnInit, OnDestroy {
 
   // ── State ──────────────────────────────────────────────────────────────────
   entityDetails: any;
@@ -46,6 +52,9 @@ export class WebsiteStudioComponent implements OnInit {
   selectedFile: File | null = null;
   websiteResponse: BusinessWebsiteResponse | null = null;
   generating = false;
+  regenerating = false;
+  regeneratePrompt = '';
+  private previousRegenerateBackup: BusinessWebsiteResponse | null = null;
 
   // ── Editor tabs ────────────────────────────────────────────────────────────
   activeTab: 'theme' | 'sections' | 'blocks' | 'code' | 'publish' = 'theme';
@@ -256,6 +265,17 @@ export class WebsiteStudioComponent implements OnInit {
   published = false;
   publishLoading = false;
   publishedUrl = '';
+  existingWebsiteId: number | null = null;
+  websiteVersion: number | null = null;
+  currentSavedSubdomain = '';
+  loadingExistingWebsite = false;
+
+  subdomainStatus: 'idle' | 'checking' | 'available' | 'taken' | 'invalid' | 'error' = 'idle';
+  subdomainStatusMessage = '';
+  private subdomainInput$ = new Subject<string>();
+  private subdomainCheckSub?: Subscription;
+
+  readonly availabilityDebounceMs = 400;
   readonly publishRootDomain = environment.production
     ? environment.websiteRootDomain
     : `${environment.websiteRootDomain}:4200`;
@@ -269,9 +289,12 @@ export class WebsiteStudioComponent implements OnInit {
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
   ngOnInit() {
+    this.setupSubdomainAvailabilityListener();
+
     const nav = this.router.getCurrentNavigation();
     if (nav?.extras?.state?.['entity']) {
       this.entityDetails = nav.extras.state['entity'];
+      this.loadExistingWebsiteIfAny();
     } else {
       const entityId = this.route.snapshot.paramMap.get('id');
       if (entityId) {
@@ -281,11 +304,13 @@ export class WebsiteStudioComponent implements OnInit {
             const found = entities.find(e => String(e.id) === String(entityId));
             this.entityDetails = found ?? { id: entityId, displayName: 'Entity', icon: 'language' };
             this.loading = false;
+            this.loadExistingWebsiteIfAny();
           },
           error: () => {
             this.entityDetails = { id: entityId, displayName: 'Entity', icon: 'language' };
             this.loading = false;
             this.error = 'Could not load entity details.';
+            this.loadExistingWebsiteIfAny();
           }
         });
       } else {
@@ -294,11 +319,107 @@ export class WebsiteStudioComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.subdomainCheckSub?.unsubscribe();
+  }
+
+  private loadExistingWebsiteIfAny() {
+    const entityId = Number(this.entityDetails?.id);
+    const displayName = String(this.entityDetails?.displayName || '').trim();
+
+    if (!Number.isFinite(entityId) || entityId <= 0 || !displayName) return;
+
+    this.loadingExistingWebsite = true;
+    this.entityService.renderBusinessWebsiteByEntity(entityId, displayName)
+      .pipe(finalize(() => (this.loadingExistingWebsite = false)))
+      .subscribe({
+        next: (resp) => {
+          this.hydrateStudioFromSavedWebsite(resp);
+          this.error = '';
+        },
+        error: (err: HttpErrorResponse) => {
+          if (err.status !== 404) {
+            this.error = 'Could not load your saved website. You can still generate a new one.';
+          }
+        }
+      });
+  }
+
+  private hydrateStudioFromSavedWebsite(resp: SaveBusinessWebsiteResponse) {
+    const metadata = this.parseSavedMetadata(resp.metadata);
+    const generatedMetadata = metadata?.generated || {};
+
+    const websiteResponse: BusinessWebsiteResponse = {
+      entityId: resp.entityId,
+      displayName: resp.displayName,
+      html: resp.html || '',
+      css: resp.css || '',
+      js: resp.js || '',
+      metadata: {
+        pageTitle: generatedMetadata.pageTitle || resp.displayName,
+        entityType: generatedMetadata.entityType || (resp.entityDetails?.type || 'BUSINESS'),
+        colorPalette: generatedMetadata.colorPalette || [],
+        fonts: generatedMetadata.fonts || [],
+        sections: generatedMetadata.sections || [],
+        designStyle: generatedMetadata.designStyle || 'Custom',
+        targetAudience: generatedMetadata.targetAudience || 'General',
+        accentFeatures: generatedMetadata.accentFeatures || []
+      },
+      entityDetails: resp.entityDetails
+    };
+
+    this.websiteResponse = websiteResponse;
+    this.editableHtml = websiteResponse.html;
+    this.editableCss = websiteResponse.css;
+    this.editableJs = websiteResponse.js;
+
+    if (metadata?.studio?.theme) {
+      this.theme = { ...this.theme, ...metadata.studio.theme };
+    } else {
+      this._seedThemeFromResponse(websiteResponse);
+    }
+
+    if (Array.isArray(metadata?.studio?.sectionOverrides) && metadata.studio.sectionOverrides.length) {
+      this.sectionOverrides = metadata.studio.sectionOverrides;
+    } else {
+      this._buildSectionOverrides(websiteResponse);
+    }
+
+    this.addedBlocks = Array.isArray(metadata?.studio?.addedBlocks) ? metadata.studio.addedBlocks : [];
+    this.previewMode = metadata?.studio?.previewMode || 'desktop';
+
+    this.publishSubdomain = this.normalizeSubdomain(resp.subdomain || resp.displayName || 'my-site');
+    this.currentSavedSubdomain = this.publishSubdomain;
+    this.existingWebsiteId = resp.websiteId;
+    this.websiteVersion = resp.version;
+    this.published = !!resp.published;
+    this.publishedUrl = this.buildWebsiteUrl(this.publishSubdomain);
+    this.activeTab = 'publish';
+    this.subdomainStatus = 'idle';
+    this.subdomainStatusMessage = '';
+    this.subdomainInput$.next(this.publishSubdomain);
+  }
+
+  private parseSavedMetadata(metadataRaw: string | null | undefined): any {
+    if (!metadataRaw) return null;
+    try {
+      return JSON.parse(metadataRaw);
+    } catch {
+      return null;
+    }
+  }
+
   // ── Generate ──────────────────────────────────────────────────────────────
   generateWebsite() {
     if (!this.entityDetails || !this.prompt) return;
     this.generating = true;
     this.error = '';
+    this.published = false;
+    this.existingWebsiteId = null;
+    this.websiteVersion = null;
+    this.currentSavedSubdomain = '';
+    this.subdomainStatus = 'idle';
+    this.subdomainStatusMessage = '';
     this.websiteResponse = null;
     this.sectionOverrides = [];
     this.addedBlocks = [];
@@ -311,19 +432,16 @@ export class WebsiteStudioComponent implements OnInit {
 
     this.entityService.generateBusinessWebsite(formData).subscribe({
       next: (resp) => {
-        // Normalize literal \n escape sequences produced by some backends
-        const unescape = (s: string) => (s || '')
-          .replace(/\\n/g, '\n')
-          .replace(/\\t/g, '\t')
-          .replace(/\\r/g, '');
-        resp = { ...resp, html: unescape(resp.html), css: unescape(resp.css), js: unescape(resp.js) };
-        this.websiteResponse = resp;
-        this._seedThemeFromResponse(resp);
-        this._buildSectionOverrides(resp);
-        this.editableHtml = resp.html || '';
-        this.editableCss = resp.css || '';
-        this.editableJs = resp.js || '';
-        this.publishSubdomain = this.normalizeSubdomain(resp.displayName || 'my-site');
+        const normalized = this.normalizeWebsiteApiResponse(resp);
+        this.websiteResponse = normalized;
+        this._seedThemeFromResponse(normalized);
+        this._buildSectionOverrides(normalized);
+        this.editableHtml = normalized.html || '';
+        this.editableCss = normalized.css || '';
+        this.editableJs = normalized.js || '';
+        this.publishSubdomain = this.normalizeSubdomain(normalized.displayName || 'my-site');
+        this.subdomainInput$.next(this.publishSubdomain);
+        this.regeneratePrompt = this.prompt;
         this.generating = false;
         this.activeTab = 'theme';
       },
@@ -332,6 +450,131 @@ export class WebsiteStudioComponent implements OnInit {
         this.generating = false;
       }
     });
+  }
+
+  onGenerateOrRegenerate() {
+    if (this.websiteResponse) {
+      this.regenerateWebsite();
+      return;
+    }
+    this.generateWebsite();
+  }
+
+  regenerateWebsite() {
+    if (!this.entityDetails || !this.websiteResponse || !this.prompt?.trim()) return;
+
+    const entityId = Number(this.entityDetails?.id ?? this.websiteResponse.entityId);
+    const displayName = String(this.entityDetails?.displayName || this.websiteResponse.displayName || '').trim();
+    if (!Number.isFinite(entityId) || entityId <= 0 || !displayName) {
+      this.error = 'Missing entity context. Please refresh and try again.';
+      return;
+    }
+
+    if (this.codeEdited) this.applyCodeEdit();
+    const currentWebsite = this.websiteResponse;
+
+    this.regenerating = true;
+    this.error = '';
+
+    const requestPayload = {
+      entityId,
+      displayName,
+      prompt: this.prompt,
+      html: currentWebsite.html,
+      css: currentWebsite.css,
+      js: currentWebsite.js,
+      metadata: JSON.stringify({
+        generated: currentWebsite.metadata,
+        studio: {
+          theme: this.theme,
+          sectionOverrides: this.sectionOverrides,
+          addedBlocks: this.addedBlocks,
+          previewMode: this.previewMode,
+        }
+      }),
+      subdomain: this.publishSubdomain || undefined,
+      published: this.published,
+    };
+
+    const formData = new FormData();
+    formData.append('request', new Blob([JSON.stringify(requestPayload)], { type: 'application/json' }));
+    if (this.selectedFile) formData.append('file', this.selectedFile);
+
+    this.entityService.regenerateBusinessWebsite(formData).subscribe({
+      next: (resp) => {
+        const normalized = this.normalizeWebsiteApiResponse(resp);
+        this.previousRegenerateBackup = { ...currentWebsite };
+
+        this.websiteResponse = normalized;
+        this.editableHtml = normalized.html || '';
+        this.editableCss = normalized.css || '';
+        this.editableJs = normalized.js || '';
+
+        this._seedThemeFromResponse(normalized);
+        this._buildSectionOverrides(normalized);
+
+        this.regeneratePrompt = this.prompt;
+        this.codeEdited = false;
+        this.activeTab = 'theme';
+        this.regenerating = false;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.error = err?.error?.message || 'Failed to regenerate website. Please try again.';
+        this.regenerating = false;
+      }
+    });
+  }
+
+  restoreBeforeRegenerate() {
+    if (!this.previousRegenerateBackup) return;
+    const previous = this.previousRegenerateBackup;
+    this.websiteResponse = previous;
+    this.editableHtml = previous.html;
+    this.editableCss = previous.css;
+    this.editableJs = previous.js;
+    this._seedThemeFromResponse(previous);
+    this._buildSectionOverrides(previous);
+    this.codeEdited = false;
+    this.previousRegenerateBackup = null;
+  }
+
+  private normalizeWebsiteApiResponse(resp: any): BusinessWebsiteResponse {
+    const unescape = (s: string) => (s || '')
+      .replace(/\\n/g, '\n')
+      .replace(/\\t/g, '\t')
+      .replace(/\\r/g, '');
+
+    const parsedMetadata = typeof resp?.metadata === 'string'
+      ? this.parseSavedMetadata(resp.metadata)
+      : (resp?.metadata || {});
+
+    const metadata = {
+      pageTitle: parsedMetadata?.pageTitle || resp?.displayName || 'Website',
+      entityType: parsedMetadata?.entityType || resp?.entityDetails?.type || 'BUSINESS',
+      colorPalette: Array.isArray(parsedMetadata?.colorPalette) ? parsedMetadata.colorPalette : [],
+      fonts: Array.isArray(parsedMetadata?.fonts) ? parsedMetadata.fonts : [],
+      sections: Array.isArray(parsedMetadata?.sections) ? parsedMetadata.sections : [],
+      designStyle: parsedMetadata?.designStyle || 'Custom',
+      targetAudience: parsedMetadata?.targetAudience || 'General',
+      accentFeatures: Array.isArray(parsedMetadata?.accentFeatures) ? parsedMetadata.accentFeatures : [],
+    };
+
+    return {
+      entityId: Number(resp?.entityId || this.entityDetails?.id || 0),
+      displayName: String(resp?.displayName || this.entityDetails?.displayName || 'Entity'),
+      html: unescape(resp?.html || ''),
+      css: unescape(resp?.css || ''),
+      js: unescape(resp?.js || ''),
+      metadata,
+      entityDetails: resp?.entityDetails || {
+        id: Number(resp?.entityId || this.entityDetails?.id || 0),
+        type: 'BUSINESS',
+        displayName: String(resp?.displayName || this.entityDetails?.displayName || 'Entity'),
+        createdByUserId: 0,
+        createdAt: '',
+        updatedAt: ''
+      }
+    };
   }
 
   private _seedThemeFromResponse(resp: BusinessWebsiteResponse) {
@@ -418,8 +661,72 @@ export class WebsiteStudioComponent implements OnInit {
     return `${safeSubdomain}.${this.publishRootDomain}`;
   }
 
+  get publishActionLabel(): string {
+    if (this.publishLoading) return this.hasExistingWebsite ? 'Updating...' : 'Publishing...';
+    return this.hasExistingWebsite ? 'Update Website' : 'Publish Website';
+  }
+
+  get hasExistingWebsite(): boolean {
+    return this.existingWebsiteId !== null;
+  }
+
+  get hasRegenerateBackup(): boolean {
+    return !!this.previousRegenerateBackup;
+  }
+
+  get canPublish(): boolean {
+    if (this.publishLoading || !this.publishSubdomain) return false;
+    if (this.subdomainStatus === 'checking' || this.subdomainStatus === 'invalid') return false;
+    if (this.hasExistingWebsite) return this.subdomainStatus !== 'taken';
+    return this.subdomainStatus === 'available';
+  }
+
   onPublishSubdomainChange(value: string) {
     this.publishSubdomain = this.normalizeSubdomain(value);
+    this.subdomainInput$.next(this.publishSubdomain);
+  }
+
+  private setupSubdomainAvailabilityListener() {
+    this.subdomainCheckSub = this.subdomainInput$
+      .pipe(
+        debounceTime(this.availabilityDebounceMs),
+        distinctUntilChanged(),
+        switchMap((subdomain) => this.checkSubdomainAvailability$(subdomain))
+      )
+      .subscribe((status) => {
+        this.subdomainStatus = status.kind;
+        this.subdomainStatusMessage = status.message;
+      });
+  }
+
+  private checkSubdomainAvailability$(subdomain: string) {
+    if (!subdomain) {
+      return of({ kind: 'idle' as const, message: '' });
+    }
+
+    this.subdomainStatus = 'checking';
+    this.subdomainStatusMessage = 'Checking availability...';
+
+    return this.entityService.checkSubdomainAvailability(subdomain).pipe(
+      switchMap((res: SubdomainAvailabilityResponse) => {
+        this.publishSubdomain = this.normalizeSubdomain(res.normalizedSubdomain || subdomain);
+
+        if (!res.valid) {
+          return of({ kind: 'invalid' as const, message: res.message || 'Subdomain is invalid.' });
+        }
+
+        if (!res.available) {
+          const isSameAsCurrent = this.hasExistingWebsite && this.publishSubdomain === this.currentSavedSubdomain;
+          if (isSameAsCurrent) {
+            return of({ kind: 'available' as const, message: 'Current subdomain kept for this website.' });
+          }
+          return of({ kind: 'taken' as const, message: res.message || 'Subdomain is already taken.' });
+        }
+
+        return of({ kind: 'available' as const, message: res.message || 'Subdomain is available.' });
+      }),
+      catchError(() => of({ kind: 'error' as const, message: 'Could not verify subdomain right now.' }))
+    );
   }
 
   // ── Publish (API) ─────────────────────────────────────────────────────────
@@ -449,8 +756,56 @@ export class WebsiteStudioComponent implements OnInit {
     this.publishSubdomain = subdomain;
     if (this.codeEdited) this.applyCodeEdit();
 
+    this.publishLoading = true;
+    this.error = '';
+    this.subdomainStatus = 'checking';
+    this.subdomainStatusMessage = 'Checking availability...';
+
+    this.entityService.checkSubdomainAvailability(subdomain).subscribe({
+      next: (availability) => {
+        const normalized = this.normalizeSubdomain(availability.normalizedSubdomain || subdomain);
+        this.publishSubdomain = normalized;
+
+        if (!availability.valid) {
+          this.subdomainStatus = 'invalid';
+          this.subdomainStatusMessage = availability.message || 'Subdomain is invalid.';
+          this.publishLoading = false;
+          return;
+        }
+
+        const isSameAsCurrent = this.hasExistingWebsite && normalized === this.currentSavedSubdomain;
+        if (!availability.available && !isSameAsCurrent) {
+          this.subdomainStatus = 'taken';
+          this.subdomainStatusMessage = availability.message || 'Subdomain is already taken.';
+          this.publishLoading = false;
+          return;
+        }
+
+        this.subdomainStatus = 'available';
+        this.subdomainStatusMessage = isSameAsCurrent
+          ? 'Current subdomain kept for this website.'
+          : (availability.message || 'Subdomain is available.');
+
+        this.persistWebsite(entityId, displayName, normalized);
+      },
+      error: () => {
+        this.subdomainStatus = 'error';
+        this.subdomainStatusMessage = 'Could not verify subdomain right now.';
+        this.publishLoading = false;
+      }
+    });
+  }
+
+  private persistWebsite(entityId: number, displayName: string, subdomain: string) {
+    const currentWebsite = this.websiteResponse;
+    if (!currentWebsite) {
+      this.error = 'No website content available to publish.';
+      this.publishLoading = false;
+      return;
+    }
+
     const metadata = {
-      generated: this.websiteResponse.metadata,
+      generated: currentWebsite.metadata,
       studio: {
         theme: this.theme,
         sectionOverrides: this.sectionOverrides,
@@ -462,22 +817,25 @@ export class WebsiteStudioComponent implements OnInit {
     const payload = {
       entityId,
       displayName,
-      prompt: this.prompt || undefined,
       html: this.getPreviewSrcDoc(),
-      css: this.websiteResponse.css || '',
-      js: this.websiteResponse.js || '',
+      css: currentWebsite.css || '',
+      js: currentWebsite.js || '',
       metadata: JSON.stringify(metadata),
       subdomain,
       published: true,
     };
 
-    this.publishLoading = true;
-    this.error = '';
+    const saveOrUpdate$ = this.hasExistingWebsite
+      ? this.entityService.updateBusinessWebsite(payload)
+      : this.entityService.saveBusinessWebsite({ ...payload, prompt: this.prompt || undefined });
 
-    this.entityService.saveBusinessWebsite(payload).subscribe({
+    saveOrUpdate$.subscribe({
       next: (resp) => {
         const savedSubdomain = this.normalizeSubdomain(resp.subdomain || subdomain);
         this.publishSubdomain = savedSubdomain;
+        this.currentSavedSubdomain = savedSubdomain;
+        this.existingWebsiteId = resp.websiteId;
+        this.websiteVersion = resp.version;
         this.publishedUrl = this.buildWebsiteUrl(savedSubdomain);
         this.published = true;
         this.publishLoading = false;
@@ -663,9 +1021,11 @@ ${sectionCss}
 
     if (backendMessage) return backendMessage;
 
-    if (err.status === 400) return 'Save failed: please verify required fields (entity, display name, and HTML).';
-    if (err.status === 404) return 'Save failed: entity not found.';
-    if (err.status === 409) return 'Save failed: website or subdomain already exists. Choose another subdomain or use update API.';
+    if (err.status === 400) return 'Publish failed: please verify required fields and subdomain.';
+    if (err.status === 404) return this.hasExistingWebsite ? 'Update failed: website was not found. Try saving a new website.' : 'Save failed: entity not found.';
+    if (err.status === 409) return this.hasExistingWebsite
+      ? 'Update failed: subdomain is already used by another website. Choose another one.'
+      : 'Save failed: website or subdomain already exists. Use update flow or pick another subdomain.';
 
     return 'Failed to save website. Please try again.';
   }
