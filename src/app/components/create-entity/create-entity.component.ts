@@ -46,7 +46,7 @@ export class CreateEntityComponent implements OnInit {
   ];
 
   businessFields: FieldConfig[] = [
-    { key: 'businessFullName', label: 'Business Full Name', placeholder: 'TruePulse Cafe', required: true },
+    { key: 'businessFullName', label: 'Business Full Name', placeholder: 'Harbor Bake House', required: true },
     { key: 'businessAddress', label: 'Business Address', placeholder: '123 Main St', required: true },
     { key: 'businessType', label: 'Business Type', placeholder: 'Restaurant, Auto Parts, Sanitary', required: true },
     { key: 'businessMobileNumber', label: 'Business Mobile Number', placeholder: '5550100', required: true },
@@ -58,7 +58,7 @@ export class CreateEntityComponent implements OnInit {
 
   leaderFields: FieldConfig[] = [
     { key: 'leaderFullName', label: 'Leader Full Name', placeholder: 'Alex Leader', required: true },
-    { key: 'leaderCompany', label: 'Company', placeholder: 'TruePulse Inc', required: true },
+    { key: 'leaderCompany', label: 'Company', placeholder: 'North Harbor Group', required: true },
     { key: 'leaderProjectName', label: 'Project Name', placeholder: 'PulseOne', required: true },
     { key: 'leaderMobileNumber', label: 'Leader Mobile Number', placeholder: '5550200', required: true },
     { key: 'leaderCountryCode', label: 'Leader Country Code', placeholder: '+1', required: true },

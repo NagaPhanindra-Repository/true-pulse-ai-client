@@ -6,7 +6,7 @@
   <div class="studio-topbar">
     <div class="topbar-left">
       <mat-icon class="topbar-logo-icon">auto_awesome</mat-icon>
-      <span class="topbar-title">AI Website Studio</span>
+      <span class="topbar-title">ezit Website Studio</span>
       <div class="entity-badge" *ngIf="entityDetails">
         <mat-icon>{{ entityDetails.icon || "business" }}</mat-icon>
         {{ entityDetails.displayName }}
@@ -32,10 +32,10 @@
       <div class="left-panel">
         <div class="panel-header">
           <mat-icon>edit_note</mat-icon>
-          <span>Describe Your Website</span>
+          <span>Describe your entity website</span>
         </div>
         <div class="panel-body">
-          <p class="panel-hint">Tell the AI what to build, or upload a PDF with your business info.</p>
+          <p class="panel-hint">Tell the AI what to build, or upload a PDF with entity details, services, menus, offers, policies, or event information.</p>
           <div class="panel-hint" *ngIf="loadingExistingWebsite">
             <mat-icon style="font-size:0.95rem;vertical-align:middle">hourglass_top</mat-icon>
             Checking for existing website...
@@ -105,13 +105,13 @@
       <div class="preview-empty" *ngIf="!websiteResponse && !generating">
         <div class="empty-icon-wrap"><mat-icon>web</mat-icon></div>
         <h2>Your website preview will appear here</h2>
-        <p>Describe your vision on the left and click <strong>Generate Website</strong></p>
+        <p>Describe your entity on the left and click <strong>Generate Website</strong></p>
         <div class="empty-features">
           <div class="ef"><mat-icon>palette</mat-icon> Full Theme Control</div>
           <div class="ef"><mat-icon>view_list</mat-icon> Section Manager</div>
           <div class="ef"><mat-icon>extension</mat-icon> Add Blocks</div>
           <div class="ef"><mat-icon>code</mat-icon> Code Editor</div>
-          <div class="ef"><mat-icon>rocket_launch</mat-icon> One-click Publish</div>
+          <div class="ef"><mat-icon>rocket_launch</mat-icon> Publish to ezit.ai</div>
         </div>
       </div>
 

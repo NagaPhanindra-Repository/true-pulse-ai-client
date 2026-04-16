@@ -138,23 +138,15 @@
     align-items: center;
     text-decoration: none;
     color: inherit;
-    gap: 12px;
+    gap: 0;
+    flex-shrink: 0;
     &:hover {
       text-decoration: none;
     }
     .brand-logo {
-      height: 38px;
-    }
-    .brand-name {
-      font-size: calc(var(--fs-xl) * 0.8);
-      font-weight: 700;
-      letter-spacing: 1px;
-      .ai-gradient {
-        background: linear-gradient(90deg, #6ee7b7, #3b82f6, #a78bfa);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
+      height: 48px;
+      width: auto;
+      display: block;
     }
   }
   // Hamburger menu styles
@@ -577,6 +569,9 @@ html, body {
     gap: 8px;
     padding: 0 8px;
   }
+  .main-header .brand .brand-logo {
+    height: 40px;
+  }
   .main-header .nav-links {
     gap: 12px;
   }
@@ -593,8 +588,8 @@ html, body {
     flex: 0 1 auto;
     min-width: 0;
   }
-  .main-header .brand-name {
-    font-size: calc(var(--fs-lg) * 0.8);
+  .main-header .brand .brand-logo {
+    height: 34px;
   }
   .main-header .nav-links {
     display: none;

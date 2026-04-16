@@ -15,306 +15,358 @@
       <app-login-in [successMessage]="loginSuccessMessage" (closeLogin)="closeLoginModal()"></app-login-in>
     </div>
   </div>
-  <!-- Animated Hero Section -->
   <section class="home-hero">
-    <div class="hero-graphic animated">
-      <svg width="220" height="140" viewBox="0 0 220 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="pulseGradient" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#a78bfa"/>
-            <stop offset="100%" stop-color="#3b82f6"/>
-          </radialGradient>
-        </defs>
-        <ellipse cx="110" cy="70" rx="100" ry="50" fill="url(#pulseGradient)" opacity="0.18"/>
-        <circle cx="70" cy="70" r="32" fill="#a78bfa" class="pulse"/>
-        <circle cx="150" cy="70" r="32" fill="#6ee7b7" class="pulse2"/>
-        <rect x="100" y="50" width="20" height="40" rx="10" fill="#fff" opacity="0.8"/>
-        <text x="110" y="135" text-anchor="middle" fill="#b5c7e3" font-size="16">TruePulse AI</text>
-      </svg>
-    </div>
-    <div class="hero-text">
-      <h1><span class="ai-gradient">True Pulse AI</span><br><span class="subtitle">Authentic Voices. Real Wisdom.</span></h1>
+    <div class="hero-copy">
+      <div class="hero-badge">ezit.ai for businesses, creators, professionals, and modern public-facing brands</div>
+      <h1>
+        Build your entity.<br>
+        Launch your website.<br>
+        Let AI run the heavy lifting.
+      </h1>
       <p class="hero-desc">
-        Every voice verified. Every insight refined. The only feedback platform where government-ID verified users provide anonymous feedback, AI distills it into memories, and developers access it via MCP server to build smarter products.
-        <strong>No bots. No fake profiles. No false narratives. No trolls. No lost context.</strong><br><br>
-        Break free from echo chambers. Build with complete truth. Make decisions based on authentic intelligence and institutional memory.
+        ezit.ai turns one idea, one profile, or one uploaded PDF into a complete digital operating layer. Create an entity, generate a polished website, publish it on your own
+        <strong>entityname.ezit.ai</strong> subdomain, and activate a 24/7 AI concierge that can answer questions, capture leads, support customers, take bookings, and guide orders.
       </p>
+      <p class="hero-desc hero-desc--muted">
+        Then scale visibility with campaign-ready posters, one-click social publishing, scheduled promotions, event ticketing with QR passes, and the trust, memory, and insight systems that keep every improvement grounded.
+      </p>
+
       <div class="cta-group">
-        <button class="cta-btn" (click)="openSignUpModal()">Get Started Free</button>
-        <button class="secondary-btn" (click)="scrollToFeatures()">See How It Works</button>
+        <button class="cta-btn" (click)="openSignUpModal()">Start with ezit.ai</button>
+        <button class="secondary-btn" (click)="scrollToFeatures()">Explore the platform</button>
       </div>
-      <div class="hero-stats">
-        <div><span>10K+</span><br>Verified Users</div>
-        <div><span>0%</span><br>Fake Accounts</div>
-        <div><span>∞</span><br>Honest Feedback</div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Trust & Authenticity Section -->
-  <section class="privacy-trust-section">
-    <h2>Why Authentic Voices Matter. Why Real Wisdom Works.</h2>
-    <div class="privacy-flow">
-      <div class="privacy-step">
-        <div class="step-number">✓</div>
-        <h3>Verified Authenticity</h3>
-        <p>Every voice is government-ID verified. Real people, real opinions. No bots infiltrating your feedback.</p>
+      <div class="hero-metrics">
+        <div class="metric-pill">
+          <strong>1 input</strong>
+          <span>to generate your site and setup</span>
+        </div>
+        <div class="metric-pill">
+          <strong>24/7</strong>
+          <span>AI support and lead handling</span>
+        </div>
+        <div class="metric-pill">
+          <strong>Seconds</strong>
+          <span>to publish, refresh, and promote</span>
+        </div>
       </div>
-      <div class="step-arrow">+</div>
-      <div class="privacy-step">
-        <div class="step-number">✓</div>
-        <h3>Anonymous Protection</h3>
-        <p>Identity never revealed to decision-makers. Users give honest feedback without fear of retaliation.</p>
-      </div>
-      <div class="step-arrow">+</div>
-      <div class="privacy-step">
-        <div class="step-number">✓</div>
-        <h3>AI Refinement</h3>
-        <p>AI distills raw feedback into themes, sentiment, and actionable insights. Cuts through noise. Finds patterns.</p>
-      </div>
-      <div class="step-arrow">=</div>
-      <div class="privacy-step">
-        <div class="step-number">🎯</div>
-        <h3>Real Wisdom</h3>
-        <p>Authentic intelligence for smarter decisions. No false narratives. No echo chambers. Pure insight.</p>
-      </div>
-    </div>
-    
-  <h2>How It Works: From Your Voice to Real Wisdom</h2>
-    <div class="privacy-flow">
-      <div class="privacy-step">
-        <div class="step-number">1</div>
-        <h3>Share Your Voice</h3>
-        <p>Have authentic feedback to share? Comment on a favorite business's new direction, a politician's recent policy, a celebrity's latest work, or how new releases affect you. Your honest perspective matters.</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="privacy-step">
-        <div class="step-number">2</div>
-        <h3>Verify Once, Speak Forever</h3>
-        <p>Government-ID verification (takes only 2 minutes) proves you're a real person. Then provide unlimited authentic feedback—completely protected and kept anonymous. Your identity never gets revealed.</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="privacy-step">
-        <div class="step-number">3</div>
-        <h3>AI Distills Real Wisdom</h3>
-        <p>Government-ID verification (takes only 2 minutes) proves you're a real person. Then provide unlimited authentic feedback—completely protected and kept anonymous. Your identity never gets revealed.</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="privacy-step">
-        <div class="step-number">4</div>
-        <h3>Leaders Get Real Answers</h3>
-        <p>Decision-makers (businesses, politicians, creators) see aggregated wisdom: "70% value this direction," "key concern about this policy," "customers love this change." They get the truth. You stay completely anonymous.</p>
+
+      <div class="hero-proof">
+        <span>Websites from prompts, menus, brochures, or PDFs</span>
+        <span>Subdomain checks on ezit.ai</span>
+        <span>AI campaign studio with editable layers</span>
+        <span>Events, passes, bookings, and memory-backed improvement</span>
       </div>
     </div>
 
-    <div class="privacy-promise">
-      <h3>🔒 The Authenticity Guarantee</h3>
-      <ul>
-        <li><strong>✓ 100% Verified:</strong> Every user government-ID verified. Zero fake profiles. Zero bot accounts.</li>
-        <li><strong>✓ Always Anonymized:</strong> Personal data never shown to decision-makers. Complete separation.</li>
-        <li><strong>✓ No False Narratives:</strong> Unlike competitors allowing bots, you get feedback from real people only.</li>
-        <li><strong>✓ Constructive By Design:</strong> AI filters for actionable insights. Trolls and noise, eliminated.</li>
-      </ul>
-    </div>
-  </section>
+    <div class="hero-stage">
+      <div class="stage-shell">
+        <div class="stage-topbar">
+          <span class="stage-dot"></span>
+          <span class="stage-dot"></span>
+          <span class="stage-dot"></span>
+          <div class="stage-url">harbor-bakes.ezit.ai</div>
+        </div>
 
-  <!-- Features Section -->
-  <section class="features-section" id="features">
-    <h2>Authentic Voices. Real Wisdom. Competitive Advantage.</h2>
-    <div class="features-grid">
-      <div class="feature-card dynamic">
-        <div class="icon-bg"><svg width="48" height="48"><circle cx="24" cy="24" r="22" fill="#6ee7b7"/><text x="24" y="30" text-anchor="middle" fill="#fff" font-size="18">🛡️</text></svg></div>
-        <h3>Zero Fake Accounts</h3>
-        <p>Government-ID verified community. While competitors allow bots and fake profiles, every TruePulse user is real.</p>
-      </div>
-      <div class="feature-card dynamic">
-        <div class="icon-bg"><svg width="48" height="48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#a78bfa"/><text x="24" y="34" text-anchor="middle" fill="#fff" font-size="18">🔒</text></svg></div>
-        <h3>Honest Feedback Guaranteed</h3>
-        <p>Anonymous protection means users give fearless, constructive feedback. No self-censorship. No echo chambers.</p>
-      </div>
-      <div class="feature-card dynamic">
-        <div class="icon-bg"><svg width="48" height="48"><ellipse cx="24" cy="24" rx="22" ry="16" fill="#3b82f6"/><text x="24" y="30" text-anchor="middle" fill="#fff" font-size="18">❓</text></svg></div>
-        <h3>Ask & Refine</h3>
-        <p>Ask targeted questions to your verified audience. Get authentic opinions from thousands of real people.</p>
-      </div>
-      <div class="feature-card dynamic">
-        <div class="icon-bg"><svg width="48" height="48"><circle cx="24" cy="24" r="22" fill="#fff" opacity="0.7"/><text x="24" y="30" text-anchor="middle" fill="#3b82f6" font-size="18">🤖</text></svg></div>
-        <h3>AI Wisdom Engine</h3>
-        <p>AI distills verified feedback into themes, patterns, decisions, and edge cases. Decision-makers see real wisdom; users stay completely anonymous and never exposed.</p>
-      </div>
-      <div class="feature-card dynamic">
-        <div class="icon-bg"><svg width="48" height="48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#3b82f6"/><text x="24" y="34" text-anchor="middle" fill="#fff" font-size="18">🔍</text></svg></div>
-        <h3>Deep Dive Questions</h3>
-        <p>Follow-up questions dig deeper. AI re-analyzes for specific insights. Build wisdom iteratively, anonymously.</p>
-      </div>
-      <div class="feature-card dynamic">
-        <div class="icon-bg"><svg width="48" height="48"><ellipse cx="24" cy="24" rx="22" ry="16" fill="#a78bfa"/><text x="24" y="30" text-anchor="middle" fill="#fff" font-size="18">📊</text></svg></div>
-        <h3>Feature Memory System</h3>
-        <p>Capture decisions, edge cases, requirements, and clarifications from team and users. Build institutional memory. Never lose context again.</p>
-      </div>
-      <div class="feature-card dynamic">
-        <div class="icon-bg"><svg width="48" height="48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#6ee7b7"/><text x="24" y="30" text-anchor="middle" fill="#1f2a44" font-size="18">🍽️</text></svg></div>
-        <h3>Business AI Agent</h3>
-        <p>Upload menu/services PDF. AI understands your business, answers real customer questions, handles bookings 24/7.</p>
-      </div>
-      <div class="feature-card dynamic">
-        <div class="icon-bg"><svg width="48" height="48"><circle cx="24" cy="24" r="22" fill="#3b82f6"/><text x="24" y="30" text-anchor="middle" fill="#fff" font-size="18">🧠</text></svg></div>
-        <h3>MemoryVault-MCP Server</h3>
-        <p>Live MCP endpoint: <a href="https://memoryvault-mcp.onrender.com/mcp" target="_blank" rel="noopener noreferrer">memoryvault-mcp.onrender.com/mcp</a>. It combines Jira/ALM/Rally story details with meeting notes and team chat context in one place (currently integrated with Jira), so developers and AI coding agents can understand the full story before writing code.</p>
-      </div>
-    </div>
-  </section>
+        <div class="stage-grid">
+          <article class="stage-card stage-card--feature">
+            <p class="stage-kicker">Entity launch</p>
+            <h3>From entity profile to live digital presence</h3>
+            <ul>
+              <li>Create the right account for your business, profession, brand, or campaign</li>
+              <li>Upload details once and let AI shape the public experience</li>
+              <li>Go live on your own ezit.ai address without agency overhead</li>
+            </ul>
+          </article>
 
-  <!-- Why Section -->
-  <section class="why-section">
-    <h2>Why TruePulse AI? Because Competitors Have It Wrong.</h2>
-    <div class="why-cards">
-      <div class="why-card">
-        <span class="why-icon">✔️</span>
-        <div>
-          <h4>Authentic > Fake</h4>
-          <p>Your competitors allow bots and fake profiles. We verify every user with government ID. Real people. Real wisdom.</p>
-        </div>
-      </div>
-      <div class="why-card">
-        <span class="why-icon">🎯</span>
-        <div>
-          <h4>Wisdom > Noise</h4>
-          <p>AI doesn't just collect feedback—it refines it. Cuts through trolls, groupthink, and false narratives. Actionable insights only.</p>
-        </div>
-      </div>
-      <div class="why-card">
-        <span class="why-icon">🔐</span>
-        <div>
-          <h4>Privacy Built In</h4>
-          <p>Users stay anonymous. Decision-makers get insights. No witch hunts. No retaliation. Just honest, constructive feedback.</p>
-        </div>
-      </div>
-      <div class="why-card">
-        <span class="why-icon">💰</span>
-        <div>
-          <h4>ROI You Can Measure</h4>
-          <p>Decisions based on verified intelligence, not echo chambers. No wasted time on troll feedback or false accusations.</p>
-        </div>
-      </div>
-      <div class="why-card">
-        <span class="why-icon">🚀</span>
-        <div>
-          <h4>For Any Industry</h4>
-          <p>Politicians seeking honest constituent feedback. CEOs needing product truth. Restaurants getting real customer voices. All covered.</p>
-        </div>
-      </div>
-      <div class="why-card">
-        <span class="why-icon">📚</span>
-        <div>
-          <h4>Memory That Never Fades</h4>
-          <p>Feature Memory captures decisions, edge cases, requirements, and clarifications. Build institutional memory. Teams never lose context on why decisions were made.</p>
-        </div>
-      </div>
-      <div class="why-card">
-        <span class="why-icon">🧠</span>
-        <div>
-          <h4>AI Memory for Devs</h4>
-          <p>Instead of searching Jira, chat threads, and meeting docs separately, teams ask one MCP server and get the complete answer with sources. This reduces missed requirements and rework.</p>
+          <article class="stage-card stage-card--chat">
+            <p class="stage-kicker">Always-on service</p>
+            <h3>Customer conversations handled around the clock</h3>
+            <div class="chat-lines">
+              <span>Answers services, pricing, timings, FAQs, and availability</span>
+              <span>Captures reservations, appointments, booking requests, and order intent</span>
+              <span>Responds from the actual knowledge you upload for the entity</span>
+            </div>
+          </article>
+
+          <article class="stage-card stage-card--poster">
+            <p class="stage-kicker">Promotion studio</p>
+            <h3>Create premium promotional visuals fast</h3>
+            <div class="poster-mini">
+              <div class="poster-mini__canvas"></div>
+              <div class="poster-mini__meta">
+                <span>Use sample images, add logos or barcodes, then drag and tune text</span>
+                <span>Control colors, fonts, captions, hashtags, and posting context</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="stage-card stage-card--events">
+            <p class="stage-kicker">Event engine</p>
+            <h3>Reservations, payments, QR entry, and email passes</h3>
+            <div class="event-row">
+              <span>Create the event experience</span>
+              <span>Offer pass types and collect payments</span>
+              <span>Send confirmations and entry-ready tickets</span>
+            </div>
+          </article>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Demo/Walkthrough Section -->
-  <section class="demo-section">
-    <h2 class="demo-title world-gradient">See It In Action</h2>
-    <div class="demo-carousel dynamic">
-      <div class="demo-tile">
-        <div class="demo-header">Profile Creation</div>
-        <div class="demo-canvas">
-          <svg viewBox="0 0 220 140" aria-hidden="true">
-            <defs>
-              <linearGradient id="pulseA" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#6ee7b7" />
-                <stop offset="100%" stop-color="#3b82f6" />
-              </linearGradient>
-            </defs>
-            <rect x="12" y="16" width="196" height="108" rx="16" fill="#1f2a44" stroke="#2f3b5e" />
-            <circle cx="58" cy="52" r="16" fill="url(#pulseA)" class="demo-pulse" />
-            <rect x="86" y="38" width="96" height="10" rx="5" fill="#9fb3d9" class="demo-line" />
-            <rect x="86" y="58" width="76" height="8" rx="4" fill="#7f95bf" class="demo-line delay-1" />
-            <rect x="28" y="86" width="150" height="12" rx="6" fill="#3b82f6" class="demo-progress" />
-            <circle cx="182" cy="92" r="10" fill="#6ee7b7" class="demo-check" />
-          </svg>
-        </div>
-        <div class="demo-caption">Verify with government ID once. Get instant access to the verified community.</div>
+  <section class="command-strip">
+    <div class="command-strip__panel">
+      <div class="command-copy">
+        <p class="section-kicker">What makes ezit.ai different</p>
+        <h2>You focus on the craft, customers, and growth. ezit handles the digital execution.</h2>
+        <p>
+          For a home baker, a clinic, a coach, a lawyer, a creator, a restaurant, or a campaign team, the work is rarely just "make a website." It is website, updates, offers, promotions, chat support, bookings, events, and follow-up. ezit.ai brings those together so real people can operate with more presence and less friction.
+        </p>
       </div>
-      <div class="demo-tile">
-        <div class="demo-header">Feedback</div>
-        <div class="demo-canvas">
-          <svg viewBox="0 0 220 140" aria-hidden="true">
-            <rect x="12" y="16" width="196" height="108" rx="16" fill="#1f2a44" stroke="#2f3b5e" />
-            <rect x="28" y="32" width="80" height="22" rx="11" fill="#3b82f6" class="demo-chat" />
-            <rect x="56" y="64" width="120" height="24" rx="12" fill="#6ee7b7" class="demo-chat delay-1" />
-            <rect x="28" y="96" width="96" height="18" rx="9" fill="#a78bfa" class="demo-chat delay-2" />
-            <circle cx="182" cy="40" r="10" fill="#6ee7b7" class="demo-ping" />
-          </svg>
-        </div>
-        <div class="demo-caption">Give anonymous feedback. Your identity stays private. Decision-makers get real insights.</div>
-      </div>
-      <div class="demo-tile">
-        <div class="demo-header">AI Summary</div>
-        <div class="demo-canvas">
-          <svg viewBox="0 0 220 140" aria-hidden="true">
-            <rect x="12" y="16" width="196" height="108" rx="16" fill="#1f2a44" stroke="#2f3b5e" />
-            <circle cx="52" cy="70" r="18" fill="#a78bfa" class="demo-orb" />
-            <rect x="86" y="40" width="110" height="10" rx="5" fill="#9fb3d9" class="demo-line" />
-            <rect x="86" y="60" width="90" height="8" rx="4" fill="#7f95bf" class="demo-line delay-1" />
-            <rect x="86" y="78" width="70" height="8" rx="4" fill="#6ee7b7" class="demo-line delay-2" />
-            <rect x="86" y="96" width="60" height="8" rx="4" fill="#3b82f6" class="demo-line delay-3" />
-          </svg>
-        </div>
-        <div class="demo-caption">AI summarizes all feedback. Entities get insights, you stay anonymous. Never revealed.</div>
-      </div>
-      <div class="demo-tile">
-        <div class="demo-header">Retro Dashboard</div>
-        <div class="demo-canvas">
-          <svg viewBox="0 0 220 140" aria-hidden="true">
-            <rect x="12" y="16" width="196" height="108" rx="16" fill="#1f2a44" stroke="#2f3b5e" />
-            <rect x="28" y="34" width="56" height="56" rx="10" fill="#3b82f6" class="demo-tile" />
-            <rect x="92" y="34" width="56" height="56" rx="10" fill="#6ee7b7" class="demo-tile delay-1" />
-            <rect x="156" y="34" width="24" height="56" rx="10" fill="#a78bfa" class="demo-tile delay-2" />
-            <rect x="28" y="98" width="152" height="10" rx="5" fill="#9fb3d9" class="demo-sweep" />
-          </svg>
-        </div>
-        <div class="demo-caption">Ask deeper questions. AI re-analyzes previous feedback. Continuous learning cycle.</div>
-      </div>
-      <div class="demo-tile">
-        <div class="demo-header">Small Business AI</div>
-        <div class="demo-canvas">
-          <svg viewBox="0 0 220 140" aria-hidden="true">
-            <rect x="12" y="16" width="196" height="108" rx="16" fill="#1f2a44" stroke="#2f3b5e" />
-            <rect x="30" y="30" width="64" height="80" rx="10" fill="#6ee7b7" class="demo-tile" />
-            <rect x="104" y="34" width="92" height="14" rx="7" fill="#9fb3d9" class="demo-line" />
-            <rect x="104" y="58" width="84" height="12" rx="6" fill="#7f95bf" class="demo-line delay-1" />
-            <rect x="104" y="80" width="72" height="10" rx="5" fill="#3b82f6" class="demo-line delay-2" />
-            <circle cx="184" cy="96" r="10" fill="#a78bfa" class="demo-ping" />
-          </svg>
-        </div>
-        <div class="demo-caption">Upload PDF once. AI reads it. Answers customer questions. Handles bookings/orders automatically.</div>
-      </div>
-      <div class="demo-tile">
-        <div class="demo-header">MemoryVault-MCP Live</div>
-        <div class="demo-canvas">
-          <svg viewBox="0 0 220 140" aria-hidden="true">
-            <rect x="12" y="16" width="196" height="108" rx="16" fill="#1f2a44" stroke="#2f3b5e" />
-            <rect x="28" y="34" width="164" height="20" rx="10" fill="#3b82f6" class="demo-sweep" />
-            <rect x="28" y="62" width="124" height="18" rx="9" fill="#6ee7b7" class="demo-chat" />
-            <rect x="28" y="88" width="140" height="16" rx="8" fill="#a78bfa" class="demo-chat delay-1" />
-            <circle cx="182" cy="100" r="10" fill="#6ee7b7" class="demo-check" />
-          </svg>
-        </div>
-        <div class="demo-caption">MemoryVault-MCP connects Jira/ALM/Rally stories, PM/TPM meeting summaries, and chat discussions (currently integrated with Jira). Developers and AI agents can ask plain questions like "What did we agree to build?" and get one clear, context-complete answer.</div>
+      <div class="command-points">
+        <div class="command-pill">Entity setup</div>
+        <div class="command-pill">Website generation</div>
+        <div class="command-pill">Instant hosting</div>
+        <div class="command-pill">24/7 AI support</div>
+        <div class="command-pill">Poster and image studio</div>
+        <div class="command-pill">Social publishing</div>
+        <div class="command-pill">Events and ticketing</div>
+        <div class="command-pill">Trusted feedback and memory</div>
       </div>
     </div>
-    <div class="demo-experience world-gradient">
-      <strong>MemoryVault-MCP keeps requirements from Jira/ALM/Rally, meetings, and chats in one searchable memory (currently integrated with Jira). Live endpoint: https://memoryvault-mcp.onrender.com/mcp. Build faster with fewer requirement gaps.</strong>
+  </section>
+
+  <section class="audience-strip">
+    <div class="audience-card">
+      <h3>Business owners</h3>
+      <p>Restaurants, salons, clinics, stores, agencies, and home-based businesses that need speed without hiring a full digital team.</p>
+    </div>
+    <div class="audience-card">
+      <h3>Creators and brands</h3>
+      <p>Launch offers, campaigns, event pages, paid experiences, and always-on audience support from one place.</p>
+    </div>
+    <div class="audience-card">
+      <h3>Professionals</h3>
+      <p>Lawyers, teachers, consultants, speakers, coaches, doctors, and specialists who need a polished public presence fast.</p>
+    </div>
+    <div class="audience-card">
+      <h3>Public leaders</h3>
+      <p>Campaigns, community groups, and public entities that need trusted communication, events, and structured feedback loops.</p>
+    </div>
+  </section>
+
+  <section class="platform-section" id="features">
+    <div class="section-heading">
+      <p class="section-kicker">The ezit.ai platform</p>
+      <h2>The operating layer for entities that want to look strong and move fast</h2>
+      <p>
+        ezit.ai is built for the full front line of an entity: public presence, customer communication, content generation, event handling, and ongoing improvement. It keeps the product practical for someone running real work every day.
+      </p>
+    </div>
+
+    <div class="platform-grid">
+      <article class="platform-card">
+        <div class="platform-icon">01</div>
+        <h3>Entity creation</h3>
+        <p>Create business, owner, creator, professional, community, or campaign entities with structured onboarding and a polished public-facing identity.</p>
+      </article>
+      <article class="platform-card">
+        <div class="platform-icon">02</div>
+        <h3>Instant website studio</h3>
+        <p>Generate a complete website from a short description, brochure, menu, profile, or uploaded PDF, then refine it without starting over.</p>
+      </article>
+      <article class="platform-card">
+        <div class="platform-icon">03</div>
+        <h3>Live hosting on ezit.ai</h3>
+        <p>Check subdomain availability, choose the strongest public name, and launch to <strong>entityname.ezit.ai</strong> with a fast publish flow.</p>
+      </article>
+      <article class="platform-card">
+        <div class="platform-icon">04</div>
+        <h3>24/7 AI chat concierge</h3>
+        <p>Train the chatbot from entity knowledge so it can answer customers, qualify demand, guide buyers, and support common workflows day and night.</p>
+      </article>
+      <article class="platform-card">
+        <div class="platform-icon">05</div>
+        <h3>Promotion and image studio</h3>
+        <p>Generate posters and campaign images, use reference images, add logos or barcodes, reposition text, and shape final creative with real control.</p>
+      </article>
+      <article class="platform-card">
+        <div class="platform-icon">06</div>
+        <h3>Social-ready publishing</h3>
+        <p>Prepare social-ready promotion flows for LinkedIn, Instagram, Facebook, Threads, X, and YouTube with custom messaging and scheduling.</p>
+      </article>
+      <article class="platform-card">
+        <div class="platform-icon">07</div>
+        <h3>Events, reservations, and passes</h3>
+        <p>Create events, define pass types, enable reservations, collect payments, generate QR access, and deliver passes through email.</p>
+      </article>
+      <article class="platform-card">
+        <div class="platform-icon">08</div>
+        <h3>Trust, memory, and intelligence</h3>
+        <p>Verified-user workflows, AI retrospectives, feedback intelligence, and memory systems remain available for teams that want operational clarity instead of noise.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="journey-section">
+    <div class="section-heading section-heading--narrow">
+      <p class="section-kicker">How it works</p>
+      <h2>From simple input to full public experience</h2>
+    </div>
+
+    <div class="journey-grid">
+      <div class="journey-step">
+        <span class="journey-number">1</span>
+        <h3>Create your entity</h3>
+        <p>Set up the right identity for your business, professional practice, creator brand, public organization, or campaign.</p>
+      </div>
+      <div class="journey-step">
+        <span class="journey-number">2</span>
+        <h3>Upload your source details</h3>
+        <p>Write a short brief or upload a menu, brochure, service list, profile, price sheet, event document, or business PDF.</p>
+      </div>
+      <div class="journey-step">
+        <span class="journey-number">3</span>
+        <h3>Generate, edit, and publish</h3>
+        <p>Generate the website, improve any section you want, preview the result, and publish it to your chosen ezit.ai subdomain.</p>
+      </div>
+      <div class="journey-step">
+        <span class="journey-number">4</span>
+        <h3>Activate your AI operations</h3>
+        <p>Switch on the chat assistant, booking flows, reservations, event actions, and public-facing support based on your uploaded knowledge.</p>
+      </div>
+      <div class="journey-step">
+        <span class="journey-number">5</span>
+        <h3>Promote continuously</h3>
+        <p>Create new visuals, offers, greetings, announcements, and campaign pushes whenever needed without rebuilding your whole presence.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="moment-section">
+    <div class="section-heading section-heading--left">
+      <p class="section-kicker">Designed for every generation of users</p>
+      <h2>Clear enough for first-time founders. Powerful enough for serious operators.</h2>
+      <p>
+        The experience should feel confident, bright, and easy to follow whether the user is a 20-year-old creator, a 55-year-old clinic owner, or a family business operator moving online for the first time. That is why the product promise stays simple: create once, launch fast, keep improving.
+      </p>
+    </div>
+
+    <div class="moment-grid">
+      <article class="moment-card">
+        <h3>For people starting from scratch</h3>
+        <p>Start with basic details and still end up with a website, chatbot, and promotional engine that feels professionally built.</p>
+      </article>
+      <article class="moment-card">
+        <h3>For busy owners and professionals</h3>
+        <p>Stop losing time across separate tools for content, support, events, updates, and customer-facing communication.</p>
+      </article>
+      <article class="moment-card">
+        <h3>For teams who need continuity</h3>
+        <p>Keep memory, insight, and feedback connected so operations improve instead of resetting every time someone changes direction.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="operations-section">
+    <div class="operations-panel">
+      <div class="section-heading section-heading--left">
+        <p class="section-kicker">What ezit.ai handles for you</p>
+        <h2>Less admin drag. More customer presence. More repeatable execution.</h2>
+      </div>
+
+      <div class="operations-grid">
+        <div class="ops-item">
+          <strong>Website updates</strong>
+          <span>Refresh offers, key visuals, services, or announcements without rebuilding the whole site.</span>
+        </div>
+        <div class="ops-item">
+          <strong>Customer support</strong>
+          <span>Answer questions quickly and capture demand before interest disappears.</span>
+        </div>
+        <div class="ops-item">
+          <strong>Bookings and orders</strong>
+          <span>Turn conversations into reservations, appointments, order requests, and real next steps.</span>
+        </div>
+        <div class="ops-item">
+          <strong>Campaign creative</strong>
+          <span>Produce offers, greeting campaigns, product drops, posters, and event creatives at the speed of need.</span>
+        </div>
+        <div class="ops-item">
+          <strong>Event logistics</strong>
+          <span>Manage attendance with passes, QR flows, reservations, and messaging instead of fragmented manual tools.</span>
+        </div>
+        <div class="ops-item">
+          <strong>Knowledge memory</strong>
+          <span>Preserve what your entity learns so updates, retros, and future improvements do not restart from zero.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="foundation-section">
+    <div class="section-heading">
+      <p class="section-kicker">Built on a trusted intelligence foundation</p>
+      <h2>The platform grew wider, but the trust layer stayed intact.</h2>
+      <p>
+        ezit.ai keeps the strongest parts of the earlier platform vision: real-user trust, insight capture, retrospectives, and memory-backed context. Those capabilities now support a broader mission around helping real-world entities run brilliantly in public.
+      </p>
+    </div>
+
+    <div class="foundation-grid">
+      <article class="foundation-card">
+        <h3>Trusted user onboarding</h3>
+        <p>Trust still matters for workflows where authentic feedback, credible participation, and cleaner signal are important.</p>
+      </article>
+      <article class="foundation-card">
+        <h3>Memory vault and MCP context</h3>
+        <p>Capture decisions, requirements, clarifications, and history so teams and AI systems can work from full context instead of fragments.</p>
+      </article>
+      <article class="foundation-card">
+        <h3>AI retros and feedback synthesis</h3>
+        <p>Use retrospectives and structured intelligence loops to improve launches, customer journeys, operations, and internal execution.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="showcase-section">
+    <div class="section-heading">
+      <p class="section-kicker">Designed for real-world use</p>
+      <h2>One system, many kinds of ambition</h2>
+    </div>
+
+    <div class="showcase-grid">
+      <article class="showcase-card">
+        <h3>Home baker</h3>
+        <p>Publish a menu, take custom orders, share seasonal offers, and answer customer questions around the clock.</p>
+      </article>
+      <article class="showcase-card">
+        <h3>Lawyer or consultant</h3>
+        <p>Create a clear service site, explain expertise, take appointment requests, and keep outreach consistent without extra overhead.</p>
+      </article>
+      <article class="showcase-card">
+        <h3>Creator brand</h3>
+        <p>Launch drops, promote campaigns, run events, and centralize audience support through one stronger public presence.</p>
+      </article>
+      <article class="showcase-card">
+        <h3>Restaurant or venue</h3>
+        <p>Use AI chat for menus, bookings, tickets, reservations, and offers without manually updating every customer touchpoint each day.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="closing-cta">
+    <div class="closing-card">
+      <p class="section-kicker">ezit.ai</p>
+      <h2>Ease it. Show up beautifully. Let AI keep the engine running.</h2>
+      <p>
+        Create the entity. Generate the website. Host it in seconds. Promote it with better creative. Support customers all day. Run events with less chaos. Keep the memory of what works. ezit.ai is for people who want strong digital execution without carrying the usual complexity.
+      </p>
+      <div class="cta-group cta-group--center">
+        <button class="cta-btn" (click)="openSignUpModal()">Create your first entity</button>
+        <button class="secondary-btn" (click)="scrollToFeatures()">See platform capabilities</button>
+      </div>
     </div>
   </section>
 </div>

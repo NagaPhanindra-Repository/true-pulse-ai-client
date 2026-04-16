@@ -14,7 +14,7 @@ export class PrivacyPolicyComponent {
   sections = [
     {
       title: 'Introduction',
-      content: 'TruePulse AI is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you visit our website and use our services.'
+      content: 'ezit.ai is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you visit our website and use our services.'
     },
     {
       title: 'Information We Collect',
@@ -25,7 +25,7 @@ export class PrivacyPolicyComponent {
         },
         {
           subtitle: 'Automatically Collected Information',
-          content: 'When you access TruePulse AI, we automatically collect certain technical information, including: IP address, browser type, operating system, referring URLs, and pages visited. We use cookies and similar tracking technologies to enhance your experience.'
+          content: 'When you access ezit.ai, we automatically collect certain technical information, including: IP address, browser type, operating system, referring URLs, and pages visited. We use cookies and similar tracking technologies to enhance your experience.'
         },
         {
           subtitle: 'Usage Data',
@@ -59,11 +59,11 @@ export class PrivacyPolicyComponent {
     },
     {
       title: 'International Data Transfers',
-      content: 'Your information may be transferred to, stored in, and processed in countries other than your country of residence. These countries may have data protection laws different from your home country. By using TruePulse AI, you consent to such transfers subject to appropriate safeguards.'
+      content: 'Your information may be transferred to, stored in, and processed in countries other than your country of residence. These countries may have data protection laws different from your home country. By using ezit.ai, you consent to such transfers subject to appropriate safeguards.'
     },
     {
       title: 'Children\'s Privacy',
-      content: 'TruePulse AI is not intended for children under 13. We do not knowingly collect personal information from children. If we discover that a child has provided us with personal information, we will delete such information promptly.'
+      content: 'ezit.ai is not intended for children under 13. We do not knowingly collect personal information from children. If we discover that a child has provided us with personal information, we will delete such information promptly.'
     },
     {
       title: 'Changes to This Policy',

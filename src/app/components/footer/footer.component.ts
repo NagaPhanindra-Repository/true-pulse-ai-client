@@ -13,30 +13,30 @@ export class FooterComponent {
   currentYear = new Date().getFullYear();
 
   productLinks = [
-    { label: 'Features', route: '/about-us' },
-    { label: 'Security', route: '/about-us' },
-    { label: 'Pricing', route: '/about-us' },
-    { label: 'API', route: '/about-us' }
+    { label: 'Website Studio', route: '/about-us' },
+    { label: 'Image Studio', route: '/about-us' },
+    { label: 'Entity Launch', route: '/entities/create' },
+    { label: 'AI Chat & Hosting', route: '/about-us' }
   ];
 
   companyLinks = [
-    { label: 'About Us', route: '/about-us' },
+    { label: 'About ezit.ai', route: '/about-us' },
     { label: 'Founder', route: '/about' },
     { label: 'Contact', route: '/contact' },
-    { label: 'Business', route: '/business' }
+    { label: 'Business Tools', route: '/business' }
   ];
 
   resourceLinks = [
-    { label: 'Documentation', route: '/about-us' },
-    { label: 'Blog', route: '/about-us' },
-    { label: 'Community', route: '/about-us' },
+    { label: 'Hosting Flow', route: '/about-us' },
+    { label: 'Events & Passes', route: '/about-us' },
+    { label: 'Memory Vault', route: '/about-us' },
     { label: 'Support', route: '/contact' }
   ];
 
   legalLinks = [
     { label: 'Privacy Policy', route: '/privacy' },
     { label: 'Terms of Service', route: '/terms' },
-    { label: 'Security & Compliance', route: '/about-us' },
+    { label: 'Trust & Compliance', route: '/about-us' },
     { label: 'Cookies', route: '/privacy' }
   ];
 

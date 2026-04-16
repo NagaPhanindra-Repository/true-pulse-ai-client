@@ -6,7 +6,7 @@
   </div>
 
   <div class="host-error" *ngIf="state === 'invalid' || state === 'not-found' || state === 'unavailable'">
-    <div class="host-error-hero">Hosted by TruePulse</div>
+    <div class="host-error-hero">Hosted by ezit.ai</div>
     <div class="host-error-card">
       <h1 *ngIf="state === 'invalid'">Invalid Subdomain</h1>
       <h1 *ngIf="state === 'not-found'">Website Not Found</h1>
@@ -28,7 +28,7 @@
 
       <div class="host-error-actions">
         <button class="host-ghost-btn" (click)="retry()" *ngIf="subdomain">Retry</button>
-        <a [href]="homeUrl" class="host-home-link">Go to TruePulse Home</a>
+        <a [href]="homeUrl" class="host-home-link">Go to ezit.ai Home</a>
         <a [href]="supportMailTo" class="host-support-link">Contact Support</a>
       </div>
     </div>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="boltGrad" x1="18" y1="6" x2="46" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDE68A"/>
+      <stop offset="35%" stop-color="#F59E0B"/>
+      <stop offset="70%" stop-color="#EF4444"/>
+      <stop offset="100%" stop-color="#DC2626"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="32" cy="32" r="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.30"/>
+      <stop offset="60%" stop-color="#EF4444" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#0C0F1A" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="boltGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <circle cx="32" cy="32" r="32" fill="#0C0F1A"/>
+  <circle cx="32" cy="32" r="31" fill="none" stroke="url(#boltGrad)" stroke-width="1.5" stroke-opacity="0.4"/>
+  <circle cx="32" cy="32" r="28" fill="url(#glow)"/>
+
+  <g filter="url(#boltGlow)">
+    <path d="
+      M 38 2
+      L 12 30
+      L 26 30
+      L 18 62
+      L 52 26
+      L 36 26
+      Z
+    " fill="url(#boltGrad)"/>
+  </g>
+
+  <path d="
+    M 38 2
+    L 12 30
+    L 26 30
+    L 18 62
+    L 52 26
+    L 36 26
+    Z
+  " fill="#FFFFFF" fill-opacity="0.12"/>
+</svg>

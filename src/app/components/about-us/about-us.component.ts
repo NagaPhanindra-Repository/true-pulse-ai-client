@@ -12,37 +12,37 @@ import { RouterLink } from '@angular/router';
 export class AboutUsComponent {
   features = [
     {
+      icon: '🏗️',
+      title: 'Entity Launch System',
+      description: 'Create the right entity for a business, owner, creator, professional, public figure, or community with a strong digital starting point.'
+    },
+    {
+      icon: '🌐',
+      title: 'Instant Website Studio',
+      description: 'Generate, refine, preview, and publish branded websites from prompts, menus, brochures, profiles, or uploaded documents.'
+    },
+    {
+      icon: '🎨',
+      title: 'Campaign and Image Studio',
+      description: 'Create premium posters, promotional images, social-ready creative, and brand-led campaign assets with editable overlays.'
+    },
+    {
       icon: '🧠',
-      title: 'Verified Signal Engine',
-      description: 'Advanced feedback collection that ensures authentic, uncontaminated input signals for accurate decision-making.'
-    },
-    {
-      icon: '📚',
-      title: 'Memory Architecture',
-      description: 'MemoryVault-MCP requirements memory unifies Jira, meetings, and chat context so teams and AI agents build with complete requirements.'
-    },
-    {
-      icon: '🎯',
-      title: 'RAG-Powered Synthesis',
-      description: 'Retrieval-Augmented Generation ensures decisions are grounded in truth, not guesses.'
-    },
-    {
-      icon: '⚡',
-      title: 'Enterprise Scale',
-      description: 'Built by architects who scaled billion-dollar systems handling millions of concurrent users.'
+      title: 'Trust, Memory, and Intelligence',
+      description: 'Trusted onboarding, retrospectives, memory workflows, and feedback intelligence continue to power smarter decisions behind the scenes.'
     }
   ];
 
   values = [
-    { title: 'Authenticity', description: 'We believe verified reality outperforms intuition. Every signal matters.' },
-    { title: 'Context Preservation', description: 'Complete context during development eliminates cascading failures.' },
-    { title: 'Evidence-Based', description: 'Decisions grounded in truth, backed by RAG synthesis and historical data.' },
-    { title: 'Enterprise Ready', description: 'Production-grade security, compliance, and scalability from day one.' }
+    { title: 'Make serious work feel easier', description: 'We reduce the digital overhead around websites, support, campaigns, and events so operators can stay focused on the real mission.' },
+    { title: 'Design for every generation', description: 'The interface should feel welcoming for first-time digital users and still credible for experienced operators and growth teams.' },
+    { title: 'Useful AI over flashy AI', description: 'Automation should remove repetitive work, create better outcomes, and stay understandable to the people using it.' },
+    { title: 'Trust is part of the product', description: 'Memory, verification, and feedback intelligence matter because better automation depends on more trustworthy inputs.' }
   ];
 
   timeline = [
-    { year: '2024', event: 'TruePulse AI Founded', detail: 'Solving the signal contamination problem in enterprise software.' },
-    { year: '2025', event: 'Retrospective & Memory Platform Launch', detail: 'Teams worldwide gain access to verified feedback & context preservation.' },
-    { year: '2026', event: 'AI Integration & Expansion', detail: 'RAG, MemoryVault-MCP, and advanced analytics for enterprise intelligence.' }
+    { year: '2024', event: 'Trust and intelligence foundation established', detail: 'The early platform focused on signal quality, memory, retrospectives, and AI-assisted understanding.' },
+    { year: '2025', event: 'Entity workflows expanded', detail: 'Website generation, hosting, AI customer support, promotions, and business-facing flows became the center of the experience.' },
+    { year: '2026', event: 'ezit.ai brand launched', detail: 'The mission sharpened: make it easy for real entities to launch, promote, support, and grow with AI doing more of the operational work.' }
   ];
 }

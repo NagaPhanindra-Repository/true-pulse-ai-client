@@ -1400,7 +1400,7 @@ export class ImageStudioComponent implements OnInit {
     this.socialPostStatus = '';
     if (this.showSocialComposer && !this.socialPostMessage.trim()) {
       const display = this.entity?.displayName || 'our brand';
-      this.socialPostMessage = `Fresh poster drop for ${display}. Built with True Pulse AI.`;
+      this.socialPostMessage = `Fresh campaign drop for ${display}. Built with ezit.ai.`;
     }
   }
 

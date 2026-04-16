@@ -31,14 +31,14 @@ export class ContactComponent {
     {
       icon: '🌐',
       title: 'Website',
-      value: 'www.truepulseai.com',
-      link: '#'
+      value: 'ezit.ai',
+      link: 'https://ezit.ai'
     },
     {
       icon: '🏢',
-      title: 'Enterprise Support',
-      value: 'For large deployments',
-      link: 'mailto:enterprise@truepulseai.com'
+      title: 'Platform Support',
+      value: 'Brand, onboarding, hosting, and AI workflow guidance',
+      link: 'mailto:ravurinagaphanindra@gmail.com'
     }
   ];
 

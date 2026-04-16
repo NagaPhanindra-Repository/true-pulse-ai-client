@@ -75,7 +75,7 @@ export class PublicWebsiteHostComponent implements OnInit {
   }
 
   get supportMailTo(): string {
-    return 'mailto:support@truepulseai.com?subject=Hosted%20Website%20Help';
+    return 'mailto:ravurinagaphanindra@gmail.com?subject=Hosted%20Website%20Help';
   }
 
   get rootDomainLabel(): string {
@@ -150,7 +150,7 @@ export class PublicWebsiteHostComponent implements OnInit {
 
   private resolveOnrenderBaseDomain(): string {
     const domains = getHostedRootDomains();
-    return domains.find((d) => d.endsWith('.onrender.com')) || 'truepulse-ai.onrender.com';
+    return domains.find((d) => d.endsWith('.onrender.com')) || 'true-pulse-ai.onrender.com';
   }
 
   private buildSrcDoc(html: string, css: string, js: string): string {
