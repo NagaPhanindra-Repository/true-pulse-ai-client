@@ -15,47 +15,64 @@
       <app-login-in [successMessage]="loginSuccessMessage" (closeLogin)="closeLoginModal()"></app-login-in>
     </div>
   </div>
+
+  <!-- ─── HERO ─── -->
   <section class="home-hero">
     <div class="hero-copy">
-      <div class="hero-badge">ezit.ai for businesses, creators, professionals, and modern public-facing brands</div>
+      <div class="hero-badge">
+        <img src="assets/ez.svg" alt="" class="hero-badge-icon" />
+        The AI operating layer for businesses, creators, professionals &amp; public brands
+      </div>
       <h1>
-        Build your entity.<br>
-        Launch your website.<br>
-        Let AI run the heavy lifting.
+        Create it.<br>
+        Launch it.<br>
+        <span class="brand-punch">ezit.</span>
       </h1>
+
+      <div class="hero-taglines">
+        <p class="tagline tagline--promise">You do what you love. <strong>AI does the rest.</strong></p>
+        <p class="tagline tagline--action">Stop figuring it out. <strong>Start easing it.</strong></p>
+      </div>
+
       <p class="hero-desc">
-        ezit.ai turns one idea, one profile, or one uploaded PDF into a complete digital operating layer. Create an entity, generate a polished website, publish it on your own
-        <strong>entityname.ezit.ai</strong> subdomain, and activate a 24/7 AI concierge that can answer questions, capture leads, support customers, take bookings, and guide orders.
+        Tell us what you do — or just upload a PDF, menu, or brochure.
+        ezit.ai instantly builds a <strong>stunning website</strong>, hosts it on
+        <strong>yourname.ezit.ai</strong>, and deploys an AI concierge that answers
+        customers, books appointments, and captures leads — while you sleep.
       </p>
       <p class="hero-desc hero-desc--muted">
-        Then scale visibility with campaign-ready posters, one-click social publishing, scheduled promotions, event ticketing with QR passes, and the trust, memory, and insight systems that keep every improvement grounded.
+        Then design scroll-stopping posters in the Image Studio,
+        publish/schedule to LinkedIn, Instagram, Facebook, X, Threads &amp; YouTube in one click,
+        launch ticketed events with QR passes — and let the memory engine
+        make every next move smarter than the last.
       </p>
 
       <div class="cta-group">
-        <button class="cta-btn" (click)="openSignUpModal()">Start with ezit.ai</button>
-        <button class="secondary-btn" (click)="scrollToFeatures()">Explore the platform</button>
+        <button class="cta-btn" (click)="openSignUpModal()">Create your entity — free</button>
+        <button class="secondary-btn" (click)="scrollToFeatures()">See how it works</button>
       </div>
 
       <div class="hero-metrics">
         <div class="metric-pill">
           <strong>1 input</strong>
-          <span>to generate your site and setup</span>
+          <span>PDF, prompt, or a quick brief</span>
         </div>
         <div class="metric-pill">
-          <strong>24/7</strong>
-          <span>AI support and lead handling</span>
+          <strong>24 / 7</strong>
+          <span>AI chat, leads &amp; bookings</span>
         </div>
         <div class="metric-pill">
-          <strong>Seconds</strong>
-          <span>to publish, refresh, and promote</span>
+          <strong>&lt; 60 s</strong>
+          <span>to a live, hosted website</span>
         </div>
       </div>
 
       <div class="hero-proof">
-        <span>Websites from prompts, menus, brochures, or PDFs</span>
-        <span>Subdomain checks on ezit.ai</span>
-        <span>AI campaign studio with editable layers</span>
-        <span>Events, passes, bookings, and memory-backed improvement</span>
+        <span>Websites from prompts, menus, or PDFs</span>
+        <span>yourname.ezit.ai subdomain</span>
+        <span>AI poster &amp; image studio</span>
+        <span>One-click social publishing</span>
+        <span>QR events, passes &amp; payments</span>
       </div>
     </div>
 
@@ -71,43 +88,43 @@
         <div class="stage-grid">
           <article class="stage-card stage-card--feature">
             <p class="stage-kicker">Entity launch</p>
-            <h3>From entity profile to live digital presence</h3>
+            <h3>Idea to live site — no code, no agency</h3>
             <ul>
-              <li>Create the right account for your business, profession, brand, or campaign</li>
-              <li>Upload details once and let AI shape the public experience</li>
-              <li>Go live on your own ezit.ai address without agency overhead</li>
+              <li>Pick your entity type: business, creator, professional, or campaign</li>
+              <li>Upload a PDF, menu, or write a one-liner — AI builds the rest</li>
+              <li>Claim <strong>yourname.ezit.ai</strong> and go live instantly</li>
             </ul>
           </article>
 
           <article class="stage-card stage-card--chat">
-            <p class="stage-kicker">Always-on service</p>
-            <h3>Customer conversations handled around the clock</h3>
+            <p class="stage-kicker">Always-on concierge</p>
+            <h3>Your AI answers customers while you focus on what matters</h3>
             <div class="chat-lines">
-              <span>Answers services, pricing, timings, FAQs, and availability</span>
-              <span>Captures reservations, appointments, booking requests, and order intent</span>
-              <span>Responds from the actual knowledge you upload for the entity</span>
+              <span>Answers pricing, hours, FAQs, and availability — instantly</span>
+              <span>Books appointments, captures leads, and takes order intent</span>
+              <span>Trained on YOUR knowledge — menus, services, policies, docs</span>
             </div>
           </article>
 
           <article class="stage-card stage-card--poster">
-            <p class="stage-kicker">Promotion studio</p>
-            <h3>Create premium promotional visuals fast</h3>
+            <p class="stage-kicker">Image Studio</p>
+            <h3>Scroll-stopping posters in minutes, not days</h3>
             <div class="poster-mini">
               <div class="poster-mini__canvas"></div>
               <div class="poster-mini__meta">
-                <span>Use sample images, add logos or barcodes, then drag and tune text</span>
-                <span>Control colors, fonts, captions, hashtags, and posting context</span>
+                <span>Generate AI images, add your logo, barcodes &amp; text overlays</span>
+                <span>One-click publish to every social channel that matters</span>
               </div>
             </div>
           </article>
 
           <article class="stage-card stage-card--events">
             <p class="stage-kicker">Event engine</p>
-            <h3>Reservations, payments, QR entry, and email passes</h3>
+            <h3>Tickets, QR passes, payments — done</h3>
             <div class="event-row">
-              <span>Create the event experience</span>
-              <span>Offer pass types and collect payments</span>
-              <span>Send confirmations and entry-ready tickets</span>
+              <span>Create the event &amp; define pass types</span>
+              <span>Collect payments &amp; generate QR entries</span>
+              <span>Auto-send confirmations &amp; e-tickets</span>
             </div>
           </article>
         </div>
@@ -115,53 +132,98 @@
     </div>
   </section>
 
+  <!-- ─── DIFFERENTIATOR STRIP ─── -->
   <section class="command-strip">
     <div class="command-strip__panel">
       <div class="command-copy">
-        <p class="section-kicker">What makes ezit.ai different</p>
-        <h2>You focus on the craft, customers, and growth. ezit handles the digital execution.</h2>
+        <p class="section-kicker">Why ezit.ai</p>
+        <h2>You do what you love. AI does the rest.</h2>
         <p>
-          For a home baker, a clinic, a coach, a lawyer, a creator, a restaurant, or a campaign team, the work is rarely just "make a website." It is website, updates, offers, promotions, chat support, bookings, events, and follow-up. ezit.ai brings those together so real people can operate with more presence and less friction.
+          Whether you bake cakes from home, run a dental clinic, coach clients online,
+          manage a restaurant, or lead a political campaign — the work is never just
+          "make a website." It's website + updates + promos + chat support + bookings +
+          events + follow-up. ezit.ai compresses all of it into one intelligent layer
+          so you can operate like a brand with a full digital team — without actually hiring one.
         </p>
       </div>
       <div class="command-points">
         <div class="command-pill">Entity setup</div>
-        <div class="command-pill">Website generation</div>
-        <div class="command-pill">Instant hosting</div>
-        <div class="command-pill">24/7 AI support</div>
-        <div class="command-pill">Poster and image studio</div>
-        <div class="command-pill">Social publishing</div>
-        <div class="command-pill">Events and ticketing</div>
-        <div class="command-pill">Trusted feedback and memory</div>
+        <div class="command-pill">AI website generation</div>
+        <div class="command-pill">One-click hosting</div>
+        <div class="command-pill">24/7 AI concierge</div>
+        <div class="command-pill">Image &amp; poster studio</div>
+        <div class="command-pill">Social publishing &amp; scheduling</div>
+        <div class="command-pill">Events, QR passes &amp; payments</div>
+        <div class="command-pill">Memory, retros &amp; trusted feedback</div>
       </div>
     </div>
   </section>
 
-  <section class="audience-strip">
-    <div class="audience-card">
-      <h3>Business owners</h3>
-      <p>Restaurants, salons, clinics, stores, agencies, and home-based businesses that need speed without hiring a full digital team.</p>
+  <!-- ─── REAL-WORLD SHOWCASE ─── -->
+  <section class="showcase-section">
+    <div class="section-heading">
+      <p class="section-kicker">Built for real people, real ambitions</p>
+      <h2>One platform. A thousand kinds of hustle.</h2>
     </div>
-    <div class="audience-card">
-      <h3>Creators and brands</h3>
-      <p>Launch offers, campaigns, event pages, paid experiences, and always-on audience support from one place.</p>
-    </div>
-    <div class="audience-card">
-      <h3>Professionals</h3>
-      <p>Lawyers, teachers, consultants, speakers, coaches, doctors, and specialists who need a polished public presence fast.</p>
-    </div>
-    <div class="audience-card">
-      <h3>Public leaders</h3>
-      <p>Campaigns, community groups, and public entities that need trusted communication, events, and structured feedback loops.</p>
+
+    <div class="showcase-grid">
+      <article class="showcase-card">
+        <h3>Home baker</h3>
+        <p>Upload your menu, go live on <strong>sweetbites.ezit.ai</strong>, take custom orders via AI chat, and blast seasonal offers to Instagram — all before lunch.</p>
+      </article>
+      <article class="showcase-card">
+        <h3>Lawyer or consultant</h3>
+        <p>A sharp service site, clear expertise, appointment booking, and consistent outreach — without the overhead of a marketing agency.</p>
+      </article>
+      <article class="showcase-card">
+        <h3>Creator or influencer</h3>
+        <p>Launch merch drops, sell event tickets, run campaigns, and give your audience 24/7 AI support — from one powerful dashboard.</p>
+      </article>
+      <article class="showcase-card">
+        <h3>Restaurant or venue</h3>
+        <p>AI chat handles menus, reservations, and daily specials. The Image Studio creates tonight's promo poster. One-click publish to every platform.</p>
+      </article>
+      <article class="showcase-card">
+        <h3>Doctor or specialist</h3>
+        <p>Professional presence, appointment capture, patient FAQs answered instantly, and campaign tools for health awareness drives.</p>
+      </article>
+      <article class="showcase-card">
+        <h3>Political campaign</h3>
+        <p>Event rallies with QR passes, real-time supporter communication, feedback collection, and a trusted public-facing identity.</p>
+      </article>
     </div>
   </section>
 
+
+  <!-- ─── AUDIENCE STRIP ─── -->
+  <section class="audience-strip">
+    <div class="audience-card">
+      <h3>Business owners</h3>
+      <p>Restaurants, bakeries, salons, clinics, stores &amp; home-based businesses — get online fast without hiring a digital team.</p>
+    </div>
+    <div class="audience-card">
+      <h3>Creators &amp; brands</h3>
+      <p>Launch drops, run paid events, design campaigns, and give your audience always-on support — all from one dashboard.</p>
+    </div>
+    <div class="audience-card">
+      <h3>Professionals</h3>
+      <p>Doctors, lawyers, teachers, coaches, consultants &amp; specialists — a polished, AI-powered presence in under a minute.</p>
+    </div>
+    <div class="audience-card">
+      <h3>Public leaders &amp; campaigns</h3>
+      <p>Politicians, community groups &amp; public entities — trusted communication, event management, and structured feedback at scale.</p>
+    </div>
+  </section>
+
+  <!-- ─── PLATFORM FEATURES ─── -->
   <section class="platform-section" id="features">
     <div class="section-heading">
       <p class="section-kicker">The ezit.ai platform</p>
-      <h2>The operating layer for entities that want to look strong and move fast</h2>
+      <h2>Everything an entity needs to look incredible and move fast</h2>
       <p>
-        ezit.ai is built for the full front line of an entity: public presence, customer communication, content generation, event handling, and ongoing improvement. It keeps the product practical for someone running real work every day.
+        One system for public presence, customer conversations, content creation,
+        event logistics, and continuous improvement — built for people who run
+        real work every single day.
       </p>
     </div>
 
@@ -169,203 +231,193 @@
       <article class="platform-card">
         <div class="platform-icon">01</div>
         <h3>Entity creation</h3>
-        <p>Create business, owner, creator, professional, community, or campaign entities with structured onboarding and a polished public-facing identity.</p>
+        <p>Choose your type — business, creator, professional, community, or campaign — and get a structured, launch-ready digital identity in minutes.</p>
       </article>
       <article class="platform-card">
         <div class="platform-icon">02</div>
-        <h3>Instant website studio</h3>
-        <p>Generate a complete website from a short description, brochure, menu, profile, or uploaded PDF, then refine it without starting over.</p>
+        <h3>AI website studio</h3>
+        <p>Describe what you do, upload a menu or PDF, and watch a complete, beautiful website appear. Edit any section, regenerate, refine — no code required.</p>
       </article>
       <article class="platform-card">
         <div class="platform-icon">03</div>
-        <h3>Live hosting on ezit.ai</h3>
-        <p>Check subdomain availability, choose the strongest public name, and launch to <strong>entityname.ezit.ai</strong> with a fast publish flow.</p>
+        <h3>Instant hosting</h3>
+        <p>Check availability, claim <strong>yourname.ezit.ai</strong>, and publish. Your site is live, fast, and SSL-secured in seconds — not weeks.</p>
       </article>
       <article class="platform-card">
         <div class="platform-icon">04</div>
-        <h3>24/7 AI chat concierge</h3>
-        <p>Train the chatbot from entity knowledge so it can answer customers, qualify demand, guide buyers, and support common workflows day and night.</p>
+        <h3>24/7 AI concierge</h3>
+        <p>A chatbot trained on YOUR docs that answers customers, qualifies leads, books appointments, and guides orders — day and night, no breaks.</p>
       </article>
       <article class="platform-card">
         <div class="platform-icon">05</div>
-        <h3>Promotion and image studio</h3>
-        <p>Generate posters and campaign images, use reference images, add logos or barcodes, reposition text, and shape final creative with real control.</p>
+        <h3>Image &amp; poster studio</h3>
+        <p>Generate stunning campaign visuals with AI, layer on your logo, barcodes, and text, then fine-tune colors, fonts, and layout until it's perfect.</p>
       </article>
       <article class="platform-card">
         <div class="platform-icon">06</div>
-        <h3>Social-ready publishing</h3>
-        <p>Prepare social-ready promotion flows for LinkedIn, Instagram, Facebook, Threads, X, and YouTube with custom messaging and scheduling.</p>
+        <h3>Social publishing</h3>
+        <p>Push promotions to LinkedIn, Instagram, Facebook, X, Threads &amp; YouTube — with custom captions, hashtags, and scheduling — in one click.</p>
       </article>
       <article class="platform-card">
         <div class="platform-icon">07</div>
-        <h3>Events, reservations, and passes</h3>
-        <p>Create events, define pass types, enable reservations, collect payments, generate QR access, and deliver passes through email.</p>
+        <h3>Events &amp; ticketing</h3>
+        <p>Create events, define pass tiers, collect payments, generate scannable QR entries, and auto-deliver e-tickets and confirmations.</p>
       </article>
       <article class="platform-card">
         <div class="platform-icon">08</div>
-        <h3>Trust, memory, and intelligence</h3>
-        <p>Verified-user workflows, AI retrospectives, feedback intelligence, and memory systems remain available for teams that want operational clarity instead of noise.</p>
+        <h3>Trust, memory &amp; intelligence</h3>
+        <p>Verified-user flows, AI retrospectives, feedback synthesis, and a memory vault that ensures every improvement is grounded — not guessed.</p>
       </article>
     </div>
   </section>
 
+  <!-- ─── JOURNEY ─── -->
   <section class="journey-section">
     <div class="section-heading section-heading--narrow">
       <p class="section-kicker">How it works</p>
-      <h2>From simple input to full public experience</h2>
+      <h2>Five steps. Zero headaches.</h2>
     </div>
 
     <div class="journey-grid">
       <div class="journey-step">
         <span class="journey-number">1</span>
         <h3>Create your entity</h3>
-        <p>Set up the right identity for your business, professional practice, creator brand, public organization, or campaign.</p>
+        <p>Business, professional practice, creator brand, community org, or campaign — pick the identity that fits and start.</p>
       </div>
       <div class="journey-step">
         <span class="journey-number">2</span>
-        <h3>Upload your source details</h3>
-        <p>Write a short brief or upload a menu, brochure, service list, profile, price sheet, event document, or business PDF.</p>
+        <h3>Add your details</h3>
+        <p>Write a brief, paste a menu, upload a brochure or PDF — or just tell us what you do in one sentence.</p>
       </div>
       <div class="journey-step">
         <span class="journey-number">3</span>
-        <h3>Generate, edit, and publish</h3>
-        <p>Generate the website, improve any section you want, preview the result, and publish it to your chosen ezit.ai subdomain.</p>
+        <h3>Generate &amp; publish</h3>
+        <p>AI builds the website. You tweak what you want. Hit publish — live on <strong>yourname.ezit.ai</strong> instantly.</p>
       </div>
       <div class="journey-step">
         <span class="journey-number">4</span>
-        <h3>Activate your AI operations</h3>
-        <p>Switch on the chat assistant, booking flows, reservations, event actions, and public-facing support based on your uploaded knowledge.</p>
+        <h3>Activate AI ops</h3>
+        <p>Turn on the chat concierge, booking flows, event ticketing, and customer support — all powered by your uploaded knowledge.</p>
       </div>
       <div class="journey-step">
         <span class="journey-number">5</span>
-        <h3>Promote continuously</h3>
-        <p>Create new visuals, offers, greetings, announcements, and campaign pushes whenever needed without rebuilding your whole presence.</p>
+        <h3>Promote &amp; grow</h3>
+        <p>Design posters, schedule social posts, launch events, and let the memory engine track what works so every campaign gets better.</p>
       </div>
     </div>
   </section>
 
+  <!-- ─── GENERATION-SPANNING ─── 
   <section class="moment-section">
     <div class="section-heading section-heading--left">
-      <p class="section-kicker">Designed for every generation of users</p>
-      <h2>Clear enough for first-time founders. Powerful enough for serious operators.</h2>
+      <p class="section-kicker">Built for every generation</p>
+      <h2>Simple enough for your first website. Powerful enough to run your empire.</h2>
       <p>
-        The experience should feel confident, bright, and easy to follow whether the user is a 20-year-old creator, a 55-year-old clinic owner, or a family business operator moving online for the first time. That is why the product promise stays simple: create once, launch fast, keep improving.
+        Whether you're a 22-year-old creator, a 55-year-old clinic owner, or a family
+        business going online for the very first time — the promise is the same:
+        create once, launch fast, keep getting better.
       </p>
     </div>
 
     <div class="moment-grid">
       <article class="moment-card">
-        <h3>For people starting from scratch</h3>
-        <p>Start with basic details and still end up with a website, chatbot, and promotional engine that feels professionally built.</p>
+        <h3>Starting from zero?</h3>
+        <p>No tech skills needed. Give us the basics and walk away with a website, AI chatbot, and promotion engine that feels professionally built.</p>
       </article>
       <article class="moment-card">
-        <h3>For busy owners and professionals</h3>
-        <p>Stop losing time across separate tools for content, support, events, updates, and customer-facing communication.</p>
+        <h3>Already running a business?</h3>
+        <p>Stop juggling five tools for your website, support, social posts, events, and follow-ups. One dashboard. Everything connected.</p>
       </article>
       <article class="moment-card">
-        <h3>For teams who need continuity</h3>
-        <p>Keep memory, insight, and feedback connected so operations improve instead of resetting every time someone changes direction.</p>
+        <h3>Scaling a team?</h3>
+        <p>Memory, feedback loops, and AI retros keep your operations sharp — so every launch, campaign, and customer interaction improves over time.</p>
       </article>
     </div>
   </section>
+  -->
 
+  <!-- ─── OPERATIONS ─── -->
   <section class="operations-section">
     <div class="operations-panel">
       <div class="section-heading section-heading--left">
-        <p class="section-kicker">What ezit.ai handles for you</p>
-        <h2>Less admin drag. More customer presence. More repeatable execution.</h2>
+        <p class="section-kicker">What ezit.ai runs for you</p>
+        <h2>Less busywork. More customers. More consistency.</h2>
       </div>
 
       <div class="operations-grid">
         <div class="ops-item">
           <strong>Website updates</strong>
-          <span>Refresh offers, key visuals, services, or announcements without rebuilding the whole site.</span>
+          <span>New menu item? Holiday hours? Fresh offer? Update in seconds — no developer needed.</span>
         </div>
         <div class="ops-item">
           <strong>Customer support</strong>
-          <span>Answer questions quickly and capture demand before interest disappears.</span>
+          <span>AI answers questions and captures demand 24/7 so you never lose a lead to slow responses.</span>
         </div>
         <div class="ops-item">
-          <strong>Bookings and orders</strong>
-          <span>Turn conversations into reservations, appointments, order requests, and real next steps.</span>
+          <strong>Bookings &amp; orders</strong>
+          <span>Conversations turn into appointments, reservations, and order intent — automatically.</span>
         </div>
         <div class="ops-item">
           <strong>Campaign creative</strong>
-          <span>Produce offers, greeting campaigns, product drops, posters, and event creatives at the speed of need.</span>
+          <span>Festival offer? New product drop? Generate the poster, write the caption, publish — all in one flow.</span>
         </div>
         <div class="ops-item">
           <strong>Event logistics</strong>
-          <span>Manage attendance with passes, QR flows, reservations, and messaging instead of fragmented manual tools.</span>
+          <span>QR passes, payment collection, attendee management, and confirmation emails — no spreadsheet required.</span>
         </div>
         <div class="ops-item">
           <strong>Knowledge memory</strong>
-          <span>Preserve what your entity learns so updates, retros, and future improvements do not restart from zero.</span>
+          <span>Every decision, every retro, every lesson learned is preserved — so your next move builds on everything before it.</span>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- ─── TRUST FOUNDATION ─── -->
   <section class="foundation-section">
     <div class="section-heading">
       <p class="section-kicker">Built on a trusted intelligence foundation</p>
-      <h2>The platform grew wider, but the trust layer stayed intact.</h2>
+      <h2>The platform grew wider. The trust layer stayed rock-solid.</h2>
       <p>
-        ezit.ai keeps the strongest parts of the earlier platform vision: real-user trust, insight capture, retrospectives, and memory-backed context. Those capabilities now support a broader mission around helping real-world entities run brilliantly in public.
+        Real-user verification, insight capture, AI retrospectives, and memory-backed
+        context aren't just features — they're the bedrock. They power smarter
+        websites, better campaigns, and customer interactions that actually improve
+        over time.
       </p>
     </div>
 
     <div class="foundation-grid">
       <article class="foundation-card">
-        <h3>Trusted user onboarding</h3>
-        <p>Trust still matters for workflows where authentic feedback, credible participation, and cleaner signal are important.</p>
+        <h3>Verified user onboarding</h3>
+        <p>Authentic feedback, credible participation, and cleaner signal — because trust is the foundation of every great business decision.</p>
       </article>
       <article class="foundation-card">
-        <h3>Memory vault and MCP context</h3>
-        <p>Capture decisions, requirements, clarifications, and history so teams and AI systems can work from full context instead of fragments.</p>
+        <h3>Memory vault &amp; MCP context</h3>
+        <p>Decisions, requirements, and history preserved for humans and AI systems alike — full context, zero fragments.</p>
       </article>
       <article class="foundation-card">
-        <h3>AI retros and feedback synthesis</h3>
-        <p>Use retrospectives and structured intelligence loops to improve launches, customer journeys, operations, and internal execution.</p>
+        <h3>AI retros &amp; feedback synthesis</h3>
+        <p>Structured intelligence loops that turn raw feedback into actionable improvements for launches, campaigns, and daily ops.</p>
       </article>
     </div>
   </section>
 
-  <section class="showcase-section">
-    <div class="section-heading">
-      <p class="section-kicker">Designed for real-world use</p>
-      <h2>One system, many kinds of ambition</h2>
-    </div>
-
-    <div class="showcase-grid">
-      <article class="showcase-card">
-        <h3>Home baker</h3>
-        <p>Publish a menu, take custom orders, share seasonal offers, and answer customer questions around the clock.</p>
-      </article>
-      <article class="showcase-card">
-        <h3>Lawyer or consultant</h3>
-        <p>Create a clear service site, explain expertise, take appointment requests, and keep outreach consistent without extra overhead.</p>
-      </article>
-      <article class="showcase-card">
-        <h3>Creator brand</h3>
-        <p>Launch drops, promote campaigns, run events, and centralize audience support through one stronger public presence.</p>
-      </article>
-      <article class="showcase-card">
-        <h3>Restaurant or venue</h3>
-        <p>Use AI chat for menus, bookings, tickets, reservations, and offers without manually updating every customer touchpoint each day.</p>
-      </article>
-    </div>
-  </section>
-
+  
+  <!-- ─── CLOSING CTA ─── -->
   <section class="closing-cta">
     <div class="closing-card">
+      <img src="assets/ez.svg" alt="" class="closing-icon" />
       <p class="section-kicker">ezit.ai</p>
-      <h2>Ease it. Show up beautifully. Let AI keep the engine running.</h2>
+      <h2>Stop figuring it out. Start easing it.</h2>
       <p>
-        Create the entity. Generate the website. Host it in seconds. Promote it with better creative. Support customers all day. Run events with less chaos. Keep the memory of what works. ezit.ai is for people who want strong digital execution without carrying the usual complexity.
+        Create your entity. Get a stunning website. Host it in seconds.
+        Deploy a 24/7 AI concierge. Design killer promos.
+        Publish everywhere. Run events. Remember everything.
+        This is digital operations — made dramatically easy.
       </p>
       <div class="cta-group cta-group--center">
-        <button class="cta-btn" (click)="openSignUpModal()">Create your first entity</button>
-        <button class="secondary-btn" (click)="scrollToFeatures()">See platform capabilities</button>
+        <button class="cta-btn" (click)="openSignUpModal()">Create your entity — it's free</button>
+        <button class="secondary-btn" (click)="scrollToFeatures()">Explore the platform</button>
       </div>
     </div>
   </section>

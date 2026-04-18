@@ -66,6 +66,15 @@
         color: #06b6d4;
         text-transform: uppercase;
         margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .eyebrow-icon {
+        width: 22px;
+        height: 22px;
+        filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.5));
       }
 
       h1 {

@@ -136,12 +136,68 @@
   text-transform: uppercase;
 }
 
+.hero-badge-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  vertical-align: middle;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.5));
+}
+
+.closing-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 14px;
+  filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.4));
+}
+
 .home-hero h1 {
   margin: 0;
-  max-width: 11ch;
+  max-width: 14ch;
   font-size: clamp(2.6rem, 6vw, 5.6rem);
   line-height: 0.94;
   letter-spacing: -0.05em;
+}
+
+.brand-punch {
+  background: linear-gradient(90deg, #06D6A0, #3B82F6, #A855F7, #EC4899);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─── Hero tagline pair ─── */
+.hero-taglines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0 4px;
+}
+
+.tagline {
+  margin: 0;
+  font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--text-soft);
+}
+
+.tagline strong {
+  color: #fff;
+}
+
+.tagline--promise strong {
+  background: linear-gradient(90deg, #06D6A0, #3B82F6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.tagline--action strong {
+  background: linear-gradient(90deg, #A855F7, #EC4899);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero-desc {
@@ -491,10 +547,15 @@
 }
 
 .platform-grid,
-.foundation-grid,
-.showcase-grid {
+.foundation-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
