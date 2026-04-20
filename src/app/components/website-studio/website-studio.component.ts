@@ -14,6 +14,7 @@ import {
   SaveBusinessWebsiteResponse,
   SubdomainAvailabilityResponse
 } from '../../models/business-website.model';
+import { getContactFormBlockHtml } from '../blocks/contact-form-block.util';
 import { environment } from '../../../environments/environment';
 import { Subject, Subscription, of } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, finalize, switchMap } from 'rxjs/operators';
@@ -120,16 +121,7 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
       type: 'contact-form',
       label: 'Contact Form',
       icon: 'contact_mail',
-      html: `<section id="contact-form-block" style="padding:3rem 2rem;background:var(--block-bg,#f9f9f9);text-align:center">
-  <h2 style="margin-bottom:1.5rem">Get In Touch</h2>
-  <form style="max-width:540px;margin:0 auto;display:flex;flex-direction:column;gap:1rem" onsubmit="return false">
-    <input type="text" placeholder="Your Name" style="padding:0.8rem 1rem;border:1px solid #ccc;border-radius:6px;font-size:1rem"/>
-    <input type="email" placeholder="Your Email" style="padding:0.8rem 1rem;border:1px solid #ccc;border-radius:6px;font-size:1rem"/>
-    <input type="tel" placeholder="Phone Number (optional)" style="padding:0.8rem 1rem;border:1px solid #ccc;border-radius:6px;font-size:1rem"/>
-    <textarea rows="5" placeholder="Your Message" style="padding:0.8rem 1rem;border:1px solid #ccc;border-radius:6px;font-size:1rem;resize:vertical"></textarea>
-    <button type="submit" style="padding:0.9rem 2rem;background:var(--color-terracotta,#c1440e);color:#fff;border:none;border-radius:6px;font-size:1.1rem;font-weight:700;cursor:pointer">Send Message</button>
-  </form>
-</section>`
+      html: '' // Will be set dynamically when added
     },
     {
       type: 'pricing-table',
@@ -385,7 +377,26 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
       this._buildSectionOverrides(websiteResponse);
     }
 
-    this.addedBlocks = Array.isArray(metadata?.studio?.addedBlocks) ? metadata.studio.addedBlocks : [];
+    // Sync addedBlocks with sections present in HTML
+    this.addedBlocks = [];
+    const html = this.editableHtml;
+    const blockTypes = [
+      { type: 'contact-form', id: 'contact-form-block' },
+      { type: 'pricing-table', id: 'pricing-block' },
+      { type: 'faq', id: 'faq-block' },
+      { type: 'team', id: 'team-block' },
+      { type: 'cta-banner', id: 'cta-banner-block' },
+      { type: 'stats', id: 'stats-block' },
+      { type: 'newsletter', id: 'newsletter-block' },
+      { type: 'map', id: 'map-block' },
+      { type: 'chatbot', id: 'chatbot-block' }
+    ];
+    for (const block of blockTypes) {
+      if (html.includes(`id="${block.id}"`) || html.includes(`id='${block.id}'`)) {
+        this.addedBlocks.push({ type: block.type });
+      }
+    }
+
     this.previewMode = metadata?.studio?.previewMode || 'desktop';
 
     this.publishSubdomain = this.normalizeSubdomain(resp.subdomain || resp.displayName || 'my-site');
@@ -625,10 +636,54 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
 
   // ── Add block ─────────────────────────────────────────────────────────────
   addBlock(block: AddBlockOption) {
+    // Prevent adding if already present in HTML or addedBlocks
+    let blockId = '';
+    let injectedHtml = block.html;
+    switch (block.type) {
+      case 'contact-form':
+        injectedHtml = getContactFormBlockHtml(
+          this.entityDetails?.id ? String(this.entityDetails.id) : '',
+          this.entityDetails?.displayName || ''
+        );
+        blockId = 'contact-form-block';
+        break;
+      case 'pricing-table':
+        blockId = 'pricing-block';
+        break;
+      case 'faq':
+        blockId = 'faq-block';
+        break;
+      case 'team':
+        blockId = 'team-block';
+        break;
+      case 'cta-banner':
+        blockId = 'cta-banner-block';
+        break;
+      case 'stats':
+        blockId = 'stats-block';
+        break;
+      case 'newsletter':
+        blockId = 'newsletter-block';
+        break;
+      case 'map':
+        blockId = 'map-block';
+        break;
+      case 'chatbot':
+        blockId = 'chatbot-block';
+        break;
+      default:
+        blockId = '';
+    }
     if (this.addedBlocks.find(b => b.type === block.type)) return;
-    this.addedBlocks.push({ type: block.type, injectedHtml: block.html });
+    this.addedBlocks.push({ type: block.type, injectedHtml });
+    // Do NOT append block HTML to editableHtml
+    // Only inject blocks in getPreviewSrcDoc
   }
-  removeBlock(type: string) { this.addedBlocks = this.addedBlocks.filter(b => b.type !== type); }
+
+  removeBlock(type: string) {
+    this.addedBlocks = this.addedBlocks.filter(b => b.type !== type);
+    // Do NOT remove block HTML from editableHtml (since it's not added there)
+  }
   isBlockAdded(type: string) { return this.addedBlocks.some(b => b.type === type); }
 
   // ── Code editor helpers ───────────────────────────────────────────────────
@@ -884,9 +939,10 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
   getPreviewSrcDoc(): string {
     if (!this.websiteResponse) return '';
 
-    let html = this.websiteResponse.html || '';
-    let css  = this.websiteResponse.css  || '';
-    let js   = this.websiteResponse.js   || '';
+    // Use the code editor's HTML as the source for preview
+    let html = this.editableHtml || '';
+    let css  = this.editableCss  || '';
+    let js   = this.editableJs   || '';
 
     // ── Inject section visibility & per-section overrides ────────────────
     let sectionCss = '';
@@ -900,13 +956,19 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
       if (s.fontSize && s.fontSize !== '1rem') sectionCss += `#${s.id} p, #${s.id} li { font-size: ${s.fontSize} !important; }\n`;
     });
 
-    // ── Inject added blocks html ─────────────────────────────────────────
-    let extraBlocksHtml = '';
-    this.addedBlocks.filter(b => b.type !== 'chatbot' && b.injectedHtml).forEach(b => {
-      extraBlocksHtml += (b.injectedHtml ?? '');
-    });
-    if (extraBlocksHtml) {
-      html = html.replace(/<\/body>/i, extraBlocksHtml + '</body>');
+    // Insert added blocks just before the <footer> or </app-footer> tag if present, else at end of <body>
+    if (this.addedBlocks && this.addedBlocks.length > 0) {
+      // Collect HTML for all non-chatbot blocks
+      const blocksHtml = this.addedBlocks.filter(b => b.type !== 'chatbot' && b.injectedHtml).map(b => b.injectedHtml ?? '').join('\n');
+      if (blocksHtml) {
+        // Insert only above the footer (never after it)
+        if (/<footer[\s>]/i.test(html)) {
+          html = html.replace(/(<footer[\s>])/i, blocksHtml + '$1');
+        } else if (/<\/app-footer>/i.test(html)) {
+          html = html.replace(/<\/app-footer>/i, blocksHtml + '</app-footer>');
+        }
+        // If no footer is found, do NOT append blocks at the end
+      }
     }
 
     // ── Inject chatbot widget script snippet ──────────────────────────────
