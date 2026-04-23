@@ -1,3 +1,5 @@
+import { getSubscribeBlockHtml } from '../blocks/subscribe-block.util';
+import { getMapBlockHtml } from '../blocks/map-block.util';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -117,6 +119,12 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
 
   // ── Addable blocks ─────────────────────────────────────────────────────────
   readonly addableBlocks: AddBlockOption[] = [
+        {
+          type: 'subscribe',
+          label: 'Subscribe',
+          icon: 'subscriptions',
+          html: '' // Will be set dynamically when added
+        },
     {
       type: 'contact-form',
       label: 'Contact Form',
@@ -229,12 +237,7 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
       type: 'map',
       label: 'Map / Location',
       icon: 'location_on',
-      html: `<section id="map-block" style="padding:2rem 2rem 0">
-  <h2 style="text-align:center;margin-bottom:1.5rem">Find Us</h2>
-  <div style="background:#e8e8e8;border-radius:12px;height:320px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#555;gap:0.7rem">
-    <span style="font-size:2rem">📍</span> Embed your Google Maps iframe here
-  </div>
-</section>`
+      html: '' // Will be set dynamically when added
     },
     {
       type: 'chatbot',
@@ -647,6 +650,20 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
         );
         blockId = 'contact-form-block';
         break;
+      case 'subscribe':
+        injectedHtml = getSubscribeBlockHtml(
+          this.entityDetails?.id ? String(this.entityDetails.id) : '',
+          this.entityDetails?.displayName || ''
+        );
+        blockId = 'subscribe-block';
+        break;
+      case 'map':
+        injectedHtml = getMapBlockHtml(
+          this.entityDetails?.id ? String(this.entityDetails.id) : '',
+          this.entityDetails?.displayName || ''
+        );
+        blockId = 'map-block';
+        break;
       case 'pricing-table':
         blockId = 'pricing-block';
         break;
@@ -665,9 +682,9 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
       case 'newsletter':
         blockId = 'newsletter-block';
         break;
-      case 'map':
-        blockId = 'map-block';
-        break;
+      // case 'map':
+      //   blockId = 'map-block';
+      //   break;
       case 'chatbot':
         blockId = 'chatbot-block';
         break;
@@ -956,18 +973,23 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
       if (s.fontSize && s.fontSize !== '1rem') sectionCss += `#${s.id} p, #${s.id} li { font-size: ${s.fontSize} !important; }\n`;
     });
 
-    // Insert added blocks just before the <footer> or </app-footer> tag if present, else at end of <body>
+    // Insert blocks just above <footer> ONLY if <footer> is the last major element in <body>. Otherwise, insert at end of <main> or <body>.
     if (this.addedBlocks && this.addedBlocks.length > 0) {
-      // Collect HTML for all non-chatbot blocks
       const blocksHtml = this.addedBlocks.filter(b => b.type !== 'chatbot' && b.injectedHtml).map(b => b.injectedHtml ?? '').join('\n');
       if (blocksHtml) {
-        // Insert only above the footer (never after it)
-        if (/<footer[\s>]/i.test(html)) {
+        // Check if <footer> is the last major element in <body>
+        const footerMatch = html.match(/<footer[\s>][\s\S]*?<\/footer>/i);
+        if (footerMatch && html.trim().endsWith(footerMatch[0])) {
+          // Insert blocks just before <footer>
           html = html.replace(/(<footer[\s>])/i, blocksHtml + '$1');
-        } else if (/<\/app-footer>/i.test(html)) {
+        } else if (/<\/app-footer>/i.test(html) && html.trim().endsWith('</app-footer>')) {
           html = html.replace(/<\/app-footer>/i, blocksHtml + '</app-footer>');
+        } else if (/<\/main>/i.test(html)) {
+          html = html.replace(/<\/main>/i, blocksHtml + '</main>');
+        } else if (/<\/body>/i.test(html)) {
+          html = html.replace(/<\/body>/i, blocksHtml + '</body>');
         }
-        // If no footer is found, do NOT append blocks at the end
+        // If no suitable place is found, do NOT append blocks
       }
     }
 
