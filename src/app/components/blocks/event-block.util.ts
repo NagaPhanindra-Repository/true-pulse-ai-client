@@ -1,0 +1,87 @@
+// event-block.util.ts
+// Utility to generate a world-class, visually stunning slideshow block for upcoming events/offers, with backend integration for both preview and published site
+import { environment } from '../../../environments/environment';
+
+/**
+ * Generates HTML+JS for the Events/Offers Slideshow block.
+ * Fetches images and details from GET /api/events/public/list/{entityId} (API must return an array of event objects as described).
+ * Each event: { name, path, expiry, message, Bookingurl }
+ * Compatible with website studio preview and public subdomain.
+ */
+export function getEventBlockHtml(entityId: string, entityDisplayName: string): string {
+  const apiUrl = environment.apiUrl || '';
+  return [
+    '<section id="event-block"',
+    '  data-entity-id="' + entityId + '"',
+    '  data-entity-display-name="' + entityDisplayName + '"',
+    '  style="padding:2.5rem 0;background:var(--block-bg,#0a0a0a);color:var(--color-text,#fff);font-family:var(--font-body);">',
+    '  <h2 style="margin-bottom:1.2rem;font-family:var(--font-heading);color:var(--color-primary,#ffb300);font-size:2.2rem;text-align:center;letter-spacing:0.01em;">Upcoming Events & Offers</h2>',
+    '  <div id="eventSlideshow" style="max-width:900px;margin:0 auto;position:relative;overflow:hidden;border-radius:18px;box-shadow:0 4px 32px rgba(0,0,0,0.18);background:var(--color-cream,#181818);min-height:340px;">',
+    '    <div id="eventSlides" style="display:flex;transition:transform 0.7s cubic-bezier(.77,0,.18,1);will-change:transform;"></div>',
+    '    <button id="eventPrev" aria-label="Previous" style="position:absolute;top:50%;left:18px;transform:translateY(-50%);background:rgba(0,0,0,0.45);border:none;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.7rem;cursor:pointer;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.12);">&#8592;</button>',
+    '    <button id="eventNext" aria-label="Next" style="position:absolute;top:50%;right:18px;transform:translateY(-50%);background:rgba(0,0,0,0.45);border:none;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.7rem;cursor:pointer;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.12);">&#8594;</button>',
+    '    <div id="eventDots" style="position:absolute;bottom:18px;left:0;right:0;text-align:center;z-index:2;"></div>',
+    '  </div>',
+    '  <script>(function() {',
+    '    var section = document.getElementById("event-block");',
+    '    if (!section) return;',
+    '    var entityId = section.getAttribute("data-entity-id");',
+    '    var slidesDiv = document.getElementById("eventSlides");',
+    '    var dotsDiv = document.getElementById("eventDots");',
+    '    var prevBtn = document.getElementById("eventPrev");',
+    '    var nextBtn = document.getElementById("eventNext");',
+    '    if (!slidesDiv || !dotsDiv || !prevBtn || !nextBtn) return;',
+    '    slidesDiv.innerHTML = "<div style=\"color:#aaa;text-align:center;width:100%\">Loading events...</div>";',
+    '    fetch("' + apiUrl + '/api/events/public/list/" + encodeURIComponent(entityId))',
+    '      .then(function(r) { return r.json(); })',
+    '      .then(function(imageslist) {',
+    '        if (!Array.isArray(imageslist) || imageslist.length === 0) {',
+    '          slidesDiv.innerHTML = "<div style=\"color:#888;text-align:center;width:100%\">No events or offers found.</div>";',
+    '          return;',
+    '        }',
+    '        var html = "";',
+    '        imageslist.forEach(function(ev, idx) {',
+    '          html += "<div class=\"event-slide\" style=\"min-width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex-direction:row;padding:0;\">";',
+    '          html += "<div style=\"flex:1;min-width:0;display:flex;align-items:center;justify-content:center;\">";',
+    '          html += "<img src=\"" + (ev.path || "") + "\" alt=\"" + (ev.name || "Event") + "\" style=\"max-width:340px;max-height:260px;width:auto;height:auto;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.13);background:#222;margin:2.5rem 1.5rem 2.5rem 2.5rem;object-fit:cover;\">";',
+    '          html += "</div>";',
+    '          html += "<div style=\"flex:2;min-width:0;padding:2.5rem 2rem 2.5rem 0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;\">";',
+    '          html += "<div style=\"font-size:1.45rem;font-family:var(--font-heading);font-weight:700;color:var(--color-primary,#ffb300);margin-bottom:0.7rem;\">" + (ev.name || "Event") + "</div>";',
+    '          if (ev.message) html += "<div style=\"font-size:1.08rem;color:var(--color-text,#fff);margin-bottom:0.7rem;line-height:1.6;\">" + ev.message + "</div>";',
+    '          if (ev.expiry) html += "<div style=\"font-size:0.98rem;color:#ffb300;margin-bottom:0.7rem;\">Ends: " + (new Date(ev.expiry).toLocaleString() || ev.expiry) + "</div>";',
+    '          if (ev.Bookingurl) html += "<a href=\"" + ev.Bookingurl + "\" target=\"_blank\" rel=\"noopener\" style=\"display:inline-block;padding:0.7rem 1.7rem;background:var(--color-primary,#ffb300);color:#181818;font-weight:700;border-radius:7px;text-decoration:none;font-size:1.08rem;box-shadow:0 2px 8px rgba(0,0,0,0.10);transition:background 0.2s;\">Book Now</a>";',
+    '          html += "</div></div>";',
+    '        });',
+    '        slidesDiv.innerHTML = html;',
+    '        var slides = slidesDiv.querySelectorAll(".event-slide");',
+    '        var current = 0;',
+    '        function showSlide(idx) {',
+    '          if (!slides.length) return;',
+    '          current = (idx + slides.length) % slides.length;',
+    '          slidesDiv.style.transform = "translateX(-" + (current * 100) + "%)";',
+    '          Array.from(dotsDiv.children).forEach(function(dot, i) {',
+    '            dot.style.background = i === current ? "#ffb300" : "#fff2";',
+    '            dot.style.transform = i === current ? "scale(1.18)" : "scale(1)";',
+    '          });',
+    '        }',
+    '        dotsDiv.innerHTML = "";',
+    '        for (var i = 0; i < slides.length; i++) {',
+    '          var dot = document.createElement("span");',
+    '          dot.style.cssText = "display:inline-block;width:13px;height:13px;margin:0 6px;border-radius:50%;background:#fff2;cursor:pointer;transition:all 0.2s;vertical-align:middle;";',
+    '          (function(idx) { dot.onclick = function() { showSlide(idx); }; })(i);',
+    '          dotsDiv.appendChild(dot);',
+    '        }',
+    '        prevBtn.onclick = function() { showSlide(current - 1); };',
+    '        nextBtn.onclick = function() { showSlide(current + 1); };',
+    '        var timer = setInterval(function() { showSlide(current + 1); }, 6000);',
+    '        slidesDiv.onmouseenter = function() { clearInterval(timer); };',
+    '        slidesDiv.onmouseleave = function() { timer = setInterval(function() { showSlide(current + 1); }, 6000); };',
+    '        showSlide(0);',
+    '      })',
+    '      .catch(function() {',
+    '        slidesDiv.innerHTML = "<div style=\"color:#c00;text-align:center;width:100%\">Failed to load events.</div>";',
+    '      });',
+    '  })();<\/script>',
+    '</section>'
+  ].join('\n');
+}

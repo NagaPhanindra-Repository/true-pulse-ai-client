@@ -1,6 +1,7 @@
 import { getSubscribeBlockHtml } from '../blocks/subscribe-block.util';
 import { getMapBlockHtml } from '../blocks/map-block.util';
 import { getMenuBlockHtml } from '../blocks/menu-block.util';
+import { getEventBlockHtml } from '../blocks/event-block.util';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -130,6 +131,12 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
       type: 'offerings',
       label: 'Offerings',
       icon: 'category',
+      html: '' // Will be set dynamically when added
+    },
+    {
+      type: 'event-slideshow',
+      label: 'Events/Offers Slideshow',
+      icon: 'slideshow',
       html: '' // Will be set dynamically when added
     },
     {
@@ -670,6 +677,13 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
           this.entityDetails?.displayName || ''
         );
         blockId = 'menu-block';
+        break;
+      case 'event-slideshow':
+        injectedHtml = getEventBlockHtml(
+          this.entityDetails?.id ? String(this.entityDetails.id) : '',
+          this.entityDetails?.displayName || ''
+        );
+        blockId = 'event-block';
         break;
       case 'map':
         injectedHtml = getMapBlockHtml(
