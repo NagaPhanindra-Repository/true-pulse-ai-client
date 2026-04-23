@@ -1,5 +1,6 @@
 import { getSubscribeBlockHtml } from '../blocks/subscribe-block.util';
 import { getMapBlockHtml } from '../blocks/map-block.util';
+import { getMenuBlockHtml } from '../blocks/menu-block.util';
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -119,12 +120,18 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
 
   // ── Addable blocks ─────────────────────────────────────────────────────────
   readonly addableBlocks: AddBlockOption[] = [
-        {
-          type: 'subscribe',
-          label: 'Subscribe',
-          icon: 'subscriptions',
-          html: '' // Will be set dynamically when added
-        },
+    {
+      type: 'subscribe',
+      label: 'Subscribe',
+      icon: 'subscriptions',
+      html: '' // Will be set dynamically when added
+    },
+    {
+      type: 'offerings',
+      label: 'Offerings',
+      icon: 'category',
+      html: '' // Will be set dynamically when added
+    },
     {
       type: 'contact-form',
       label: 'Contact Form',
@@ -657,6 +664,13 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
         );
         blockId = 'subscribe-block';
         break;
+      case 'offerings':
+        injectedHtml = getMenuBlockHtml(
+          this.entityDetails?.id ? String(this.entityDetails.id) : '',
+          this.entityDetails?.displayName || ''
+        );
+        blockId = 'menu-block';
+        break;
       case 'map':
         injectedHtml = getMapBlockHtml(
           this.entityDetails?.id ? String(this.entityDetails.id) : '',
@@ -682,9 +696,6 @@ export class WebsiteStudioComponent implements OnInit, OnDestroy {
       case 'newsletter':
         blockId = 'newsletter-block';
         break;
-      // case 'map':
-      //   blockId = 'map-block';
-      //   break;
       case 'chatbot':
         blockId = 'chatbot-block';
         break;
